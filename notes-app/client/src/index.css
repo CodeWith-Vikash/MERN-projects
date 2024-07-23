@@ -2,7 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-
-::-webkit-scrollbar{
-    display: none;
+/* The entire scrollbar */
+::-webkit-scrollbar {
+    width: 12px; /* width of the entire scrollbar */
+    height: 12px; /* height of the entire scrollbar */
 }
+
+/* The scrollbar track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* color of the track */
+    border-radius: 10px; /* round the corners */
+}
+
+/* The scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background: #888; /* color of the scroll thumb */
+    border-radius: 10px; /* round the corners */
+}
+
+/* The scrollbar thumb when hovered */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* color of the scroll thumb when hovered */
+}
+
+/* Change the placeholder color */
+input::placeholder {
+    color:black; /* Customize this color as needed */
+}
+
+/* For textareas as well */
+textarea::placeholder {
+    color:black; /* Customize this color as needed */
+}
+

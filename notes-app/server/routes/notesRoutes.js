@@ -14,10 +14,13 @@ router.get("/", async(req, res) => {
 
 // route to post data
 router.post("/", async(req, res) => {
-    const newNote = new notesModel.add(req.body.note);
+    const newNote = new noteModel({
+      note:req.body.note,
+      title:req.body.title
+    })
   try {
     const savedNote =await newNote.save()
-    res.status(200).json(savedNote)
+    res.status(200).json({message:'note saved successfuly',data:savedNote})
   } catch (error) {
      res.status(500).json('server error while posting note')
   }
@@ -28,11 +31,11 @@ router.post("/", async(req, res) => {
 router.patch("/:id", async(req, res) => {
     const id= req.params.id
     try {
-      const updatedNote= await noteModel.findByIdAndUpdate(id,req.body.note,{new:true})
+      const updatedNote= await noteModel.findByIdAndUpdate(id,req.body,{new:true})
       if(!updatedNote){
         res.status(404).json('note not found')
       }
-      res.status(200).json(updatedNote)
+      res.status(200).json({message:"note updated successfuly",data:updatedNote})
     } catch (error) {
         res.status(500).json('server error while updating note')
     }
@@ -46,7 +49,7 @@ router.delete("/:id", async(req, res) => {
        if(!deletedNote){
          res.status(404).json('note not found')
        }
-       res.status(200).json(deletedNote)
+       res.status(200).json({message:'note deleted successfuly',data:deletedNote})
     } catch (error) {
         res.status(500).json('server error while deleting note')
     }
