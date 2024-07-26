@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.sidenav{
+    background-color:rgba(1, 90, 1,0.3);
+    backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
