@@ -3,10 +3,12 @@ const router= express.Router()
 const Blog= require('../models/Blog')
 
 router.post('/',(req,res)=>{
-    const {title, text} = req.body
+    const {title, text,image,autherInfo} = req.body
     Blog.create({
         title,
-        text
+        text,
+        image,
+        autherInfo
     }).then((result)=>{
         return res.status(200).json({message:'blog created',data:result})
     }).catch((err)=>{
