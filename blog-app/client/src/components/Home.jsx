@@ -3,32 +3,13 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { mainContext } from "../context/MainContext";
 import Addblog from "./Addblog";
-import axios from "axios";
 import BlogSke from "./Skeletons/BlogSke";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { isdark, userdata, postdata, setpostdata } = useContext(mainContext);
-  const [isloading, setisloading] = useState(false);
-  const [iserror, setiserror] = useState(false);
+  const {isdark,postdata,getPost,isloading,iserror } = useContext(mainContext);
   const navigate=useNavigate()
 
-  const getPost = () => {
-    setisloading(true);
-    axios
-      .get("http://localhost:3000/")
-      .then((result) => {
-        console.log(result);
-        setpostdata(result.data);
-        setisloading(false);
-        setiserror(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setiserror(true);
-        setisloading(false);
-      });
-  };
 
   const convertDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -50,7 +31,7 @@ const Home = () => {
       <Navbar />
       <main className="min-h-screen">
         <section className="flex justify-center my-5">
-          <Addblog getPost={getPost} />
+          <Addblog/>
         </section>
         {isloading ? (
           <BlogSke />

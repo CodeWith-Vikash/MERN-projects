@@ -4,11 +4,11 @@ import { mainContext } from "../context/MainContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Addblog = ({ getPost }) => {
+const Addblog = () => {
   const [imageSrc, setImageSrc] = useState(null);
   const [isloading, setisloading] = useState(false);
   const [iserror, setiserror] = useState(false);
-  const { isdark, userdata } = useContext(mainContext);
+  const { isdark, userdata,getPost } = useContext(mainContext);
   const titleref = useRef();
   const descref = useRef();
   const navigate = useNavigate();

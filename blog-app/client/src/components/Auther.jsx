@@ -18,8 +18,8 @@ const Auther = () => {
       <Navbar/>
         <main className='min-h-screen flex justify-center flex-wrap gap-10 p-10'>
            {
-            authers.map((auther)=>{
-              return <div className='flex flex-col items-center w-fit gap-2 font-semibold text-lg'>
+            authers.map((auther,index)=>{
+              return <div className='flex flex-col items-center w-fit gap-2 font-semibold text-lg' key={index}>
             <img src={auther.avatar} className='h-[150px] w-[150px] object-cover rounded-full'/>
              <p>{auther.username}</p>
            </div>
