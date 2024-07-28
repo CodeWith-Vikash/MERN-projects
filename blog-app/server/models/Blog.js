@@ -14,12 +14,9 @@ const blogSchema = new mongoose.Schema({
         required: true,
     },
     autherInfo: {
-        type: [{
-            type: String,
-            enum: ['username', 'avtar']
-        }],
+        type:Object,
         required: true,
-        default: []
+        default: {}
     },
     dateCreated: {
         type: Date,

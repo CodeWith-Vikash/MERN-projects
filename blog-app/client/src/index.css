@@ -11,3 +11,11 @@
 ::-webkit-scrollbar{
     display: none;
 }
+
+.blog{
+    box-shadow: 1px 1px 20px black;
+}
+
+.active{
+    color: yellow;
+}
