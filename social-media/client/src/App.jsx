@@ -5,6 +5,7 @@ import Signup from './components/auth/Signup'
 import Login from './components/auth/Login'
 import Navbar from './components/Home/Navbar'
 import Dashboard from './components/Home/Dashboard'
+import Profile from './components/Home/Profile'
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
     <Navbar/>
       <Routes>
          <Route path='/' element={<Home/>}/>
+         <Route path='/profile/:id' element={<Profile/>}/>
          <Route path='/dash' element={<Dashboard/>}/>
          <Route path='/signup' element={<Signup/>}/>
          <Route path='/login' element={<Login/>}/>
