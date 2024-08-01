@@ -27,7 +27,7 @@ export const ContextProvider=({children})=>{
     const getPost = () => {
         setispostloading(true);
         axios
-          .get("http://localhost:3000/")
+          .get("https://blog-app-server69.up.railway.app")
           .then((result) => {
             console.log(result);
             setpostdata(result.data);

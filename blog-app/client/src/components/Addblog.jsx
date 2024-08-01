@@ -35,7 +35,7 @@ const Addblog = () => {
       setisloading(true);
       try {
         axios
-          .post("http://localhost:3000/", {
+          .post("https://blog-app-server69.up.railway.app/", {
             title: titleref.current.value,
             text: descref.current.value,
             image: imageSrc,

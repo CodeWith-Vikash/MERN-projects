@@ -8,7 +8,7 @@ const Auther = () => {
   const {isdark}= useContext(mainContext)
   const [authers,setAuthers]=useState([])
   useEffect(()=>{
-    axios.get('http://localhost:3000/users').then((data)=>{
+    axios.get('https://blog-app-server69.up.railway.app/users').then((data)=>{
       console.log(data)
       setAuthers(data.data)
     })

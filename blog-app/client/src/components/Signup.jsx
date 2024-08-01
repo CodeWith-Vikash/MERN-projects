@@ -15,6 +15,8 @@ const Signup = () => {
   const emailref = useRef();
   const passwordref = useRef();
 
+  axios.defaults.withCredentials=true;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!imageSrc) {
@@ -22,7 +24,7 @@ const Signup = () => {
     } else {
       setsigning(true);
       axios
-        .post("http://localhost:3000/signup", {
+        .post("https://blog-app-server69.up.railway.app/signup", {
           username: nameref.current.value,
           email: emailref.current.value,
           password: passwordref.current.value,

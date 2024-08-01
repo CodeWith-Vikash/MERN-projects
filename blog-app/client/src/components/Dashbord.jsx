@@ -18,7 +18,7 @@ const Dashbord = () => {
   const deletePost = (id) => {
     setdeletingid(id);
     axios
-      .delete(`http://localhost:3000/${id}`)
+      .delete(`https://blog-app-server69.up.railway.app/${id}`)
       .then((data) => {
         console.log(data);
         getPost();
@@ -58,7 +58,7 @@ const Dashbord = () => {
   const saveEdit = (e) => {
     e.preventDefault()
     setsaving(true)
-    axios.patch(`http://localhost:3000/${editingid}`, {
+    axios.patch(`https://blog-app-server69.up.railway.app/${editingid}`, {
       title:titleref.current.value,
       text:descref.current.value,
       image:imageSrc

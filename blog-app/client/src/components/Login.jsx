@@ -16,7 +16,7 @@ const Login = () => {
   const handleSubmit=(e)=>{
       e.preventDefault()
       setlogging(true)
-     axios.post('http://localhost:3000/login',{
+     axios.post('https://blog-app-server69.up.railway.app/login',{
        email:emailref.current.value,
        password:passwordref.current.value
      }).then((result)=>{
