@@ -44,4 +44,20 @@ router.patch('/post/:id/comment',async(req,res)=>{
     }
 })
 
+router.patch('/post/:id/like',async(req,res)=>{
+     const {username,userId}= req.body
+     const id= req.params.id
+    try {
+        const post= await postModel.findById(id)
+        if(!post){
+            res.status(404).json('post not found')
+        }
+        post.likes.push({username,userId})
+        const updatedData=await post.save()
+        res.status(200).json({message:'update success',data:updatedData})
+    } catch (error) {
+        res.status(500).json({message:'server error while updating post',error})
+    }
+})
+
 module.exports=router

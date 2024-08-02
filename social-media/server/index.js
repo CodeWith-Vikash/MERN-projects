@@ -2,6 +2,7 @@ const express= require('express')
 const mongoose=require('mongoose')
 const cors=require('cors')
 const postroute= require('./routes/post')
+const userroute= require('./routes/user')
 
 const app=express()
 app.use(express.json())
@@ -12,6 +13,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/social-media').then(()=>{
 })
 
 app.use(postroute)
+app.use(userroute)
 
 app.listen(3000,()=>{
     console.log('server is running on port 3000');

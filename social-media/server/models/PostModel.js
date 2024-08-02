@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const postSchema = mongoose.Schema({
   userInfo: {
     avatar: { type: String, required: true },
-    username: { type: String, required: true }
+    username: { type: String, required: true },
+    userId: { type: String, required: true },
   },
   title: {
     type: String,
@@ -13,7 +14,8 @@ const postSchema = mongoose.Schema({
     type: String
   },
   likes: [{
-    username: String
+    username: String,
+    userId: String
   }],
   comments: [{
     username: String,
