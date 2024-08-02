@@ -2,22 +2,26 @@ import React, { useContext, useState } from 'react'
 import { FaFileImage } from "react-icons/fa6";
 import axios from 'axios'
 import { MainContext } from '../../context/MainContext';
+import { useNavigate } from 'react-router-dom';
 
 const AddPost = () => {
   const [imagesrc, setimagesrc] = useState(null)
   const [textval, settextval] = useState('')
   const [saving, setsaving] = useState(false)
   const [posterror, setposterror] = useState(false)
-  const {handleFileChange,getPost}=useContext(MainContext)
+  const {handleFileChange,getPost,userdata}=useContext(MainContext)
+  const navigate=useNavigate()
   
   // function to add post
   const handleSubmit=(e)=>{
     e.preventDefault()
-    setsaving(true)
+    if(userdata){
+      setsaving(true)
     axios.post('http://localhost:3000/posts',{
        userInfo:{
-         avatar:'default',
-         username:'vikashprodev'
+         avatar:userdata.avatar,
+         username:userdata.username,
+         userId:userdata._id
        },
        title:textval,
        image:imagesrc,
@@ -35,6 +39,9 @@ const AddPost = () => {
       setsaving(false)
       setposterror(true)
     })
+    }else{
+      navigate('/login')
+    }
   }
   return (
     <form className='w-[300px] bg-white p-4 flex flex-col gap-2 rounded shadow' onSubmit={handleSubmit}>

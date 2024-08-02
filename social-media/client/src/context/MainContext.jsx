@@ -1,10 +1,11 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from 'axios'
 
 export const MainContext=createContext(null)
 
 export const ContextProvider=({children})=>{
     const [allposts, setallposts] = useState([])
+    const [userdata, setuserdata] = useState(null)
    //  function to get allposts
     const getPost=()=>{
        axios.get('http://localhost:3000/posts').then((result)=>{
@@ -25,7 +26,20 @@ export const ContextProvider=({children})=>{
         reader.readAsDataURL(file);
       }
     };
-    return <MainContext.Provider value={{getPost,allposts,handleFileChange}}>
+    // get localstorage
+    const getlocalstorage=()=>{
+      const data= JSON.parse(localStorage.getItem('charloguser'))
+      if(data){
+        setuserdata(data)
+        console.log('userdata: ',data);
+      }else{
+        setuserdata(null)
+      }
+    }
+    useEffect(()=>{
+      getlocalstorage()
+    },[])
+    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage}}>
         {children}
     </MainContext.Provider>
 }

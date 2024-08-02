@@ -2,16 +2,17 @@ import React, { useContext, useRef, useState } from 'react'
 import { AiFillLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import { FaComment } from "react-icons/fa";
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import {MainContext} from '../../context/MainContext'
 
 const Post = ({data}) => {
+  const navigate=useNavigate()
   const commentref=useRef()
   const [showcomment, setshowcomment] = useState(false)
   const [commenttext, setcommenttext] = useState('')
   const [commenting, setcommenting] = useState(false)
-  const {getPost} = useContext(MainContext)
+  const {getPost,userdata} = useContext(MainContext)
   // function to toggle comment section
   const toggleComment=()=>{
     setshowcomment(!showcomment)
@@ -19,21 +20,43 @@ const Post = ({data}) => {
   // function to add comment
   const addComment=(e)=>{
     e.preventDefault()
-    setcommenting(true)
+    if(userdata){
+      setcommenting(true)
      axios.patch(`http://localhost:3000/post/${data?._id}/comment`,{
-          username:'summer jain',
-          avatar:"default",
+          username:userdata.username,
+          avatar:userdata.avatar,
           comment:commenttext
      }).then((data)=>{
       console.log(data);
-      setcommenting(false)
       setcommenttext('')
+      setcommenting(false)
       getPost()
      }).catch((err)=>{
       console.log(err);
       setcommenting(false)
      })
+    }else{
+      navigate('/login')
+    }
   }
+  // function to add like
+  const addLike=(e)=>{
+    if(userdata){
+      axios.patch(`http://localhost:3000/post/${data?._id}/like`,{
+        username:userdata.username,
+        userId:userdata._id
+   }).then((data)=>{
+    console.log(data);
+    alert('like added')
+    getPost()
+   }).catch((err)=>{
+    console.log(err);
+   })
+    }else{
+      navigate('/login')
+    }
+  }
+
   return (
     <div className='bg-white w-[300px] p-2 rounded md:w-[500px] lg:w-[700px] flex flex-col gap-4'>
       <section className='flex items-center gap-2'>
@@ -61,7 +84,7 @@ const Post = ({data}) => {
       <hr />
 
       <section className='flex justify-between px-2'>
-        <p className='flex items-center gap-1 cursor-pointer'><AiFillLike color='black' size='1.5rem'/> Like</p>
+        <p className='flex items-center gap-1 cursor-pointer' onClick={addLike}><AiFillLike size='1.5rem'/> Like</p>
         <p className='flex items-center gap-1 cursor-pointer' onClick={toggleComment}><FaComment color='black' size='1.5rem'/> Comment</p>
       </section>
        <hr />
@@ -86,6 +109,7 @@ const Post = ({data}) => {
         </Link>
           <form onSubmit={addComment}>
           <textarea rows="3" cols='0' className='bg-blue-100 p-2 outline-none w-full' placeholder='write your comment here...'
+          value={commenttext}
            onChange={(e)=>setcommenttext(e.target.value)}
            required
           ></textarea>

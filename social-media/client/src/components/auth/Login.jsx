@@ -1,11 +1,18 @@
-import React, { useRef, useState } from 'react'
-import {Link} from 'react-router-dom'
+import React, { useContext, useRef, useState } from 'react'
+import {Link,useNavigate} from 'react-router-dom'
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import axios from 'axios'
+import {MainContext} from '../../context/MainContext'
 
 const Login = () => {
+  const navigate=useNavigate()
   const [showpass, setshowpass] = useState(false)
+  const [isloading, setisloading] = useState(false)
+  const [iserr, setiserr] = useState(false)
   const passref=useRef()
+  const mailref=useRef()
+  const {getlocalstorage} = useContext(MainContext)
   // function to toggle password
    const togglePass=()=>{
       if(!showpass){
@@ -16,11 +23,32 @@ const Login = () => {
       setshowpass(!showpass)
    }
 
+  //  function to login
+  const handleSubmit=(e)=>{
+    e.preventDefault()
+    setisloading(true)
+    axios.post('http://localhost:3000/login',{
+      email:mailref.current.value,
+      password:passref.current.value
+    }).then((result)=>{
+      console.log(result);
+      setisloading(false)
+      localStorage.setItem('charloguser',JSON.stringify(result.data.data))
+      getlocalstorage()
+      navigate('/')
+    }).catch((err)=>{
+      console.log(err);
+      setiserr(true)
+      setisloading(false)
+    })
+  }
+
   return (
     <div className='bg-gray-300 h-screen flex justify-center items-center'>
        <div className='flex flex-col gap-6 bg-white w-[300px] px-4 py-6 rounded-lg items-center shadow'>
-         <form className='flex flex-col gap-4'>
-         <input type="email" placeholder='Email' className='border-2 border-gray-400 rounded-lg px-2 py-1 text-lg outline-blue-600'/>
+        {iserr && <p className='text-red-600 text-center'>something went wrong</p>}
+         <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+         <input type="email" placeholder='Email' className='border-2 border-gray-400 rounded-lg px-2 py-1 text-lg outline-blue-600' ref={mailref}/>
 
          <div className='relative cursor-pointer'>
          <input type="password" placeholder='Password' className='border-2 border-gray-400 rounded-lg px-2 py-1 text-lg outline-blue-600' ref={passref}/>
@@ -29,7 +57,7 @@ const Login = () => {
           </div>
          </div>
 
-         <button type="submit" className='bg-blue-700 text-white text-lg font-semibold rounded-lg py-2'>Login</button>
+         <button type="submit" className='bg-blue-700 text-white text-lg font-semibold rounded-lg py-2'>{isloading?'logging...':'Login'}</button>
          </form>
          <Link to='/signup'>
          <button type="button" className='bg-green-600 text-white text-lg font-semibold rounded-lg py-2 px-4 w-fit'>Create new account</button>
