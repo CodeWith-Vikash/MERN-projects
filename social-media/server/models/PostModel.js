@@ -20,7 +20,8 @@ const postSchema = mongoose.Schema({
   comments: [{
     username: String,
     avatar: String,
-    comment: String
+    comment: String,
+    userId: String
   }],
   postDate:{
     type:Date,

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiFillLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import { FaComment } from "react-icons/fa";
@@ -13,6 +13,19 @@ const Post = ({data}) => {
   const [commenttext, setcommenttext] = useState('')
   const [commenting, setcommenting] = useState(false)
   const {getPost,userdata} = useContext(MainContext)
+  const [isliked, setisliked] = useState(false)
+
+  // check if post is liked by the user
+  const checkLike = () => {
+    if (!data || !userdata) return; 
+    const liked = data.likes.some(element => element.userId === userdata._id);
+    setisliked(liked);
+  }
+
+  useEffect(() => {
+    checkLike();
+  }, [data, userdata])
+   
   // function to toggle comment section
   const toggleComment=()=>{
     setshowcomment(!showcomment)
@@ -25,6 +38,7 @@ const Post = ({data}) => {
      axios.patch(`http://localhost:3000/post/${data?._id}/comment`,{
           username:userdata.username,
           avatar:userdata.avatar,
+          userId:userdata._id,
           comment:commenttext
      }).then((data)=>{
       console.log(data);
@@ -45,10 +59,11 @@ const Post = ({data}) => {
       axios.patch(`http://localhost:3000/post/${data?._id}/like`,{
         username:userdata.username,
         userId:userdata._id
-   }).then((data)=>{
-    console.log(data);
-    alert('like added')
-    getPost()
+   }).then((result)=>{
+      const likes=result.data.data.likes
+      console.log(likes);
+      getPost()
+      checkLike()
    }).catch((err)=>{
     console.log(err);
    })
@@ -60,7 +75,7 @@ const Post = ({data}) => {
   return (
     <div className='bg-white w-[300px] p-2 rounded md:w-[500px] lg:w-[700px] flex flex-col gap-4'>
       <section className='flex items-center gap-2'>
-        <Link to={`/profile/${data?.userInfo?.username}`}>
+        <Link to={data?.userInfo?.userId==userdata?._id?`/dash`:`/profile/${data?.userInfo?.userId}`}>
         <img src={data?.userInfo?.avatar} className='h-10 w-10 rounded-full'/>
         </Link>
         <div className='flex flex-col leading-5'>
@@ -84,7 +99,7 @@ const Post = ({data}) => {
       <hr />
 
       <section className='flex justify-between px-2'>
-        <p className='flex items-center gap-1 cursor-pointer' onClick={addLike}><AiFillLike size='1.5rem'/> Like</p>
+        <p className='flex items-center gap-1 cursor-pointer' onClick={addLike}><AiFillLike size='1.5rem' className={isliked?'text-blue-700':'text-black'}/> Like</p>
         <p className='flex items-center gap-1 cursor-pointer' onClick={toggleComment}><FaComment color='black' size='1.5rem'/> Comment</p>
       </section>
        <hr />
@@ -92,7 +107,9 @@ const Post = ({data}) => {
          <div className='flex flex-col gap-4 max-h-[200px] overflow-auto pb-2'>
             {data?.comments.map((comment)=>{
               return <div className='flex gap-2' key={comment.username}>
+              <Link to={comment.userId==userdata?._id?`/dash`:`/profile/${comment.userId}`}>
               <img src={comment.avatar} className='h-10 w-10 rounded-full'/>
+              </Link>
                <div className='bg-gray-200 p-2 rounded w-full'>
                 <p className='font-semibold text-sm'>{comment.username}</p>
                 <p className='leading-4'>
@@ -105,7 +122,7 @@ const Post = ({data}) => {
 
          <div className='flex gap-2 bg-gray-700 p-2 rounded-lg'>
          <Link to='/dash'>
-           <img src="https://scontent.fpat2-3.fna.fbcdn.net/v/t39.30808-1/441536166_437807788855507_2768361419187942287_n.jpg?stp=cp0_dst-jpg_p40x40&_nc_cat=1&ccb=1-7&_nc_sid=f4b9fd&_nc_ohc=TqgV9mSr2DgQ7kNvgEzDVNf&_nc_ht=scontent.fpat2-3.fna&gid=AZ5NgVnF6qopzwe2B-tba1a&oh=00_AYBht9XU0V9AlC1YqMAHvWIe4D1UOR2ApkHSfnMkPB-EGA&oe=66B0E3F2" className='h-10 w-10 rounded-full'/>
+           <img src={userdata?.avatar} className='h-10 w-10 rounded-full'/>
         </Link>
           <form onSubmit={addComment}>
           <textarea rows="3" cols='0' className='bg-blue-100 p-2 outline-none w-full' placeholder='write your comment here...'
