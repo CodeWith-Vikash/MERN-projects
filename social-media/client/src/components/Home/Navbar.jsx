@@ -20,7 +20,7 @@ const Navbar = () => {
           <button className='bg-green-600 text-white font-semibold px-2 py-1 rounded'>Login</button>
         </Link>}
         {userdata && <Link to='/dash'>
-           <img src={userdata.avatar} className='h-10 w-10 rounded-full'/>
+           <img src={userdata.avatar} className='h-10 w-10 rounded-full object-cover'/>
         </Link>}
       </div>
     </nav>

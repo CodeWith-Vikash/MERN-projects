@@ -76,7 +76,7 @@ const Post = ({data}) => {
     <div className='bg-white w-[300px] p-2 rounded md:w-[500px] lg:w-[700px] flex flex-col gap-4'>
       <section className='flex items-center gap-2'>
         <Link to={data?.userInfo?.userId==userdata?._id?`/dash`:`/profile/${data?.userInfo?.userId}`}>
-        <img src={data?.userInfo?.avatar} className='h-10 w-10 rounded-full'/>
+        <img src={data?.userInfo?.avatar} className='h-10 w-10 rounded-full object-cover'/>
         </Link>
         <div className='flex flex-col leading-5'>
           <p className='font-semibold'>{data?.userInfo?.username}</p>
@@ -108,7 +108,7 @@ const Post = ({data}) => {
             {data?.comments.map((comment)=>{
               return <div className='flex gap-2' key={comment.username}>
               <Link to={comment.userId==userdata?._id?`/dash`:`/profile/${comment.userId}`}>
-              <img src={comment.avatar} className='h-10 w-10 rounded-full'/>
+              <img src={comment.avatar} className='h-10 w-10 rounded-full object-cover'/>
               </Link>
                <div className='bg-gray-200 p-2 rounded w-full'>
                 <p className='font-semibold text-sm'>{comment.username}</p>
@@ -122,7 +122,7 @@ const Post = ({data}) => {
 
          <div className='flex gap-2 bg-gray-700 p-2 rounded-lg'>
          <Link to='/dash'>
-           <img src={userdata?.avatar} className='h-10 w-10 rounded-full'/>
+           <img src={userdata?.avatar} className='h-10 w-10 rounded-full object-cover'/>
         </Link>
           <form onSubmit={addComment}>
           <textarea rows="3" cols='0' className='bg-blue-100 p-2 outline-none w-full' placeholder='write your comment here...'

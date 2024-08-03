@@ -69,4 +69,33 @@ router.patch('/post/:id/like', async (req, res) => {
     }
 });
 
+router.patch('/post/edit/:id',async(req,res)=>{
+    const id=req.params.id
+    const {title,image}=req.body
+    try {
+        const updatedpost = await postModel.findByIdAndUpdate(id,{title,image},{new:true});
+        if (!updatedpost) {
+            return res.status(404).json('Post not found');
+        }
+       
+        res.status(200).json({ message: 'post edit success', data: updatedpost });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while editing post', error });
+    }
+})
+
+router.delete('/post/delete/:id',async(req,res)=>{
+    const id=req.params.id
+    try {
+        const deletedpost = await postModel.findByIdAndDelete(id);
+        if (!deletedpost) {
+            return res.status(404).json('Post not found');
+        }
+       
+        res.status(200).json({ message: 'post delete success', data: deletedpost });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while deletting post', error });
+    }
+})
+
 module.exports = router;

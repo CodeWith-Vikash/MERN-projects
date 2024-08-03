@@ -3,8 +3,11 @@ const mongoose=require('mongoose')
 const cors=require('cors')
 const postroute= require('./routes/post')
 const userroute= require('./routes/user')
+const bodyParser=require('body-parser')
 
 const app=express()
+app.use(bodyParser.json({ limit: '100mb' })); // Adjust the limit as needed
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.json())
 app.use(cors())
 
