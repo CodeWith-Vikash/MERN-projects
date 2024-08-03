@@ -6,6 +6,7 @@ import Login from './components/auth/Login'
 import Navbar from './components/Home/Navbar'
 import Dashboard from './components/Home/Dashboard'
 import Profile from './components/Home/Profile'
+import Footer from './components/Home/Footer'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
          <Route path='/signup' element={<Signup/>}/>
          <Route path='/login' element={<Login/>}/>
       </Routes>
+      <Footer/>
     </BrowserRouter>
   )
 }

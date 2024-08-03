@@ -12,7 +12,7 @@ const Post = ({data}) => {
   const [showcomment, setshowcomment] = useState(false)
   const [commenttext, setcommenttext] = useState('')
   const [commenting, setcommenting] = useState(false)
-  const {getPost,userdata} = useContext(MainContext)
+  const {getPost,userdata,calculateTimeGap} = useContext(MainContext)
   const [isliked, setisliked] = useState(false)
 
   // check if post is liked by the user
@@ -80,7 +80,7 @@ const Post = ({data}) => {
         </Link>
         <div className='flex flex-col leading-5'>
           <p className='font-semibold'>{data?.userInfo?.username}</p>
-          <p className='text-sm'>3 days ago</p>
+          <p className='text-sm'>{calculateTimeGap(data?.postDate)}</p>
         </div>
       </section>
       <section className='flex flex-col gap-2'>

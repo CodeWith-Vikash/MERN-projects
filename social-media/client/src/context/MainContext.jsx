@@ -15,6 +15,48 @@ export const ContextProvider=({children})=>{
        })
     }
 
+    // function to convert timestamp to timegap
+    function calculateTimeGap(timestamp) {
+      const pastDate = new Date(timestamp);
+      const currentDate = new Date();
+    
+      // Calculate the time difference in milliseconds
+      const timeDifference = Math.abs(currentDate - pastDate);
+    
+      // Calculate years
+      const years = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 365.25));
+      
+      // Calculate months
+      const months = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+      
+      // Calculate days
+      const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+      
+      // Calculate hours
+      const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      
+      // Calculate minutes
+      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+      
+      // Calculate seconds
+      const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    
+      if (years >= 1) {
+        return `${years} years ago`;
+      } else if (months >= 1) {
+        return `${months} months ago`;
+      } else if (days >= 1) {
+        return `${days} days ago`;
+      } else if (hours >= 1) {
+        return `${hours} hours ago`;
+      } else if (minutes >= 1) {
+        return `${minutes} minutes ago`;
+      } else {
+        return `${seconds} seconds ago`;
+      }
+    }
+    
+
    //  funciton to convert file in to url
     const handleFileChange = (event,setimagesrc) => {
       const file = event.target.files[0];
@@ -39,7 +81,7 @@ export const ContextProvider=({children})=>{
     useEffect(()=>{
       getlocalstorage()
     },[])
-    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage}}>
+    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage,calculateTimeGap}}>
         {children}
     </MainContext.Provider>
 }

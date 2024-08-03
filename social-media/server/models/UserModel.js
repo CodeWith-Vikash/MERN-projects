@@ -17,7 +17,11 @@ const userSchema=mongoose.Schema({
     avatar:{
         type:String,
         default:'/user.jfif'
-    }
+    },
+    friends:[{
+        userId: String,
+        avatar: String
+    }]
 })
 
 module.exports=mongoose.model('User',userSchema)
