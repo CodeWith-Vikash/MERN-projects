@@ -12,15 +12,11 @@ const Signup = () => {
   const passref=useRef()
   const userref=useRef()
   const emailref=useRef()
-  // function to toggle password
-   const togglePass=()=>{
-      if(!showpass){
-         passref.current.type='password'
-      }else{
-        passref.current.type='text'
-      }
-      setshowpass(!showpass)
-   }
+   // Function to toggle password visibility
+  const togglePass = () => {
+    passref.current.type = showpass ? 'password' : 'text';
+    setshowpass(!showpass);
+  };
   //  function to signup
   const handleSubmit=(e)=>{
     e.preventDefault()

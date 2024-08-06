@@ -18,9 +18,15 @@ const userSchema=mongoose.Schema({
         type:String,
         default:'/user.jfif'
     },
-    friends:[{
+    followers:[{
         userId: String,
-        avatar: String
+        avatar: String,
+        username: String
+    }],
+    following:[{
+        userId: String,
+        avatar: String,
+        username: String
     }]
 })
 

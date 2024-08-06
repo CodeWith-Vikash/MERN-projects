@@ -13,16 +13,11 @@ const Login = () => {
   const passref=useRef()
   const mailref=useRef()
   const {getlocalstorage} = useContext(MainContext)
-  // function to toggle password
-   const togglePass=()=>{
-      if(!showpass){
-         passref.current.type='password'
-      }else{
-        passref.current.type='text'
-      }
-      setshowpass(!showpass)
-   }
-
+ // Function to toggle password visibility
+ const togglePass = () => {
+  passref.current.type = showpass ? 'password' : 'text';
+  setshowpass(!showpass);
+};
   //  function to login
   const handleSubmit=(e)=>{
     e.preventDefault()
@@ -68,3 +63,4 @@ const Login = () => {
 }
 
 export default Login
+// old code
