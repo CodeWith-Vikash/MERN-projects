@@ -98,24 +98,52 @@ router.patch('/following/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const user = await userModel.findById(id);
-        const userToFollow = await userModel.findById(userId);
-        if (!user || !userToFollow) {
+        const userToRemove = await userModel.findById(userId);
+        if (!user || !userToRemove) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         user.following.push({ username, userId, avatar });
-        userToFollow.followers.push({
+        userToRemove.followers.push({
             username: user.username,
             userId: user._id,
             avatar: user.avatar
         });
 
         const savedUser = await user.save();
-        const savedFollower = await userToFollow.save();
+        const savedFollower = await userToRemove.save();
         res.status(200).json({ message: 'Following success', myUser: savedUser, followedUser: savedFollower });
     } catch (err) {
         return res.status(500).json({ message: 'Error while following', error: err });
     }
 });
+
+// Route to remove follower
+router.patch('/follower/remove/:id', async (req, res) => {
+    const { userId } = req.body;  // This is the user who wants to remove a follower
+    const { id } = req.params;    // This is the follower being removed
+    try {
+        const myUser = await userModel.findById(userId);
+        const follower = await userModel.findById(id);
+        
+        if (!myUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (!follower) {
+            return res.status(404).json({ message: 'Follower not found' });
+        }
+
+        myUser.followers = myUser.followers.filter(person => person.userId.toString() !== id);
+        follower.following = follower.following.filter(person => person.userId.toString() !== userId);
+
+        await myUser.save();
+        await follower.save();
+
+        res.status(200).json({ message: 'Follower removed successfully', myUser, follower });
+    } catch (err) {
+        res.status(500).json({ message: 'Error while removing follower', error: err.message });
+    }
+});
+
 
 module.exports = router;

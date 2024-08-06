@@ -1,12 +1,14 @@
 import React, { useContext } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {MainContext} from '../../context/MainContext'
 
 const Navbar = () => {
   const {userdata,getlocalstorage}=useContext(MainContext)
+  const navigate=useNavigate()
   const logOut=()=>{
     localStorage.removeItem('charloguser')
     getlocalstorage()
+    navigate('/')
   }
   return (
     <nav className='flex justify-between items-center px-4 py-2 bg-white md:sticky md:top-0 z-50'>

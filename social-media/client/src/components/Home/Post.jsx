@@ -121,9 +121,9 @@ const Post = ({data}) => {
          </div>
 
          <div className='flex gap-2 bg-gray-700 p-2 rounded-lg'>
-         <Link to='/dash'>
-           <img src={userdata?.avatar} className='h-10 w-10 rounded-full object-cover'/>
-        </Link>
+         {userdata && <Link to='/dash'>
+           <img src={userdata.avatar} className='h-10 w-10 rounded-full object-cover'/>
+        </Link>}
           <form onSubmit={addComment}>
           <textarea rows="3" cols='0' className='bg-blue-100 p-2 outline-none w-full' placeholder='write your comment here...'
           value={commenttext}

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { FaLessThanEqual } from 'react-icons/fa';
 
 const Profile = () => {
-  const { handleFileChange, allposts, getPost,userdata } = useContext(MainContext);
+  const { handleFileChange, allposts, getPost,userdata,getlocalstorage } = useContext(MainContext);
   const [userposts, setuserposts] = useState([]);
   const [profileuser, setprofileuser] = useState(null)
   const [following, setfollowing] = useState(false)
@@ -38,11 +38,13 @@ const Profile = () => {
   const follow=()=>{
     setfollowing(true)
     axios.patch(`http://localhost:3000/following/${userdata._id}`,{
-      username: profileuser.username,
-      userId : profileuser._id,
-      avatar: profileuser.avatar
+      username: profileuser?.username,
+      userId : profileuser?._id,
+      avatar: profileuser?.avatar
     }).then((result)=>{
        console.log(result);
+       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser))
+       getlocalstorage()
        setfollowing(false)
        setfollowerror(false)
        finduser()
@@ -60,6 +62,8 @@ const Profile = () => {
       userId : profileuser._id
     }).then((result)=>{
        console.log(result);
+       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser))
+       getlocalstorage()
        setunfollowing(false)
        setfollowerror(false)
        finduser()
