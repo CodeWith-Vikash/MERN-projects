@@ -55,6 +55,46 @@ export const ContextProvider=({children})=>{
         return `${seconds} seconds ago`;
       }
     }
+    // function to calculate comment time gap
+    function commentTimeGap(timestamp) {
+      const pastDate = new Date(timestamp);
+      const currentDate =Date.now();
+    
+      // Calculate the time difference in milliseconds
+      const timeDifference = Math.abs(currentDate - pastDate);
+    
+      // Calculate years
+      const years = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 365.25));
+      
+      // Calculate months
+      const months = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24 * 30.44));
+      
+      // Calculate days
+      const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+      
+      // Calculate hours
+      const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      
+      // Calculate minutes
+      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+      
+      // Calculate seconds
+      const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    
+      if (years >= 1) {
+        return `${years} y`;
+      } else if (months >= 1) {
+        return `${months} m`;
+      } else if (days >= 1) {
+        return `${days} d`;
+      } else if (hours >= 1) {
+        return `${hours} h`;
+      } else if (minutes >= 1) {
+        return `${minutes} m`;
+      } else {
+        return `${seconds} s`;
+      }
+    }
     
 
    //  funciton to convert file in to url
@@ -90,7 +130,7 @@ export const ContextProvider=({children})=>{
     useEffect(()=>{
       getlocalstorage()
     },[])
-    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage,calculateTimeGap}}>
+    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage,calculateTimeGap,commentTimeGap}}>
         {children}
     </MainContext.Provider>
 }

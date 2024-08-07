@@ -5,6 +5,7 @@ import { FaComment } from "react-icons/fa";
 import {Link,useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import {MainContext} from '../../context/MainContext'
+import Comment from './Comment'
 
 const Post = ({data}) => {
   const navigate=useNavigate()
@@ -12,7 +13,7 @@ const Post = ({data}) => {
   const [showcomment, setshowcomment] = useState(false)
   const [commenttext, setcommenttext] = useState('')
   const [commenting, setcommenting] = useState(false)
-  const {getPost,userdata,calculateTimeGap} = useContext(MainContext)
+  const {getPost,userdata,calculateTimeGap,commentTimeGap} = useContext(MainContext)
   const [isliked, setisliked] = useState(false)
 
   // check if post is liked by the user
@@ -104,19 +105,9 @@ const Post = ({data}) => {
       </section>
        <hr />
       {showcomment && <section ref={commentref}>
-         <div className='flex flex-col gap-4 max-h-[200px] overflow-auto pb-2'>
+         <div className='flex flex-col gap-4 max-h-[250px] overflow-auto pb-2'>
             {data?.comments.map((comment)=>{
-              return <div className='flex gap-2' key={comment.username}>
-              <Link to={comment.userId==userdata?._id?`/dash`:`/profile/${comment.userId}`}>
-              <img src={comment.avatar} className='h-10 w-10 rounded-full object-cover'/>
-              </Link>
-               <div className='bg-gray-200 p-2 rounded w-full'>
-                <p className='font-semibold text-sm'>{comment.username}</p>
-                <p className='leading-4'>
-                {comment.comment}
-                </p>
-               </div>
-            </div>
+              return <Comment key={comment.userId} comment={comment}/>
             })}
          </div>
 

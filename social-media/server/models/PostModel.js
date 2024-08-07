@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const postSchema = mongoose.Schema({
   userInfo: {
@@ -8,25 +8,45 @@ const postSchema = mongoose.Schema({
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   image: {
-    type: String
+    type: String,
   },
-  likes: [{
-    username: String,
-    userId: String
-  }],
-  comments: [{
-    username: String,
-    avatar: String,
-    comment: String,
-    userId: String
-  }],
-  postDate:{
-    type:Date,
-    default: new Date()
-  }
+  likes: [
+    {
+      username: String,
+      userId: String,
+    },
+  ],
+  comments: [
+    {
+      username: String,
+      avatar: String,
+      comment: String,
+      userId: String,
+      replies: [
+        {
+          username: String,
+          avatar: String,
+          comment: String,
+          userId: String,
+          replyDate: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+      commentDate: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  postDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.model("Post", postSchema);

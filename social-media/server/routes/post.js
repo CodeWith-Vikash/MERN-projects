@@ -36,7 +36,7 @@ router.patch('/post/:id/comment', async (req, res) => {
         if (!post) {
             return res.status(404).json('Post not found');
         }
-        post.comments.push({ username, avatar, comment,userId });
+        post.comments.unshift({ username, avatar, comment,userId });
         const updatedData = await post.save();
         res.status(200).json({ message: 'Update success', data: updatedData });
     } catch (error) {
