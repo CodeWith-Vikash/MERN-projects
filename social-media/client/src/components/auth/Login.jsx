@@ -25,10 +25,10 @@ const Login = () => {
     axios.post('http://localhost:3000/login',{
       email:mailref.current.value,
       password:passref.current.value
-    }).then((result)=>{
+    },{ withCredentials: true }).then((result)=>{
       console.log(result);
       setisloading(false)
-      localStorage.setItem('charloguser',JSON.stringify(result.data.data))
+      localStorage.setItem('charloguser',JSON.stringify(result.data.data.userId))
       getlocalstorage()
       navigate('/')
     }).catch((err)=>{

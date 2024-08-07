@@ -43,7 +43,7 @@ const Profile = () => {
       avatar: profileuser?.avatar
     }).then((result)=>{
        console.log(result);
-       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser))
+       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser._id))
        getlocalstorage()
        setfollowing(false)
        setfollowerror(false)
@@ -62,7 +62,7 @@ const Profile = () => {
       userId : profileuser._id
     }).then((result)=>{
        console.log(result);
-       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser))
+       localStorage.setItem('charloguser',JSON.stringify(result.data.myUser._id))
        getlocalstorage()
        setunfollowing(false)
        setfollowerror(false)
@@ -76,7 +76,7 @@ const Profile = () => {
 
 
   useEffect(() => {
-    let isfollowing = profileuser?.followers?.some((user)=> user.userId == userdata._id)
+    let isfollowing = profileuser?.followers?.some((user)=> user.userId == userdata?._id)
     setalredayFollowing(isfollowing)
   }, [profileuser]);
 

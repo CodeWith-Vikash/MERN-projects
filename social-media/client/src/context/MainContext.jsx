@@ -18,7 +18,7 @@ export const ContextProvider=({children})=>{
     // function to convert timestamp to timegap
     function calculateTimeGap(timestamp) {
       const pastDate = new Date(timestamp);
-      const currentDate = new Date();
+      const currentDate =Date.now();
     
       // Calculate the time difference in milliseconds
       const timeDifference = Math.abs(currentDate - pastDate);
@@ -68,12 +68,21 @@ export const ContextProvider=({children})=>{
         reader.readAsDataURL(file);
       }
     };
+
+    const finduser=(id)=>{
+      axios.get(`http://localhost:3000/user/${id}`).then((result)=>{
+        setuserdata(result.data)
+        console.log(result);
+      }).catch((err)=>{
+         console.log(err);
+      })
+   }
     // get localstorage
     const getlocalstorage=()=>{
-      const data= JSON.parse(localStorage.getItem('charloguser'))
-      if(data){
-        setuserdata(data)
-        console.log('userdata: ',data);
+      const userId=JSON.parse(localStorage.getItem('charloguser'))
+      console.log(userId)
+      if(userId){
+        finduser(userId)
       }else{
         setuserdata(null)
       }

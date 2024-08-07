@@ -76,7 +76,7 @@ const Dashboard = () => {
         })
         .then((result) => {
           console.log(result);
-          localStorage.setItem("charloguser", JSON.stringify(result.data.data));
+          localStorage.setItem("charloguser", JSON.stringify(result.data.data._id));
           getlocalstorage();
           setprofileupdating(false);
         })
@@ -166,7 +166,7 @@ const Dashboard = () => {
         userId : id
       }).then((result)=>{
          console.log(result);
-         localStorage.setItem('charloguser',JSON.stringify(result.data.myUser))
+         localStorage.setItem('charloguser',JSON.stringify(result.data.myUser._id))
          getlocalstorage()
          setunfollowid(false)
       }).catch((err)=>{
@@ -184,7 +184,7 @@ const removeFollower = (id) => {
     })
     .then((result) => {
       console.log(result);
-      localStorage.setItem('charloguser', JSON.stringify(result.data.myUser));
+      localStorage.setItem('charloguser', JSON.stringify(result.data.myUser._id));
       getlocalstorage();
       setremovingid(null);
     })
