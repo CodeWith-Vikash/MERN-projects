@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const postModel = require('../models/PostModel');
 
+// route to get all posts
 router.get('/posts', async (req, res) => {
     try {
         const data = await postModel.find();
@@ -11,6 +12,7 @@ router.get('/posts', async (req, res) => {
     }
 });
 
+// route to add a post
 router.post('/posts', async (req, res) => {
     const { userInfo, title, image, likes, comments } = req.body;
     try {
@@ -28,6 +30,7 @@ router.post('/posts', async (req, res) => {
     }
 });
 
+// route to comment on a post
 router.patch('/post/:id/comment', async (req, res) => {
     const { username, avatar, comment,userId } = req.body;
     const id = req.params.id;
@@ -44,6 +47,41 @@ router.patch('/post/:id/comment', async (req, res) => {
     }
 });
 
+// route to delete a comment
+router.patch('/post/:id/comment/:commentId/delete',async(req,res)=>{
+    const {id,commentId}=req.params
+    try {
+        const post = await postModel.findById(id);
+        if (!post) {
+            return res.status(404).json('Post not found');
+        }
+        let newcomments=post.comments.filter((comment)=>comment._id != commentId)
+        post.comments=newcomments
+        const updatedData = await post.save();
+        res.status(200).json({ message: 'comment delete success', data: updatedData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while deleting comment', error });
+    }
+})
+
+// route to edit a comment
+router.patch('/post/:id/comment/:commentId/edit',async(req,res)=>{
+    const {id,commentId}=req.params
+    const {comment}=req.body
+    try {
+        const post = await postModel.findById(id);
+        if (!post) {
+            return res.status(404).json('Post not found');
+        }
+        post.comments.find((comment)=>comment._id == commentId).comment=comment
+        const updatedData = await post.save();
+        res.status(200).json({ message: 'comment update success', data: updatedData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while updating comment', error });
+    }
+})
+
+// route to like a post 
 router.patch('/post/:id/like', async (req, res) => {
     const { username, userId } = req.body;
     const id = req.params.id;
@@ -69,6 +107,7 @@ router.patch('/post/:id/like', async (req, res) => {
     }
 });
 
+// route to update post
 router.patch('/post/edit/:id',async(req,res)=>{
     const id=req.params.id
     const {title,image}=req.body
@@ -84,6 +123,7 @@ router.patch('/post/edit/:id',async(req,res)=>{
     }
 })
 
+// route to delete post
 router.delete('/post/delete/:id',async(req,res)=>{
     const id=req.params.id
     try {
@@ -118,6 +158,40 @@ router.patch('/post/:id/comment/:commentId/reply', async(req,res)=>{
         res.status(200).json({ message: 'comment reply success', data: updatedData });
     } catch (error) {
         res.status(500).json({ message: 'Server error while replying comment', error });
+    }
+})
+
+// route to delete a reply
+router.patch('/post/:postId/comment/:commentId/reply/:replyId/delete', async(req,res)=>{
+    const {postId,commentId,replyId} = req.params
+    try {
+        const post = await postModel.findById(postId);
+        if (!post) {
+            return res.status(404).json('Post not found');
+        }
+       const newreplies= post.comments.find((comment)=> comment._id == commentId).replies.filter((reply)=> reply._id != replyId)
+       post.comments.find((comment)=> comment._id == commentId).replies=newreplies
+        const updatedData = await post.save();
+        res.status(200).json({ message: 'reply delete success', data: updatedData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while deleting reply', error });
+    }
+})
+
+// route to edit a reply
+router.patch('/post/:postId/comment/:commentId/reply/:replyId/edit', async(req,res)=>{
+    const {postId,commentId,replyId} = req.params
+    const {reply}=req.body
+    try {
+        const post = await postModel.findById(postId);
+        if (!post) {
+            return res.status(404).json('Post not found');
+        }
+       post.comments.find((comment)=> comment._id == commentId).replies.find((reply)=> reply._id == replyId).reply=reply
+        const updatedData = await post.save();
+        res.status(200).json({ message: 'reply edit success', data: updatedData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while editing reply', error });
     }
 })
 
