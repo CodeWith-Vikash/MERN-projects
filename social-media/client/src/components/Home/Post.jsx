@@ -107,7 +107,7 @@ const Post = ({data}) => {
       {showcomment && <section ref={commentref}>
          <div className='flex flex-col gap-4 max-h-[250px] overflow-auto pb-2'>
             {data?.comments.map((comment)=>{
-              return <Comment key={comment.userId} comment={comment}/>
+              return <Comment key={comment.userId} comment={comment} postId={data._id}/>
             })}
          </div>
 

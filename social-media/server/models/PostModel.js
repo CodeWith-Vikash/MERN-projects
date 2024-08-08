@@ -29,8 +29,9 @@ const postSchema = mongoose.Schema({
         {
           username: String,
           avatar: String,
-          comment: String,
+          reply: String,
           userId: String,
+          commentUser: String,
           replyDate: {
             type: Date,
             default: Date.now,

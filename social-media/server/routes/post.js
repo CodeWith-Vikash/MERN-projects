@@ -98,4 +98,27 @@ router.delete('/post/delete/:id',async(req,res)=>{
     }
 })
 
+// route to reply a comment
+router.patch('/post/:id/comment/:commentId/reply', async(req,res)=>{
+    const { username, avatar, reply,userId,commentUser } = req.body;
+    const {id,commentId} = req.params
+    try {
+        const post = await postModel.findById(id);
+        if (!post) {
+            return res.status(404).json('Post not found');
+        }
+        post.comments.find((comment)=> comment._id == commentId).replies.unshift({
+            username,
+            avatar,
+            reply,
+            userId,
+            commentUser
+        })
+        const updatedData = await post.save();
+        res.status(200).json({ message: 'comment reply success', data: updatedData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error while replying comment', error });
+    }
+})
+
 module.exports = router;
