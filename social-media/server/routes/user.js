@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
     try {
         const user = await userModel.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'No user found with this email please create an account' });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
 
         res.status(200).json({ message: 'Login successful',data:{userId:user._id}});
     } catch (error) {
-        res.status(500).json({ message: 'Error while logging in', error });
+        res.status(500).json({ message: 'internal server error', error });
     }
 });
 

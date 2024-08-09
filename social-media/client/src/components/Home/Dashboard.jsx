@@ -7,6 +7,8 @@ import { MainContext } from "../../context/MainContext";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Dashboard = () => {
   const [profilepic, setprofilepic] = useState("/user.jfif");
@@ -82,6 +84,7 @@ const Dashboard = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.error('internal server error')
           setprofileupdating(false);
         });
     };
@@ -119,6 +122,7 @@ const Dashboard = () => {
       })
       .catch((err) => {
         console.log(err);
+        toast.error('internal server error')
         setsaveerror(true);
         setsaving(false);
       });
@@ -132,18 +136,20 @@ const Dashboard = () => {
   };
   // function to delete post
   const deletePost = (e) => {
-    setdeletingid(true);
     e.preventDefault();
+    setdeleting(true)
     axios
       .delete(`http://localhost:3000/post/delete/${deletingid}`)
       .then((data) => {
         console.log(data);
+        toast.info('post deleted')
         setdeleting(false);
         setdeletingid(null);
         getPost();
       })
       .catch((err) => {
         console.log(err);
+        toast.error('internal server error')
         setdeleting(false);
         setdeleteerror(true);
       });
@@ -171,6 +177,7 @@ const Dashboard = () => {
          setunfollowid(false)
       }).catch((err)=>{
          console.log(err);
+         toast.error('internal server error')
          setunfollowid(false)
       })
     }
@@ -184,19 +191,22 @@ const removeFollower = (id) => {
     })
     .then((result) => {
       console.log(result);
+      toast.info('follower removed')
       localStorage.setItem('charloguser', JSON.stringify(result.data.myUser._id));
       getlocalstorage();
       setremovingid(null);
     })
     .catch((err) => {
       console.log(err);
+      toast.error('internal server error')
       setremovingid(null);
     });
 };
 
 
   return (
-    <div
+   <>
+      <div
       className={`min-h-screen bg-slate-200 relative ${
         editingid || deletingid || showFollowers || showFollowing
           ? "h-screen overflow-hidden"
@@ -330,7 +340,7 @@ const removeFollower = (id) => {
               type="submit"
               className="bg-red-600 text-white font-semibold px-2 py-1 rounded"
             >
-              {saving ? "deletting..." : "Delete"}
+              {deleting ? "deletting..." : "Delete"}
             </button>
             <button
               type="button"
@@ -454,6 +464,7 @@ const removeFollower = (id) => {
         </section>
       )}
     </div>
+   </>
   );
 };
 

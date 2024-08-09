@@ -6,6 +6,8 @@ import {Link,useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import {MainContext} from '../../context/MainContext'
 import Comment from './Comment'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 const Post = ({data}) => {
   const navigate=useNavigate()
@@ -48,6 +50,7 @@ const Post = ({data}) => {
       getPost()
      }).catch((err)=>{
       console.log(err);
+      toast.error('internal server error')
       setcommenting(false)
      })
     }else{
@@ -67,6 +70,7 @@ const Post = ({data}) => {
       checkLike()
    }).catch((err)=>{
     console.log(err);
+    toast.error('internal server error')
    })
     }else{
       navigate('/login')
@@ -74,7 +78,8 @@ const Post = ({data}) => {
   }
 
   return (
-    <div className='bg-white w-[300px] p-2 rounded md:w-[500px] lg:w-[700px] flex flex-col gap-4'>
+    <>
+      <div className='bg-white w-[300px] p-2 rounded md:w-[500px] lg:w-[700px] flex flex-col gap-4'>
       <section className='flex items-center gap-2'>
         <Link to={data?.userInfo?.userId==userdata?._id?`/dash`:`/profile/${data?.userInfo?.userId}`}>
         <img src={data?.userInfo?.avatar} className='h-10 w-10 rounded-full object-cover'/>
@@ -126,6 +131,7 @@ const Post = ({data}) => {
          </div>
       </section>}
     </div>
+    </>
   )
 }
 

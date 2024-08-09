@@ -4,6 +4,8 @@ import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import axios from 'axios'
 import {MainContext} from '../../context/MainContext'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const navigate=useNavigate()
@@ -27,12 +29,14 @@ const Login = () => {
       password:passref.current.value
     },{ withCredentials: true }).then((result)=>{
       console.log(result);
+      toast.success('Login successfull')
       setisloading(false)
       localStorage.setItem('charloguser',JSON.stringify(result.data.data.userId))
       getlocalstorage()
       navigate('/')
     }).catch((err)=>{
       console.log(err);
+      toast.error(err.response.data.message)
       setiserr(true)
       setisloading(false)
     })

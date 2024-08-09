@@ -6,6 +6,8 @@ import { FaTrashAlt } from "react-icons/fa";
 import { MdEditDocument } from "react-icons/md";
 import Reply from './Reply'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Comment = ({comment,postId}) => {
     const {commentTimeGap,userdata,getPost} =useContext(MainContext)
@@ -40,6 +42,7 @@ const Comment = ({comment,postId}) => {
           setshowreplies(true)
          }).catch((err)=>{
             console.log(err)
+            toast.error('internal server error')
             setreplying(false)
        })
     }
@@ -48,10 +51,12 @@ const Comment = ({comment,postId}) => {
       setdeleting(true)
       axios.patch(`http://localhost:3000/post/${postId}/comment/${comment._id}/delete`).then((result)=>{
         console.log(result);
+        toast.info('comment deleted')
         setdeleting(false)
         getPost()
       }).catch((err)=>{
         console.log(err);
+        toast.error('internal server error')
         setdeleting(false)
       })
     }
@@ -74,6 +79,7 @@ const Comment = ({comment,postId}) => {
         getPost()
       }).catch((err)=>{
         console.log(err);
+        toast.error('internal server error')
         setsaving(false)
       })
     }
@@ -89,7 +95,7 @@ const Comment = ({comment,postId}) => {
                <div className='bg-gray-200 p-2 rounded w-full'>
                 <div className='flex items-center justify-between gap-10'>
                 <p className='font-semibold'>{comment.username}</p>
-                 {!editing && comment.userId==userdata._id && <div className='flex gap-2'>
+                 {!editing && comment.userId==userdata?._id && <div className='flex gap-2'>
                   <MdEditDocument size='1rem' color='green' className='cursor-pointer' onClick={editComment}/>
                   <FaTrashAlt size='1rem' color='red' className='cursor-pointer' onClick={deleteComment}/>
                  </div>}
@@ -132,7 +138,7 @@ const Comment = ({comment,postId}) => {
                 <Link to='/dash'>
                 {replying?
                  <img src="/Fading wheel.gif" className='h-10 w-10 object-cover rounded-full'/>
-                :<img src={userdata.avatar} className='h-7 w-7 rounded-full object-cover'/>}
+                :<img src={userdata?.avatar} className='h-7 w-7 rounded-full object-cover'/>}
                 </Link>
                 <input type="text" value={replyval}
                  required

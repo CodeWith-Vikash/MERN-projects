@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {MainContext} from '../../context/MainContext'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 const Navbar = () => {
   const {userdata,getlocalstorage}=useContext(MainContext)
@@ -8,10 +10,12 @@ const Navbar = () => {
   const logOut=()=>{
     localStorage.removeItem('charloguser')
     getlocalstorage()
+    toast.warning('User loged out')
     navigate('/')
   }
   return (
-    <nav className='flex justify-between items-center px-4 py-2 bg-white md:sticky md:top-0 z-50'>
+    <>
+      <nav className='flex justify-between items-center px-4 py-2 bg-white md:sticky md:top-0 z-50'>
       <Link to='/'>
       <img src="/logo.png" className='h-14'/>
       </Link>
@@ -26,6 +30,7 @@ const Navbar = () => {
         </Link>}
       </div>
     </nav>
+    </>
   )
 }
 

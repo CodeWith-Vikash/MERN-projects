@@ -3,6 +3,8 @@ import {Link,useNavigate} from 'react-router-dom'
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
   const navigate=useNavigate()
@@ -27,6 +29,7 @@ const Signup = () => {
       password: passref.current.value
     }).then((data)=>{
       console.log(data);
+      toast.success('signed up successfully you can login now')
       setisloading(false)
       setiserr(false)
       userref.current.value=''
@@ -35,6 +38,7 @@ const Signup = () => {
       navigate('/login')
     }).catch((err)=>{
       console.log(err);
+      toast.error('internal server error')
       setisloading(false)
       setiserr(true)
     })

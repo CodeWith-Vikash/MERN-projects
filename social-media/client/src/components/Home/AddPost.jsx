@@ -3,6 +3,8 @@ import { FaFileImage } from "react-icons/fa6";
 import axios from 'axios'
 import { MainContext } from '../../context/MainContext';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 const AddPost = () => {
   const [imagesrc, setimagesrc] = useState(null)
@@ -29,6 +31,7 @@ const AddPost = () => {
        comments:[]
     }).then((data)=>{
       console.log(data);
+      toast.info('Post added successfully')
       setposterror(false)
       settextval('')
       setimagesrc(null)
@@ -36,6 +39,7 @@ const AddPost = () => {
       getPost()
     }).catch((err)=>{
       console.log((err));
+      toast.error('internal server error while adding the post')
       setsaving(false)
       setposterror(true)
     })
@@ -44,7 +48,8 @@ const AddPost = () => {
     }
   }
   return (
-    <form className='w-[300px] bg-white p-4 flex flex-col gap-2 rounded shadow' onSubmit={handleSubmit}>
+    <>
+      <form className='w-[300px] bg-white p-4 flex flex-col gap-2 rounded shadow' onSubmit={handleSubmit}>
       {posterror && <p className='text-red-500 text-center'>Something went wrong</p>}
       <textarea cols="30" rows="3" placeholder='whats on your mind?'
        className='border-2 border-gray-400 rounded p-2 outline-blue-600 w-full'
@@ -66,6 +71,7 @@ const AddPost = () => {
         </div>
       </label>
     </form>
+    </>
   )
 }
 
