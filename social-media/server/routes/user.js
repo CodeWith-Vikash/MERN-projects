@@ -94,7 +94,7 @@ router.patch('/unfollow/:id', async (req, res) => {
 });
 
 // Route to follow user
-router.patch('/following/:id', async (req, res) => {
+router.patch('/follow/:id', async (req, res) => {
     const { username, userId, avatar } = req.body;
     const { id } = req.params;
     try {

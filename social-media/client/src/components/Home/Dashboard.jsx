@@ -237,7 +237,10 @@ const removeFollower = (id) => {
           )}
           <div className="flex flex-col items-center gap-1 w-[300px] leading-4 md:items-start">
             <h3 className="font-bold text-2xl">{userdata?.username}</h3>
-            <div className="flex gap-10 pt-2">
+            <div className="flex gap-4 pt-2">
+              <p>
+                <b>{userposts.length}</b> Posts
+              </p>
               <p className="cursor-pointer" onClick={toggleFollwers}>
                 <b>{userdata?.followers.length}</b> Followers
               </p>
@@ -359,7 +362,7 @@ const removeFollower = (id) => {
       {/* followers section */}
       {showFollowers && (
         <section className="edit h-screen w-full absolute top-0 pt-10 flex justify-center">
-          <div className="bg-gray-800 text-white w-[300px] rounded-lg h-fit ">
+          <div className="bg-gray-800 text-white w-[300px] md:w-[400px] rounded-lg h-fit ">
             <div className="flex items-center p-2 font-semibold text-lg justify-end gap-[88px] border-b-2">
               <p>Followers</p>
               <span className="cursor-pointer pr-2" onClick={toggleFollwers}>
@@ -393,7 +396,7 @@ const removeFollower = (id) => {
                             alt="user"
                             className="h-10 w-10 rounded-full object-cover font-semibold"
                           />
-                          <p className="leading-4 max-w-[90px]">
+                          <p className="leading-4 max-w-[90px] md:max-w-[150px]">
                             {user.username}
                           </p>
                         </div>
@@ -415,7 +418,7 @@ const removeFollower = (id) => {
       {/* following section */}
       {showFollowing && (
         <section className="edit h-screen w-full absolute top-0 pt-10 flex justify-center">
-          <div className="bg-gray-800 text-white w-[300px] rounded-lg h-fit ">
+          <div className="bg-gray-800 text-white w-[300px] md:w-[400px] rounded-lg h-fit ">
             <div className="flex items-center p-2 font-semibold text-lg justify-end gap-[88px] border-b-2">
               <p>Following</p>
               <span className="cursor-pointer pr-2" onClick={toggleFollwing}>
@@ -447,7 +450,7 @@ const removeFollower = (id) => {
                           alt="user"
                           className="h-10 w-10 rounded-full object-cover font-semibold"
                         />
-                        <p>{user.username}</p>
+                        <p className="leading-4 max-w-[90px] md:max-w-[150px]">{user.username}</p>
                       </div>
                     </Link>
                     <button className="outline-none border-none bg-red-600 text-white font-semibold px-2 rounded h-fit py-1 text-sm" onClick={()=>{
