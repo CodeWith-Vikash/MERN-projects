@@ -87,7 +87,7 @@ router.patch('/unfollow/:id', async (req, res) => {
 
         const savedUser = await user.save();
         const savedFollower = await userToUnfollow.save();
-        res.status(200).json({ message: 'Unfollowing success', myUser: savedUser, followedUser: savedFollower });
+        res.status(200).json({ message: 'Unfollowing success', myUser: savedUser, unfollowedUser: savedFollower });
     } catch (err) {
         return res.status(500).json({ message: 'Error while unfollowing', error: err });
     }
@@ -95,24 +95,26 @@ router.patch('/unfollow/:id', async (req, res) => {
 
 // Route to follow user
 router.patch('/follow/:id', async (req, res) => {
-    const { username, userId, avatar } = req.body;
+    const { username, userId, avatar,followers,following } = req.body;
     const { id } = req.params;
     try {
         const user = await userModel.findById(id);
-        const userToRemove = await userModel.findById(userId);
-        if (!user || !userToRemove) {
+        const userToFollow = await userModel.findById(userId);
+        if (!user || !userToFollow) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.following.push({ username, userId, avatar });
-        userToRemove.followers.push({
+        user.following.push({ username, userId, avatar,following,followers });
+        userToFollow.followers.push({
             username: user.username,
             userId: user._id,
-            avatar: user.avatar
+            avatar: user.avatar,
+            following: user.following,
+            followers: user.followers
         });
 
         const savedUser = await user.save();
-        const savedFollower = await userToRemove.save();
+        const savedFollower = await userToFollow.save();
         res.status(200).json({ message: 'Following success', myUser: savedUser, followedUser: savedFollower });
     } catch (err) {
         return res.status(500).json({ message: 'Error while following', error: err });
