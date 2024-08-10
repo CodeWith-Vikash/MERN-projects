@@ -6,6 +6,7 @@ import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import User from './User'
 
 const Profile = () => {
   const { handleFileChange, allposts, getPost, userdata, getlocalstorage } =
@@ -62,14 +63,11 @@ const Profile = () => {
         username: profileuser?.username,
         userId: profileuser?._id,
         avatar: profileuser?.avatar,
+        following: profileuser?.following,
+        followers: profileuser?.followers
       })
       .then((result) => {
         console.log(result);
-        localStorage.setItem(
-          "charloguser",
-          JSON.stringify(result.data.myUser._id)
-        );
-        getlocalstorage();
         setfollowing(false);
         setfollowerror(false);
         finduser();
@@ -91,11 +89,6 @@ const Profile = () => {
       })
       .then((result) => {
         console.log(result);
-        localStorage.setItem(
-          "charloguser",
-          JSON.stringify(result.data.myUser._id)
-        );
-        getlocalstorage();
         setunfollowing(false);
         setfollowerror(false);
         finduser();
@@ -112,6 +105,7 @@ const Profile = () => {
     let isfollowing = profileuser?.followers?.some(
       (user) => user.userId == userdata?._id
     );
+    console.log('profilefollowing :',isfollowing)
     setalredayFollowing(isfollowing);
   }, [profileuser]);
 
@@ -205,23 +199,7 @@ const Profile = () => {
                 )
                 .map((user) => {
                   return (
-                    <div className="flex justify-between p-2 items-center">
-                      <Link to={`/profile/${user.userId}`}>
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={user.avatar}
-                            alt="user"
-                            className="h-10 w-10 rounded-full object-cover font-semibold"
-                          />
-                          <p className="leading-4 max-w-[90px] md:max-w-[150px]">
-                            {user.username}
-                          </p>
-                        </div>
-                      </Link>
-                      <button className="outline-none border-none bg-blue-400 text-black font-semibold px-2 rounded h-fit py-1 text-sm">
-                        Follow
-                      </button>
-                    </div>
+                    <User user={user} finduser={finduser}/>
                   );
                 })}
             </div>
@@ -256,21 +234,7 @@ const Profile = () => {
                   user.username.toUpperCase().startsWith(inputval.toUpperCase())
                 ).map((user) => {
                 return (
-                  <div className="flex justify-between p-2 items-center">
-                    <Link to={`/profile/${user.userId}`}>
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={user.avatar}
-                          alt="user"
-                          className="h-10 w-10 rounded-full object-cover font-semibold"
-                        />
-                        <p className="max-w-[90px] md:max-w-[150px] leading-4">{user.username}</p>
-                      </div>
-                    </Link>
-                    <button className="outline-none border-none bg-blue-600 text-white font-semibold px-2 rounded h-fit py-1 text-sm" >
-                      Follow
-                    </button>
-                  </div>
+                  <User user={user} finduser={finduser}/>
                 );
               })}
             </div>
