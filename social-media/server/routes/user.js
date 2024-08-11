@@ -5,6 +5,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
+// route to get all users
+router.get('/users',async(req,res)=>{
+    try {
+        const users = await userModel.find()
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(500).json({ message: 'Error while getting users', error });
+    }
+})
+
 // Signup route
 router.post('/signup', async (req, res) => {
     const { username, email, password } = req.body;

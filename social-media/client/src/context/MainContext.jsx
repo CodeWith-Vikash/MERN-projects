@@ -6,6 +6,8 @@ export const MainContext=createContext(null)
 export const ContextProvider=({children})=>{
     const [allposts, setallposts] = useState([])
     const [userdata, setuserdata] = useState(null)
+    const [allusers, setallusers] = useState([])
+    const [profileuser, setprofileuser] = useState(null);
    //  function to get allposts
     const getPost=()=>{
        axios.get('http://localhost:3000/posts').then((result)=>{
@@ -117,6 +119,18 @@ export const ContextProvider=({children})=>{
          console.log(err);
       })
    }
+   // function to find profile user
+  const findprofileuser = (id) => {
+    axios
+      .get(`http://localhost:3000/user/${id}`)
+      .then((result) => {
+        setprofileuser(result.data);
+      })
+      .catch((err) => {
+        toast.error("server error while getting user posts");
+        console.log(err);
+      });
+  };
     // get localstorage
     const getlocalstorage=()=>{
       const userId=JSON.parse(localStorage.getItem('charloguser'))
@@ -127,10 +141,21 @@ export const ContextProvider=({children})=>{
         setuserdata(null)
       }
     }
+    //function to getallusers
+    const getUsers=()=>{
+       axios.get('http://localhost:3000/users').then((result)=>{
+        console.log(result);
+        setallusers(result.data)
+       }).catch((err)=>{
+          console.log(err)
+       })
+    }
+
     useEffect(()=>{
       getlocalstorage()
+      getUsers()
     },[])
-    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage,calculateTimeGap,commentTimeGap}}>
+    return <MainContext.Provider value={{getPost,allposts,handleFileChange,userdata,getlocalstorage,calculateTimeGap,commentTimeGap,allusers,findprofileuser,profileuser}}>
         {children}
     </MainContext.Provider>
 }

@@ -9,10 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import User from './User'
 
 const Profile = () => {
-  const { handleFileChange, allposts, getPost, userdata, getlocalstorage } =
-    useContext(MainContext);
+  const { handleFileChange, allposts, getPost, userdata, getlocalstorage,findprofileuser,profileuser } =
+  useContext(MainContext);
   const [userposts, setuserposts] = useState([]);
-  const [profileuser, setprofileuser] = useState(null);
   const [following, setfollowing] = useState(false);
   const [followerror, setfollowerror] = useState(false);
   const [alredayFollowing, setalredayFollowing] = useState(false);
@@ -20,6 +19,7 @@ const Profile = () => {
   const [showFollowers, setshowFollowers] = useState(false);
   const [showFollowing, setshowFollowing] = useState(false);
   const [inputval, setinputval] = useState("");
+  console.log('profileuser:',profileuser)
 
   const { id } = useParams();
   
@@ -42,18 +42,7 @@ const Profile = () => {
       console.log(data);
     }
   };
-  // function to find user
-  const finduser = () => {
-    axios
-      .get(`http://localhost:3000/user/${id}`)
-      .then((result) => {
-        setprofileuser(result.data);
-      })
-      .catch((err) => {
-        toast.error("server error while getting user posts");
-        console.log(err);
-      });
-  };
+  
 
   // function to follow user
   const follow = () => {
@@ -70,7 +59,8 @@ const Profile = () => {
         console.log(result);
         setfollowing(false);
         setfollowerror(false);
-        finduser();
+        findprofileuser(id);
+        getlocalstorage()
       })
       .catch((err) => {
         console.log(err);
@@ -91,7 +81,8 @@ const Profile = () => {
         console.log(result);
         setunfollowing(false);
         setfollowerror(false);
-        finduser();
+        findprofileuser(id);
+        getlocalstorage()
       })
       .catch((err) => {
         console.log(err);
@@ -107,12 +98,14 @@ const Profile = () => {
     );
     console.log('profilefollowing :',isfollowing)
     setalredayFollowing(isfollowing);
-  }, [profileuser]);
+  }, [profileuser,id]);
 
   useEffect(() => {
     getPost();
-    finduser();
-  }, []);
+    findprofileuser(id);
+    setshowFollowers(false)
+    setshowFollowing(false)
+  }, [id]);
 
   useEffect(() => {
     findUserPosts();
@@ -199,7 +192,7 @@ const Profile = () => {
                 )
                 .map((user) => {
                   return (
-                    <User user={user} finduser={finduser}/>
+                    <User user={user} findprofileuser={findprofileuser} id={id}/>
                   );
                 })}
             </div>
@@ -234,7 +227,7 @@ const Profile = () => {
                   user.username.toUpperCase().startsWith(inputval.toUpperCase())
                 ).map((user) => {
                 return (
-                  <User user={user} finduser={finduser}/>
+                  <User user={user} findprofileuser={findprofileuser} id={id}/>
                 );
               })}
             </div>

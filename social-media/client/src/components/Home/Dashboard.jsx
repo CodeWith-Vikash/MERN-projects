@@ -389,7 +389,7 @@ const removeFollower = (id) => {
                 .map((user) => {
                   return (
                     <div className="flex justify-between p-2 items-center">
-                      <Link to={`/profile/${user._id}`}>
+                      <Link to={`/profile/${user.userId}`}>
                         <div className="flex items-center gap-2">
                           <img
                             src={user.avatar}
@@ -402,10 +402,10 @@ const removeFollower = (id) => {
                         </div>
                       </Link>
                       <button className="outline-none border-none bg-gray-400 text-black font-semibold px-2 rounded h-fit py-1 text-sm" onClick={()=>{
-                        setremovingid(user._id)
-                        removeFollower(user._id)
+                        setremovingid(user.userId)
+                        removeFollower(user.userId)
                       }}>
-                        {user._id==removingid?'removing...':'Remove'}
+                        {user.userId==removingid?'removing...':'Remove'}
                       </button>
                     </div>
                   );
@@ -443,7 +443,7 @@ const removeFollower = (id) => {
                 ).map((user) => {
                 return (
                   <div className="flex justify-between p-2 items-center">
-                    <Link to={`/profile/${user._id}`}>
+                    <Link to={`/profile/${user.userId}`}>
                       <div className="flex items-center gap-2">
                         <img
                           src={user.avatar}
@@ -454,10 +454,10 @@ const removeFollower = (id) => {
                       </div>
                     </Link>
                     <button className="outline-none border-none bg-red-600 text-white font-semibold px-2 rounded h-fit py-1 text-sm" onClick={()=>{
-                      setunfollowid(user._id)
-                      unfollow(user._id)
+                      setunfollowid(user.userId)
+                      unfollow(user.userId)
                     }}>
-                      {unfollowid==user._id?'removing...':'Unfollow'}
+                      {unfollowid==user.userId?'removing...':'Unfollow'}
                     </button>
                   </div>
                 );

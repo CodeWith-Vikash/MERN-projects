@@ -5,15 +5,24 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const User = ({user,finduser}) => {
+const User = ({user,findprofileuser,id}) => {
     const [following, setfollowing] = useState(false);
     const [alredayFollowing, setalredayFollowing] = useState(false);
     const [unfollowing, setunfollowing] = useState(false);
+    const [userdetails, setuserdetails] = useState({})
     const {userdata} =
     useContext(MainContext);
     console.log(alredayFollowing,'user : ',user);
     
-
+   
+    const finduser=()=>{
+      axios.get(`http://localhost:3000/user/${user.userId}`).then((result)=>{
+        setuserdetails(result.data)
+        console.log(result);
+      }).catch((err)=>{
+         console.log(err);
+      })
+   }
       // function to follow a connection of profile user
   const followConnection = () => {
     setfollowing(true);
@@ -28,7 +37,7 @@ const User = ({user,finduser}) => {
       .then((result) => {
         console.log(result);
         setfollowing(false);
-        finduser();
+        finduser()
       })
       .catch((err) => {
         console.log(err);
@@ -47,7 +56,7 @@ const User = ({user,finduser}) => {
       .then((result) => {
         console.log(result);
         setunfollowing(false);
-        finduser();
+        finduser()
       })
       .catch((err) => {
         console.log(err);
@@ -56,16 +65,20 @@ const User = ({user,finduser}) => {
       });
   };
 
+  useEffect(()=>{
+    finduser()
+  },[id])
+
  useEffect(()=>{
-    let isfollowing = user?.followers?.some(
+    let isfollowing = userdetails?.followers?.some(
         (user) => user.userId == userdata?._id
       );
       console.log('userfollow :',isfollowing)
       setalredayFollowing(isfollowing);
- },[user,userdata])
+ },[userdetails])
   return (
     <div className="flex justify-between p-2 items-center">
-      <Link to={`/profile/${user.userId}`}>
+       <Link to={user.userId==userdata?._id?`/dash`:`/profile/${user.userId}`}>
         <div className="flex items-center gap-2">
           <img
             src={user.avatar}
@@ -77,7 +90,8 @@ const User = ({user,finduser}) => {
           </p>
         </div>
       </Link>
-      {alredayFollowing ? (
+       {user.userId != userdata?._id && <div>
+       {alredayFollowing ? (
         <button
           className="outline-none border-none bg-red-500 text-black font-semibold px-2 rounded h-fit py-1 text-sm"
           onClick={() => unfollowConnection()}
@@ -92,6 +106,7 @@ const User = ({user,finduser}) => {
           {following ? "saving..." : "Follow"}
         </button>
       )}
+       </div>}
     </div>
   );
 };
