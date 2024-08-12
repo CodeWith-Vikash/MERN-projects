@@ -11,6 +11,7 @@ const AddPost = () => {
   const [textval, settextval] = useState('')
   const [saving, setsaving] = useState(false)
   const [posterror, setposterror] = useState(false)
+  const [mediaType,setMediaType] = useState('')
   const {handleFileChange,getPost,userdata}=useContext(MainContext)
   const navigate=useNavigate()
   
@@ -26,7 +27,10 @@ const AddPost = () => {
          userId:userdata._id
        },
        title:textval,
-       image:imagesrc,
+       media: {
+        url:imagesrc,
+        mediaType
+       },
        likes:[],
        comments:[]
     }).then((data)=>{
@@ -58,14 +62,20 @@ const AddPost = () => {
        required
       ></textarea>
       <input type="file" id='img' className='hidden' 
-        onChange={(e)=> handleFileChange(e,setimagesrc)}
+        onChange={(e)=> handleFileChange(e,setimagesrc,setMediaType)}
       />
       <label htmlFor="img"  className='flex flex-col gap-2'>
-        {imagesrc && <img src={imagesrc} className='w-full h-[150px] object-cover rounded cursor-pointer'/>}
+        {imagesrc && <div>
+        {mediaType=='video'?
+         <video controls className='w-full h-[150px] object-cover rounded cursor-pointer'>
+         <source src={imagesrc} type="video/mp4" />
+       </video>
+        : <img src={imagesrc} className='w-full h-[150px] object-cover rounded cursor-pointer'/>}
+        </div>}
         <div className='flex justify-between'>
         <div className='flex items-center cursor-pointer gap-2'>
         <FaFileImage size='1.5rem' color='violet'/>
-        <b>Add an image</b>
+        <b>Add media</b>
         </div>
         <button type='submit' className='bg-green-600 text-white font-semibold px-2 py-1 rounded'>{saving?'posting...':'post'}</button>
         </div>

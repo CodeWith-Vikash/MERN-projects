@@ -14,12 +14,12 @@ router.get('/posts', async (req, res) => {
 
 // route to add a post
 router.post('/posts', async (req, res) => {
-    const { userInfo, title, image, likes, comments } = req.body;
+    const { userInfo, title, media, likes, comments } = req.body;
     try {
         const postedData = new postModel({
             userInfo,
             title,
-            image,
+            media,
             likes,
             comments
         });

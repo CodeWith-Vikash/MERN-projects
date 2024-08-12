@@ -91,7 +91,14 @@ const Post = ({data}) => {
       </section>
       <section className='flex flex-col gap-2'>
         <p className='leading-5'>{data?.title}</p>
-        {data?.image && <img src={data?.image} className='h-[300px] w-full object-cover'/>}
+        <div>
+          {data?.media.mediaType=='image'?
+           <img src={data?.media?.url} className='h-[300px] w-full object-cover'/>
+          : <video controls className='w-full h-[300px] object-contain rounded cursor-pointer'>
+          <source src={data?.media?.url} type="video/mp4" />
+        </video>
+          }
+        </div>
       </section>
 
       <section className='flex justify-between px-2'>

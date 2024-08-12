@@ -100,16 +100,28 @@ export const ContextProvider=({children})=>{
     
 
    //  funciton to convert file in to url
-    const handleFileChange = (event,setimagesrc) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setimagesrc(e.target.result)
-        };
-        reader.readAsDataURL(file);
+   const handleFileChange = (event, setImageSrc, setMediaType) => {
+    const file = event.target.files[0];
+    
+    if (file) {
+      const fileType = file.type;
+  
+      if (fileType.startsWith('image/')) {
+        setMediaType('image');
+      } else if (fileType.startsWith('video/')) {
+        setMediaType('video');
+      } else {
+        setMediaType('unknown');
       }
-    };
+  
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImageSrc(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
 
     const finduser=(id)=>{
       axios.get(`http://localhost:3000/user/${id}`).then((result)=>{
