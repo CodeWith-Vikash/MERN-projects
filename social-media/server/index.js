@@ -16,7 +16,7 @@ app.use(cors({
     credentials: true
   }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/social-media').then(()=>{
+mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.DB_PASSWORD}@cluster0.w7gbj.mongodb.net/`).then(()=>{
     console.log('mongodb connected');
 })
 
