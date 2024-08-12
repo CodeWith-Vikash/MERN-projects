@@ -14,13 +14,14 @@ const AddPost = () => {
   const [mediaType,setMediaType] = useState('')
   const {handleFileChange,getPost,userdata}=useContext(MainContext)
   const navigate=useNavigate()
+  axios.defaults.withCredentials=true
   
   // function to add post
   const handleSubmit=(e)=>{
     e.preventDefault()
     if(userdata){
       setsaving(true)
-    axios.post('http://localhost:3000/posts',{
+    axios.post('https://charlog-server.vercel.app/posts',{
        userInfo:{
          avatar:userdata.avatar,
          username:userdata.username,

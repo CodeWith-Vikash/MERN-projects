@@ -15,6 +15,7 @@ const Login = () => {
   const passref=useRef()
   const mailref=useRef()
   const {getlocalstorage} = useContext(MainContext)
+  axios.defaults.withCredentials=true
  // Function to toggle password visibility
  const togglePass = () => {
   passref.current.type = showpass ? 'password' : 'text';
@@ -24,7 +25,7 @@ const Login = () => {
   const handleSubmit=(e)=>{
     e.preventDefault()
     setisloading(true)
-    axios.post('http://localhost:3000/login',{
+    axios.post('https://charlog-server.vercel.app/login',{
       email:mailref.current.value,
       password:passref.current.value
     },{ withCredentials: true }).then((result)=>{

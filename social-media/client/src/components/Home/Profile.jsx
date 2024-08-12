@@ -20,6 +20,8 @@ const Profile = () => {
   const [showFollowing, setshowFollowing] = useState(false);
   const [inputval, setinputval] = useState("");
   console.log('profileuser:',profileuser)
+  axios.defaults.withCredentials=true
+
 
   const { id } = useParams();
   
@@ -48,7 +50,7 @@ const Profile = () => {
   const follow = () => {
     setfollowing(true);
     axios
-      .patch(`http://localhost:3000/follow/${userdata._id}`, {
+      .patch(`https://charlog-server.vercel.app/follow/${userdata._id}`, {
         username: profileuser?.username,
         userId: profileuser?._id,
         avatar: profileuser?.avatar,
@@ -74,7 +76,7 @@ const Profile = () => {
   const unfollow = () => {
     setunfollowing(true);
     axios
-      .patch(`http://localhost:3000/unfollow/${userdata._id}`, {
+      .patch(`https://charlog-server.vercel.app/unfollow/${userdata._id}`, {
         userId: profileuser._id,
       })
       .then((result) => {

@@ -19,6 +19,8 @@ const Comment = ({comment,postId}) => {
     const [editing, setediting] = useState(false)
     const [saving, setsaving] = useState(false)
     const [editval, seteditval] = useState('')
+    axios.defaults.withCredentials=true
+
 
     const toggleReplyBox=()=>{
       setshowinputbox(!showinputbox)
@@ -28,7 +30,7 @@ const Comment = ({comment,postId}) => {
     const replyComment=(e)=>{
        e.preventDefault()
        setreplying(true)
-       axios.patch(`http://localhost:3000/post/${postId}/comment/${comment._id}/reply`,{
+       axios.patch(`https://charlog-server.vercel.app/post/${postId}/comment/${comment._id}/reply`,{
            username:userdata.username,
            avatar: userdata.avatar,
            reply: replyval,
@@ -49,7 +51,7 @@ const Comment = ({comment,postId}) => {
     // function to delete a comment
     const deleteComment=()=>{
       setdeleting(true)
-      axios.patch(`http://localhost:3000/post/${postId}/comment/${comment._id}/delete`).then((result)=>{
+      axios.patch(`https://charlog-server.vercel.app/post/${postId}/comment/${comment._id}/delete`).then((result)=>{
         console.log(result);
         toast.info('comment deleted')
         setdeleting(false)
@@ -70,7 +72,7 @@ const Comment = ({comment,postId}) => {
     const saveComment=(e)=>{
       e.preventDefault()
       setsaving(true)
-      axios.patch(`http://localhost:3000/post/${postId}/comment/${comment._id}/edit`,{
+      axios.patch(`https://charlog-server.vercel.app/post/${postId}/comment/${comment._id}/edit`,{
         comment:editval
       }).then((result)=>{
         console.log(result);

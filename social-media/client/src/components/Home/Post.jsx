@@ -17,6 +17,7 @@ const Post = ({data}) => {
   const [commenting, setcommenting] = useState(false)
   const {getPost,userdata,calculateTimeGap,commentTimeGap} = useContext(MainContext)
   const [isliked, setisliked] = useState(false)
+  axios.defaults.withCredentials=true
 
   // check if post is liked by the user
   const checkLike = () => {
@@ -38,7 +39,7 @@ const Post = ({data}) => {
     e.preventDefault()
     if(userdata){
       setcommenting(true)
-     axios.patch(`http://localhost:3000/post/${data?._id}/comment`,{
+     axios.patch(`https://charlog-server.vercel.app/post/${data?._id}/comment`,{
           username:userdata.username,
           avatar:userdata.avatar,
           userId:userdata._id,
@@ -60,7 +61,7 @@ const Post = ({data}) => {
   // function to add like
   const addLike=(e)=>{
     if(userdata){
-      axios.patch(`http://localhost:3000/post/${data?._id}/like`,{
+      axios.patch(`https://charlog-server.vercel.app/post/${data?._id}/like`,{
         username:userdata.username,
         userId:userdata._id
    }).then((result)=>{
