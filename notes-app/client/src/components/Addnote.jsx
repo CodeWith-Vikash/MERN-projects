@@ -8,7 +8,7 @@ const Addnote = ({islight,getdata}) => {
 
     // function to add data to database
     const addData=()=>{
-      axios.post('http://localhost:3000/',{
+      axios.post('/api/notes',{
          note:textval,
          title:titleval
       }).then((result)=>{

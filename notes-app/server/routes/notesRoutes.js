@@ -3,7 +3,7 @@ const router = express.Router();
 const noteModel = require("../models/noteModel");
 
 // route to get data
-router.get("/", async(req, res) => {
+router.get("/api/notes", async(req, res) => {
   try {
     const notes =await noteModel.find(req.body);
     res.status(200).json(notes)
@@ -13,7 +13,7 @@ router.get("/", async(req, res) => {
 });
 
 // route to post data
-router.post("/", async(req, res) => {
+router.post("/api/notes", async(req, res) => {
     const newNote = new noteModel({
       note:req.body.note,
       title:req.body.title
@@ -28,7 +28,7 @@ router.post("/", async(req, res) => {
 });
 
 // route to update data
-router.patch("/:id", async(req, res) => {
+router.patch("/api/notes/:id", async(req, res) => {
     const id= req.params.id
     try {
       const updatedNote= await noteModel.findByIdAndUpdate(id,req.body,{new:true})
@@ -42,7 +42,7 @@ router.patch("/:id", async(req, res) => {
 });
 
 // route to delete data
-router.delete("/:id", async(req, res) => {
+router.delete("/api/notes/:id", async(req, res) => {
     const id= req.params.id
     try {
        const deletedNote= await noteModel.findByIdAndDelete(id)

@@ -8,7 +8,7 @@ const Note = ({islight,data,getdata}) => {
   const [isediting, setisediting] = useState(false)
   // function to delte a note
   const delteNote=()=>{
-    axios.delete(`http://localhost:3000/${data._id}`).then((result)=>{
+    axios.delete(`/api/notes/${data._id}`).then((result)=>{
       console.log(result);
       getdata()
     }).catch((err)=>{
@@ -24,7 +24,7 @@ const Note = ({islight,data,getdata}) => {
 
   // function to save a edited note
    const saveUpdate=()=>{
-    axios.patch(`http://localhost:3000/${data._id}`,{
+    axios.patch(`/api/notes/${data._id}`,{
       note:updatedtext
     }).then((result)=>{
       console.log(result);

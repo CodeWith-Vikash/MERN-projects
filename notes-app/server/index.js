@@ -5,9 +5,9 @@ const cors= require('cors')
 const router= require('./routes/notesRoutes')
 
 app.use(express.json())
-app.use(cors())
+app.use(express.static('dist'))
 
-mongoose.connect('mongodb://127.0.0.1:27017/notes-app').then(()=>{
+mongoose.connect('mongodb+srv://vikashkumardev87:LS9lzSjAow1ZdCVh@notesclustur.ix3g5.mongodb.net/').then(()=>{
     console.log('mongodb connected');
 }).catch(()=>{
     console.log('smething went wrong while connectig to mongodb');

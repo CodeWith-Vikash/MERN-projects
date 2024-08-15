@@ -16,7 +16,7 @@ const App = () => {
 
   // function to fetch notes from database
   const getdata=()=>{
-    axios.get('http://localhost:3000/').then((data)=>{
+    axios.get('/api/notes').then((data)=>{
       console.log(data);
       setnotes(data.data)
     }).catch((err)=>{
