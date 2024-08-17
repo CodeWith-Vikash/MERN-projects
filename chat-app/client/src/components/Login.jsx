@@ -1,13 +1,15 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { RiEyeCloseFill } from "react-icons/ri";
 import { RxEyeOpen } from "react-icons/rx";
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import {auth,db} from '../firebase/firebase'
-import { setDoc,doc } from 'firebase/firestore';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios'
+import { UserContext } from '../Context/AuthContext';
 
 const Login = () => {
+  const {setuserdata}=useContext(UserContext)
   const [isopen, setisopen] = useState(false)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,47 +30,18 @@ const Login = () => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
-  
-    try {
-      // Sign in the user
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  
-      // Proceed if sign-in is successful
-      navigate("/");
-  
-      // Uploading file to Firebase Storage
-      // const fileRef = ref(storage, `avatars/${userCredential.user.uid}/${file.name}`);
-      // const uploadTask = uploadBytesResumable(fileRef, file);
-  
-      // uploadTask.on('state_changed', 
-      //   null, 
-      //   (uploadError) => {
-      //     setError(true);
-      //   }, 
-      //   () => {
-      //     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-      //       // Updating user profile
-      //       await updateProfile(auth.currentUser, {
-      //         displayName,
-      //         photoURL: downloadURL
-      //       });
-  
-      //       // Creating user document in Firestore
-      //       await setDoc(doc(db, "users", userCredential.user.uid), {
-      //         displayName,
-      //         photoURL: downloadURL,
-      //         email,
-      //         uid: userCredential.user.uid
-      //       });
-      //       await setDoc(doc(db,"userChats",userCredential.user.uid),{})
-      //       navigate("/");
-      //     });
-      //   }
-      // );
-    } catch (error) {
-      setError(true);
+    axios.post('/api/login',{email,password}).then((result)=>{
+       console.log(result);
+       setuserdata(result.data.user)
+       localStorage.setItem('chatuser',JSON.stringify(result.data.user._id))
+       toast.success(result.data.message)
+       setLoading(false)
+       navigate('/')
+    }).catch((err)=>{
+      console.log(err);
+      toast.error(err.response.data.message)
       setLoading(false)
-    }
+    })
   };
   return (
     <div className="h-screen bg-zinc-800 flex justify-center items-center">

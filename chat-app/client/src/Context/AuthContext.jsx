@@ -1,26 +1,30 @@
 import { createContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import {auth} from '../firebase/firebase'
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
-export const UserContext=createContext(null)
+export const UserContext = createContext(null);
 
-export const UserProvider=({children})=>{
-    const [currentUser, setcurrentUser] = useState()
-
-    useEffect(()=>{
-        const unsub= onAuthStateChanged(auth,(user)=>{
-            setcurrentUser(user)
-            console.log('currentuser',user)
-        })
-
-        return ()=>{
-            unsub();
-        }
-    },[])
-
-
-
-    return <UserContext.Provider value={{currentUser}}>
-             {children}
+export const UserProvider = ({ children }) => {
+  const [userdata, setuserdata] = useState(null);
+  useEffect(()=>{
+    const data=JSON.parse(localStorage.getItem('chatuser'))
+    if(data){
+      axios.get(`/api/user/${data}`).then((result)=>{
+        console.log(result)
+        setuserdata(result.data)
+    }).catch((err)=>{
+        console.log(err);
+        toast.error(err.response.data.message)
+        setuserdata(null)
+      })
+    }else{
+        setuserdata(null)
+    }
+  },[])
+  return (
+    <UserContext.Provider value={{ userdata,setuserdata }}>
+      {children}
     </UserContext.Provider>
-}
+  );
+};
