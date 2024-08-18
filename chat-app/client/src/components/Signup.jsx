@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import { RiEyeCloseFill } from "react-icons/ri";
@@ -7,33 +7,15 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { UserContext } from "../Context/AuthContext";
 
 const Signup = () => {
-  const url= 'https://api.cloudinary.com/v1_1/codewithvikash/image/upload'
+  const {uploadFile,imgloading}=useContext(UserContext)
   const [isopen, setisopen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [imgloading, setimgloading] = useState(false)
   const [img, setimg] = useState(null);
   const passwordref = useRef(null);
   const navigate = useNavigate();
-
-  // function to upload image on cloudinary
-const uploadImage = async (imageFile) => {
-  setimgloading(true)
-  const formData = new FormData();
-  formData.append('file', imageFile);
-  formData.append('upload_preset', 'chat-app');
-  try {
-    const response = await axios.post('https://api.cloudinary.com/v1_1/codewithvikash/image/upload', formData);
-    console.log('Image uploaded successfully:', response.data);
-    setimg(response.data.secure_url)
-    setimgloading(false)
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    toast.error('image upload unsuccessful')
-    setimgloading(false)
-  }
-};
 
 
   const toggleye = () => {
@@ -82,7 +64,7 @@ const uploadImage = async (imageFile) => {
               <RiEyeCloseFill aria-label="Show password" className="absolute top-3 right-3 cursor-pointer" size="1.3rem" onClick={toggleye} />
             )}
           </div>
-          <input type="file" id="file" className="hidden" name="file" onChange={(e)=>uploadImage(e.target.files[0])} />
+          <input type="file" id="file" className="hidden" name="file" onChange={(e)=>uploadFile(e.target.files[0],setimg)} />
           <label htmlFor="file" className="flex items-center gap-2 cursor-pointer">
             <BiSolidImageAdd size="1.7rem" />
             <b>Add an avatar</b>

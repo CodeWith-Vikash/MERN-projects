@@ -5,13 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import {UserContext} from '../../Context/AuthContext'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios';
 
 
 const Aside = ({closeSide}) => {
   const [searchval, setsearchval] = useState('')
-  const {setuserdata,userdata} = useContext(UserContext)
-  const [profilepic, setprofilepic] = useState(userdata?.avatar)
+  const {setuserdata,userdata,uploadFile,imgloading,getuserdetails,allusers,getChat} = useContext(UserContext)
+  const [profilepic, setprofilepic] = useState(userdata?.avatar?userdata.avatar:'/user.jfif')
   const [showprofile, setshowprofile] = useState(false)
+  const [profileloading, setprofileloading] = useState(false)
+
   const logout=()=>{
     localStorage.removeItem('chatuser')
     setuserdata(null)
@@ -27,6 +30,22 @@ const Aside = ({closeSide}) => {
     }
     setshowprofile(!showprofile)
   }
+
+  // function to update profile pic
+  const updateProfile=async (imgFile)=>{
+    const imgurl= await uploadFile(imgFile,setprofilepic)
+    setprofileloading(true)
+    axios.patch(`/api/user/profile/${userdata._id}`,{avatar:imgurl}).then((result)=>{
+       console.log(result);
+       toast.info(result.data.message)
+       setprofileloading(false)
+       getuserdetails()
+      }).catch((err)=>{
+        console.log(err);
+        toast.error(err.response.data.message)
+        setprofileloading(false)
+    })
+  }
   return (
     <>
       <div className='flex flex-col gap-4'>
@@ -41,20 +60,26 @@ const Aside = ({closeSide}) => {
            </div>
         </nav>
         <section className='relative w-fit my-0 mx-auto'>
-            <input type="text" placeholder='Search' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'/>
+            <input type="text" placeholder='Search' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'
+            value={searchval}
+            onChange={(e)=> setsearchval(e.target.value)}
+            />
             <FaSearch size="1rem" className='absolute top-[50%] translate-y-[-50%] right-3'/>
         </section>
 
-        <section className='h-[70vh] overflow-auto flex flex-col gap-2'>
-            <div className='flex gap-2 p-2 hover:bg-black cursor-pointer'>
-                <img src="https://up.yimg.com/ib/th?id=OIP.Bv23QwiO7nTO6tvLBeGLLwHaHa&pid=Api&rs=1&c=1&qlt=95&w=120&h=120" alt="" className='rounded-full h-12'/>
+        {searchval && <section className='h-[70vh] overflow-auto flex flex-col gap-2'>
+            {
+              allusers?.filter((user)=> user.username.toUpperCase().startsWith(searchval.toUpperCase())).map((user)=>{
+                return <div className='flex gap-2 p-2 hover:bg-black cursor-pointer' key={user._id} onClick={()=> getChat(user._id)}>
+                <img src={user.avatar?user.avatar:'/user.jfif'} alt="" className='rounded-full h-12 w-12 object-cover'/>
                 <div className='w-[230px]'>
-                    <p className='font-semibold'>fjldfjslfslfsflf ldfsdlfjsdlfj fldfflfl</p>
+                    <p className='font-semibold'>{user.username}</p>
                     <span className='text-sm'>fldfjdlsfsklfdkffld fldflsfls fldf</span>
                 </div>
             </div>
-            {/* fjldfjlfjdlfslf */}
-        </section>
+              })
+            }
+        </section>}
     </div>
     {/* profile section */}
     <section className='h-screen w-full absolute top-0 bgblur' ref={profileref}>
@@ -62,7 +87,7 @@ const Aside = ({closeSide}) => {
       <div className='flex flex-col gap-2 items-center mt-[100px]'>
       <div className="relative w-fit">
             <img
-              src={profilepic}
+              src={imgloading || profileloading?'/loader.gif':profilepic}
               className="h-[200px] w-[200px] rounded-full object-cover border-2 border-black"
             />
             <label htmlFor="img">
@@ -74,6 +99,7 @@ const Aside = ({closeSide}) => {
               type="file"
               id="img"
               className="hidden"
+              onChange={(e)=>updateProfile(e.target.files[0])}
             />
           </div>
           <p className='text-black font-semibold text-lg text-center'>{userdata?.username}</p>

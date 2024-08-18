@@ -1,13 +1,67 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { MdEmojiEmotions } from "react-icons/md";
 import { BiSolidImageAdd } from "react-icons/bi";
+import { UserContext } from "../../Context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const ChatBox = ({ openSide }) => {
   const [isEmojiVisible, setisEmojiVisible] = useState(false);
   const [inputval, setinputval] = useState("");
+  const [mediaType, setmediaType] = useState("text");
+  const [mediaUrl, setmediaUrl] = useState("");
+  const [sending, setsending] = useState(false);
+  const { userdata, chat, chatuser, uploadFile, getChat } =
+    useContext(UserContext);
+
+  // function to handle media input
+  async function handleFileInput(file) {
+    if (file) {
+      const fileType = file.type;
+
+      let type;
+      if (fileType.startsWith("image/")) {
+        type = "image";
+      } else if (fileType.startsWith("video/")) {
+        type = "video";
+      } else if (fileType.startsWith("application/")) {
+        type = "file";
+      } else {
+        type = "unknown";
+      }
+      setmediaType(type);
+      await uploadFile(file, setmediaUrl);
+    }
+  }
+
+  // function to send message
+  const sendMessage = () => {
+    setsending(true);
+    axios
+      .post(`/api/chat/message/${chat?._id}`, {
+        contentType: mediaType,
+        content: inputval,
+        mediaUrl,
+        sender: userdata?._id,
+      })
+      .then((result) => {
+        console.log(result);
+        getChat(chatuser._id);
+        setsending(false);
+        setinputval("");
+        setmediaUrl("");
+        setmediaType("text");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message);
+        setsending(false);
+      });
+  };
 
   return (
     <div>
@@ -19,67 +73,98 @@ const ChatBox = ({ openSide }) => {
         />
         <div className="flex items-center gap-1">
           <img
-            src="https://up.yimg.com/ib/th?id=OIP.7PFJ2-xr8x_3EprzHWmXAgHaHa&pid=Api&rs=1&c=1&qlt=95&w=119&h=119"
-            alt=""
-            className="h-10 rounded-full"
+            src={chatuser?.avatar ? chatuser.avatar : "/user.jfif"}
+            className="h-10 rounded-full w-10 object-cover"
           />
-          <span>name</span>
+          <span>{chatuser?.username}</span>
         </div>
       </nav>
-      <section className=" h-[80.8vh] bg-gradient-to-b from-zinc-900 via-black to-zinc-900 p-4 overflow-auto flex flex-col gap-6">
-        {/* chat box */}
-        <div className="flex gap-2 flex-row-reverse">
-          <img
-            src="https://up.yimg.com/ib/th?id=OIP.7PFJ2-xr8x_3EprzHWmXAgHaHa&pid=Api&rs=1&c=1&qlt=95&w=119&h=119"
-            alt=""
-            className="h-10 rounded-full"
-          />
-          <p className="bg-green-500 w-fit p-2 mt-4 rounded-xl text-sm font-semibold rounded-tr-sm h-fit">
-            hello buddy
-          </p>
-        </div>
-        {/* sender chat */}
-        <div className="flex gap-2 ">
-          <img
-            src="https://up.yimg.com/ib/th?id=OIP.Bv23QwiO7nTO6tvLBeGLLwHaHa&pid=Api&rs=1&c=1&qlt=95&w=120&h=120"
-            alt=""
-            className="h-10 rounded-full"
-          />
-          <p className="bg-blue-500 w-fit p-2 mt-4 rounded-xl text-sm font-semibold rounded-tl-sm h-fit">
-            what's up dude
-          </p>
-        </div>
-        {/*  image with text*/}
-        <div className="flex gap-2 ">
-          <img
-            src="https://up.yimg.com/ib/th?id=OIP.Bv23QwiO7nTO6tvLBeGLLwHaHa&pid=Api&rs=1&c=1&qlt=95&w=120&h=120"
-            alt=""
-            className="h-10 rounded-full"
-          />
-          <div className="bg-blue-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tl-sm h-fit">
-            <img src="/wallpaper.jpg" alt="" className="w-[250px] rounded-lg" />
-            <p className="p-2">this is a test image</p>
-          </div>
-        </div>
-        {/* for sender also */}
-        <div className="flex gap-2 flex-row-reverse">
-          <img
-            src="https://up.yimg.com/ib/th?id=OIP.7PFJ2-xr8x_3EprzHWmXAgHaHa&pid=Api&rs=1&c=1&qlt=95&w=119&h=119"
-            alt=""
-            className="h-10 rounded-full"
-          />
-          <div className="bg-green-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tr-sm h-fit">
-            <img
-              src="https://up.yimg.com/ib/th?id=OIP.a_NBaDZCwiV6fKa7XJ6B9AHaEK&pid=Api&rs=1&c=1&qlt=95&w=204&h=114"
-              alt=""
-              className="w-[250px] rounded-lg"
-            />
-            <p className="p-2">this is a test image</p>
-          </div>
-        </div>
+      {/* chat box */}
+      <section className=" h-[80.8vh] bg-gradient-to-b from-zinc-900 via-black to-zinc-900 p-4 overflow-auto flex flex-col gap-4">
+        {chat?.messages?.map((message) => {
+          if (message.sender._id == userdata?._id) {
+            return message.contentType == "image" ? (
+              <div className="flex gap-2 flex-row-reverse">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="bg-green-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tr-sm h-fit">
+                  <img
+                    src={message.mediaUrl}
+                    className="w-[250px] rounded-lg"
+                  />
+                  <p className="p-2">{message.content}</p>
+                </div>
+              </div>
+            ) : message.contentType == "video" ? (
+              <div className="flex gap-2 flex-row-reverse">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="bg-green-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tr-sm h-fit">
+                  <video controls className="w-[250px] rounded-lg h-[200px]">
+                    <source src={message.mediaUrl} type="video/mp4" />
+                  </video>
+                  <p className="p-2">{message.content}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2 flex-row-reverse">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <p className="bg-green-500 w-fit p-2 mt-4 rounded-xl text-sm font-semibold rounded-tr-sm h-fit">
+                  {message.content}
+                </p>
+              </div>
+            );
+          } else {
+            return message.contentType == "image" ? (
+              <div className="flex gap-2 ">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="bg-blue-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tl-sm h-fit">
+                  <img
+                    src={message.mediaUrl}
+                    className="w-[250px] rounded-lg"
+                  />
+                  <p className="p-2">{message.content}</p>
+                </div>
+              </div>
+            ) : message.contentType == "video" ? (
+              <div className="flex gap-2">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="bg-blue-500 w-fit p-1 mt-4 rounded-xl text-sm font-semibold rounded-tl-sm h-fit">
+                  <video controls className="w-[250px] rounded-lg h-[200px]">
+                    <source src={message.mediaUrl} type="video/mp4" />
+                  </video>
+                  <p className="p-2">{message.content}</p>
+                </div>
+              </div>
+            ) :(
+              <div className="flex gap-2 ">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <p className="bg-blue-500 w-fit p-2 mt-4 rounded-xl text-sm font-semibold rounded-tl-sm h-fit">
+                  {message.content}
+                </p>
+              </div>
+            );
+          }
+        })}
       </section>
       <section className="relative">
-         {/* emoji picker */}
+        {/* emoji picker */}
         {isEmojiVisible && (
           <div className="absolute bottom-[11vh] left-2 z-[0] flex-shrink-0">
             <Picker
@@ -95,7 +180,12 @@ const ChatBox = ({ openSide }) => {
             onClick={() => setisEmojiVisible(!isEmojiVisible)}
           />
 
-          <input type="file" id="image" className="hidden" />
+          <input
+            type="file"
+            id="image"
+            className="hidden"
+            onChange={(e) => handleFileInput(e.target.files[0])}
+          />
           <label htmlFor="image">
             <BiSolidImageAdd size="2rem" />
           </label>
@@ -108,8 +198,14 @@ const ChatBox = ({ openSide }) => {
               value={inputval}
               onChange={(e) => setinputval(e.target.value)}
             />
-            <button className="bg-green-600 py-1 px-2 font-semibold rounded">
+            <button
+              className="bg-green-600 py-1 px-2 font-semibold rounded flex items-center gap-1"
+              onClick={sendMessage}
+            >
               send
+              {sending && (
+                <img src="/loader.gif" className="h-5 w-5 rounded-full" />
+              )}
             </button>
           </div>
         </div>
