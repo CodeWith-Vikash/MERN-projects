@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   const [imgloading, setimgloading] = useState(false)
   const [allusers, setallusers] = useState([])
   const [chat, setchat] = useState({})
-  const [chatuser, setchatuser] = useState({})
+  const [chatuser, setchatuser] = useState(null)
 
     // function to upload image on cloudinary
     const uploadFile = async (file, setFileUrl) => {
@@ -63,6 +63,10 @@ const getChat=(id)=>{
      let user=result.data.users.find((person)=> person._id!=userdata._id)
      setchatuser(user)
      console.log(user);
+     scrollToBottom()
+     if(window.innerWidth<768){
+      closeSide()
+     }
   }).catch((err)=>{
      console.log(err)
      toast.error(err.response.data.message)
@@ -85,12 +89,31 @@ const getChat=(id)=>{
         setuserdata(null)
     }
    }
+
+   // function to scroll chat view to bottom 
+  const chatref=useRef(null)
+  const scrollToBottom=()=>{
+    const div= chatref.current
+    div.scrollTo({
+      top: div.scrollHeight,
+      behavior: 'smooth',
+    })
+  }
+
+  //  functions to toggle sidenav
+   const sideref=useRef(null)
+  const closeSide=()=>{
+     sideref.current.style.transform='translateX(-100%)'
+    }
+    const openSide=()=>{
+    sideref.current.style.transform='translateX(0%)'
+  }
   useEffect(()=>{
     getuserdetails()
     getUsers()
   },[])
   return (
-    <UserContext.Provider value={{ userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat}}>
+    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide}}>
       {children}
     </UserContext.Provider>
   );

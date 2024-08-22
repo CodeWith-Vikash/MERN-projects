@@ -1,4 +1,4 @@
-import React,{useContext, useRef, useState} from 'react'
+import React,{useContext, useEffect, useRef, useState} from 'react'
 import { FaArrowAltCircleLeft,FaSearch,FaCameraRetro} from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
 import { useNavigate } from 'react-router-dom';
@@ -10,10 +10,11 @@ import axios from 'axios';
 
 const Aside = ({closeSide}) => {
   const [searchval, setsearchval] = useState('')
-  const {setuserdata,userdata,uploadFile,imgloading,getuserdetails,allusers,getChat} = useContext(UserContext)
+  const {setuserdata,userdata,uploadFile,imgloading,getuserdetails,allusers,getChat,chat} = useContext(UserContext)
   const [profilepic, setprofilepic] = useState(userdata?.avatar?userdata.avatar:'/user.jfif')
   const [showprofile, setshowprofile] = useState(false)
   const [profileloading, setprofileloading] = useState(false)
+  const [allchats, setallchats] = useState([])
 
   const logout=()=>{
     localStorage.removeItem('chatuser')
@@ -46,6 +47,22 @@ const Aside = ({closeSide}) => {
         setprofileloading(false)
     })
   }
+  // function to get all chats for current user
+  const getAllChats=()=>{
+    axios.get(`/api/chats/${userdata._id}`).then((result)=>{
+      console.log(result);
+      setallchats(result.data)
+    }).catch((err)=>{
+       console.log(err);
+       toast.warning(err.response.data.message)
+    })
+  }
+
+  useEffect(()=>{
+    getAllChats()
+    setsearchval("")
+  },[userdata,chat])
+
   return (
     <>
       <div className='flex flex-col gap-4'>
@@ -60,26 +77,39 @@ const Aside = ({closeSide}) => {
            </div>
         </nav>
         <section className='relative w-fit my-0 mx-auto'>
-            <input type="text" placeholder='Search' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'
+            <input type="text" placeholder='Search username' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'
             value={searchval}
             onChange={(e)=> setsearchval(e.target.value)}
             />
             <FaSearch size="1rem" className='absolute top-[50%] translate-y-[-50%] right-3'/>
         </section>
 
-        {searchval && <section className='h-[70vh] overflow-auto flex flex-col gap-2'>
+        <div className='h-[70vh] overflow-auto flex flex-col'>
+        {searchval && <section className='flex flex-col gap-2'>
             {
               allusers?.filter((user)=> user.username.toUpperCase().startsWith(searchval.toUpperCase())).map((user)=>{
-                return <div className='flex gap-2 p-2 hover:bg-black cursor-pointer' key={user._id} onClick={()=> getChat(user._id)}>
+                return <div className='flex items-center gap-2 p-2 hover:bg-black cursor-pointer' key={user._id} onClick={()=> getChat(user._id)}>
                 <img src={user.avatar?user.avatar:'/user.jfif'} alt="" className='rounded-full h-12 w-12 object-cover'/>
                 <div className='w-[230px]'>
                     <p className='font-semibold'>{user.username}</p>
-                    <span className='text-sm'>fldfjdlsfsklfdkffld fldflsfls fldf</span>
                 </div>
             </div>
               })
             }
         </section>}
+        <section>
+          {allchats?.map((chat)=>{
+              let user=chat.users.find((user)=>user._id!=userdata._id)
+              return <div className='flex gap-2 p-2 hover:bg-black cursor-pointer' key={user._id} onClick={()=> getChat(user._id)}>
+              <img src={user.avatar?user.avatar:'/user.jfif'} alt="" className='rounded-full h-12 w-12 object-cover'/>
+              <div className='w-[230px] flex flex-col justify-center'>
+                  <p className='font-semibold'>{user.username}</p>
+                  {chat.latestMessage && <span className='text-sm max-w-[200px] overflow-hidden h-[20px]'>{chat.latestMessage.fileName?chat.latestMessage.fileName:chat.latestMessage.content}</span>}
+              </div>
+          </div>
+          })}
+        </section>
+        </div>
     </div>
     {/* profile section */}
     <section className='h-screen w-full absolute top-0 bgblur' ref={profileref}>

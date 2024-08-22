@@ -5,14 +5,7 @@ import {UserContext} from '../../Context/AuthContext'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
-  const {userdata}=useContext(UserContext)
-  const sideref=useRef(null)
-  const closeSide=()=>{
-     sideref.current.style.transform='translateX(-100%)'
-    }
-    const openSide=()=>{
-    sideref.current.style.transform='translateX(0%)'
-  }
+  const {userdata,openSide,closeSide,sideref}=useContext(UserContext)
   return (
     <>
       {!userdata?
@@ -24,7 +17,7 @@ const Home = () => {
         </Link>
       </section>
       :<div className='md:flex'>
-      <aside className='h-screen w-[300px]   absolute top-0 left-0 md:static bg-zinc-800 text-white transition-all md:translate-x-0 translate-x-[-100%] md:w-[500px] z-10' ref={sideref}>
+      <aside className='h-screen w-[300px]   absolute top-0 left-0 md:static bg-zinc-800 text-white transition-all md:translate-x-[0%] translate-x-[-100%] md:w-[500px] z-10' ref={sideref}>
         <Aside closeSide={closeSide}/>
       </aside>
       <main className='h-screen bg-slate-300 text-white md:w-full'>

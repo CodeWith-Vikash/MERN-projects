@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import { MdOutlineDownloadForOffline } from "react-icons/md";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { MdEmojiEmotions } from "react-icons/md";
@@ -13,9 +14,10 @@ const ChatBox = ({ openSide }) => {
   const [isEmojiVisible, setisEmojiVisible] = useState(false);
   const [inputval, setinputval] = useState("");
   const [mediaType, setmediaType] = useState("text");
+  const [filename, setfilename] = useState(null)
   const [mediaUrl, setmediaUrl] = useState("");
   const [sending, setsending] = useState(false);
-  const { userdata, chat, chatuser, uploadFile, getChat } =
+  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref } =
     useContext(UserContext);
 
   // function to handle media input
@@ -35,17 +37,22 @@ const ChatBox = ({ openSide }) => {
       }
       setmediaType(type);
       await uploadFile(file, setmediaUrl);
+      setfilename(file.name)
+      console.log(file.name);
+      
     }
   }
 
   // function to send message
-  const sendMessage = () => {
+  const sendMessage = (e) => {
+    e.preventDefault()
     setsending(true);
     axios
       .post(`/api/chat/message/${chat?._id}`, {
         contentType: mediaType,
         content: inputval,
         mediaUrl,
+        fileName:filename,
         sender: userdata?._id,
       })
       .then((result) => {
@@ -71,16 +78,16 @@ const ChatBox = ({ openSide }) => {
           onClick={openSide}
           className="md:hidden"
         />
-        <div className="flex items-center gap-1">
+        {chatuser && <div className="flex items-center gap-1">
           <img
             src={chatuser?.avatar ? chatuser.avatar : "/user.jfif"}
             className="h-10 rounded-full w-10 object-cover"
           />
           <span>{chatuser?.username}</span>
-        </div>
+        </div>}
       </nav>
       {/* chat box */}
-      <section className=" h-[80.8vh] bg-gradient-to-b from-zinc-900 via-black to-zinc-900 p-4 overflow-auto flex flex-col gap-4">
+      <section className=" h-[80.8vh] bg-gradient-to-b from-zinc-900 via-black to-zinc-900 p-4 overflow-auto flex flex-col gap-4" ref={chatref}>
         {chat?.messages?.map((message) => {
           if (message.sender._id == userdata?._id) {
             return message.contentType == "image" ? (
@@ -94,6 +101,7 @@ const ChatBox = ({ openSide }) => {
                     src={message.mediaUrl}
                     className="w-[250px] rounded-lg"
                   />
+                  <p className="text-gray-800">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -107,8 +115,25 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
+                  <p className="text-gray-800">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
+              </div>
+            ) : message.contentType == "file" ? (
+              <div className="flex gap-2 flex-row-reverse">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="flex w-[300px] bg-green-500 rounded-xl flex-col">
+                <div className="min-h-[50px] bg-red-400 flex items-center justify-between p-2 rounded-t-lg">
+                  <p className="font-semibold max-w-[200px] whitespace-normal break-all leading-5">{message.fileName}</p>
+                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer"/>
+                </div>
+                {message.content && <p className="p-2 font-semibold text-sm">
+                  {message.content}
+                </p>}
+              </div>
               </div>
             ) : (
               <div className="flex gap-2 flex-row-reverse">
@@ -133,6 +158,7 @@ const ChatBox = ({ openSide }) => {
                     src={message.mediaUrl}
                     className="w-[250px] rounded-lg"
                   />
+                  <p className="text-gray-800">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -146,10 +172,27 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
+                  <p className="text-gray-800">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
-            ) :(
+            ) : message.contentType == "file" ? (
+              <div className="flex gap-2">
+                <img
+                  src={message.sender.avatar}
+                  className="h-10 rounded-full w-10 object-cover"
+                />
+                <div className="flex w-[300px] bg-blue-500 rounded-xl flex-col">
+                <div className="min-h-[50px] bg-red-400 flex items-center justify-between p-2 rounded-t-lg">
+                  <p className="font-semibold max-w-[200px] whitespace-normal break-all">{message.fileName}</p>
+                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer"/>
+                </div>
+                {message.content && <p className="p-2 font-semibold text-sm">
+                  {message.content}
+                </p>}
+              </div>
+              </div>
+            ):(
               <div className="flex gap-2 ">
                 <img
                   src={message.sender.avatar}
@@ -186,11 +229,13 @@ const ChatBox = ({ openSide }) => {
             className="hidden"
             onChange={(e) => handleFileInput(e.target.files[0])}
           />
-          <label htmlFor="image">
+          {imgloading?
+           <img src="loader.gif" className="rounded-full h-8 "/>
+          :<label htmlFor="image">
             <BiSolidImageAdd size="2rem" />
-          </label>
+          </label>}
 
-          <div className="flex items-center gap-2">
+          <form className="flex items-center gap-2" onSubmit={sendMessage}>
             <input
               type="text"
               placeholder="Write something..."
@@ -200,14 +245,13 @@ const ChatBox = ({ openSide }) => {
             />
             <button
               className="bg-green-600 py-1 px-2 font-semibold rounded flex items-center gap-1"
-              onClick={sendMessage}
             >
               send
               {sending && (
                 <img src="/loader.gif" className="h-5 w-5 rounded-full" />
               )}
             </button>
-          </div>
+          </form>
         </div>
       </section>
     </div>

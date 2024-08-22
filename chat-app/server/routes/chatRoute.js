@@ -4,7 +4,23 @@ const Chat = require('../models/chatModel');
 const messageModel = require('../models/messageModel');
 const chatModel = require('../models/chatModel');
 
-
+// get my chats
+router.get('/chats/:userId',async(req,res)=>{
+  const id = req.params.userId
+  try{
+    let chats= await chatModel.find({
+      users: {$in:[id]}
+    })
+    .populate('users','-password')
+    .populate('latestMessage')
+    if(!chats){
+      res.status(404).json({message:'no chats found'})
+    }
+    res.status(200).json(chats)
+  }catch(error){
+    return res.status(500).json({ message: "server error! can't get your chats",error });
+  }
+})
 // Route to find or get chat of a user
 router.post('/chat', async (req, res) => {
   const { userId1, userId2 } = req.body;
@@ -42,7 +58,7 @@ router.post('/chat', async (req, res) => {
 // Route to create new message
 router.post('/chat/message/:id', async (req, res) => {
   const chatId = req.params.id;
-  const { contentType, content, mediaUrl, sender } = req.body;
+  const { contentType, content, mediaUrl, sender,fileName } = req.body;
 
   try {
       // Find the chat by ID
@@ -56,7 +72,8 @@ router.post('/chat/message/:id', async (req, res) => {
           sender,
           contentType,
           content,
-          mediaUrl
+          mediaUrl,
+          fileName:fileName||null
       });
       await newMessage.save();
 
