@@ -87,7 +87,7 @@ const Aside = ({closeSide}) => {
         <div className='h-[70vh] overflow-auto flex flex-col'>
         {searchval && <section className='flex flex-col gap-2'>
             {
-              allusers?.filter((user)=> user.username.toUpperCase().startsWith(searchval.toUpperCase())).map((user)=>{
+              allusers?.filter((user)=> user.username.toUpperCase().startsWith(searchval.toUpperCase()) && user._id!=userdata._id).map((user)=>{
                 return <div className='flex items-center gap-2 p-2 hover:bg-black cursor-pointer' key={user._id} onClick={()=> getChat(user._id)}>
                 <img src={user.avatar?user.avatar:'/user.jfif'} alt="" className='rounded-full h-12 w-12 object-cover'/>
                 <div className='w-[230px]'>

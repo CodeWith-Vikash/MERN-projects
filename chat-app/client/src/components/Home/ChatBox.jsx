@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import { GrClose } from "react-icons/gr";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -71,9 +72,8 @@ const ChatBox = ({ openSide }) => {
   };
 
   // function to download file from cloudinary
-  const downloadFile = async () => {
+  const downloadFile = async (url) => {
     try {
-      const url = ''; // Your file URL
     const response = await axios({
       url,
       method: 'GET',
@@ -121,7 +121,7 @@ const ChatBox = ({ openSide }) => {
                     src={message.mediaUrl}
                     className="w-[250px] rounded-lg"
                   />
-                  <p className="text-gray-800">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px] break-all">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -135,7 +135,7 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
-                  <p className="text-gray-800 w-[250px]">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px] break-all">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -178,7 +178,7 @@ const ChatBox = ({ openSide }) => {
                     src={message.mediaUrl}
                     className="w-[250px] rounded-lg"
                   />
-                  <p className="text-gray-800">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px] break-all">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -192,7 +192,7 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
-                  <p className="text-gray-800 w-[250px]">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px] break-all">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -274,6 +274,29 @@ const ChatBox = ({ openSide }) => {
           </form>
         </div>
       </section>
+      {/* selected media section */}
+      {mediaUrl && <section className="bg-gray-950 w-full absolute top-[55px] h-[90.5vh] flex flex-col justify-between items-end">
+        <GrClose size='2rem' className="float-right m-6 cursor-pointer" onClick={()=>{
+          setmediaUrl("")
+          setmediaType("")
+        }}/>
+          <div className="w-fit my-0 mx-auto">
+            {mediaType=='image'?
+              <img src={mediaUrl} className="h-[300px] w-[300px] object-cover object-top"/>
+            :<video controls className="h-[300px] w-[300px] object-contain">
+               <source src={mediaUrl} type="video/mp4" />
+             </video>}
+          </div>
+          <button
+              className="bg-green-600 py-1 px-2 font-semibold rounded flex items-center gap-1 m-6"
+              onClick={sendMessage}
+            >
+              send
+              {sending && (
+                <img src="/loader.gif" className="h-5 w-5 rounded-full" />
+              )}
+            </button>
+      </section>}
     </div>
   );
 };
