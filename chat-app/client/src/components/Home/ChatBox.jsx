@@ -70,6 +70,26 @@ const ChatBox = ({ openSide }) => {
       });
   };
 
+  // function to download file from cloudinary
+  const downloadFile = async () => {
+    try {
+      const url = ''; // Your file URL
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'blob', // Important
+    });
+    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = 'file.pdf'; // Desired file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    } catch (error) {
+       console.log(error);
+    }
+  };
   return (
     <div>
       <nav className="h-[9.2vh] bg-zinc-800 flex items-center px-2 gap-4">
@@ -115,7 +135,7 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
-                  <p className="text-gray-800">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px]">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -125,10 +145,10 @@ const ChatBox = ({ openSide }) => {
                   src={message.sender.avatar}
                   className="h-10 rounded-full w-10 object-cover"
                 />
-                <div className="flex w-[300px] bg-green-500 rounded-xl flex-col">
+                <div className="flex w-[300px] bg-green-500 rounded-xl flex-col mt-5">
                 <div className="min-h-[50px] bg-red-400 flex items-center justify-between p-2 rounded-t-lg">
                   <p className="font-semibold max-w-[200px] whitespace-normal break-all leading-5">{message.fileName}</p>
-                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer"/>
+                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer" onClick={()=> downloadFile(message.mediaUrl)}/>
                 </div>
                 {message.content && <p className="p-2 font-semibold text-sm">
                   {message.content}
@@ -172,7 +192,7 @@ const ChatBox = ({ openSide }) => {
                   <video controls className="w-[250px] rounded-lg h-[200px]">
                     <source src={message.mediaUrl} type="video/mp4" />
                   </video>
-                  <p className="text-gray-800">{message.fileName}</p>
+                  <p className="text-gray-800 w-[250px]">{message.fileName}</p>
                   <p className="p-2">{message.content}</p>
                 </div>
               </div>
@@ -182,10 +202,10 @@ const ChatBox = ({ openSide }) => {
                   src={message.sender.avatar}
                   className="h-10 rounded-full w-10 object-cover"
                 />
-                <div className="flex w-[300px] bg-blue-500 rounded-xl flex-col">
+                <div className="flex w-[300px] bg-blue-500 rounded-xl flex-col mt-5">
                 <div className="min-h-[50px] bg-red-400 flex items-center justify-between p-2 rounded-t-lg">
                   <p className="font-semibold max-w-[200px] whitespace-normal break-all">{message.fileName}</p>
-                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer"/>
+                  <MdOutlineDownloadForOffline size='2rem' className="cursor-pointer" onClick={()=> downloadFile(message.mediaUrl)}/>
                 </div>
                 {message.content && <p className="p-2 font-semibold text-sm">
                   {message.content}

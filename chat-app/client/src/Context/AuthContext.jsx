@@ -19,20 +19,17 @@ export const UserProvider = ({ children }) => {
       const formData = new FormData();
       formData.append('file', file);
       
-      // Adjust the URL based on the type of file
-      const uploadUrl = file.type.startsWith('image/') 
-        ? 'https://api.cloudinary.com/v1_1/codewithvikash/image/upload'
-        : 'https://api.cloudinary.com/v1_1/codewithvikash/raw/upload';
-    
       try {
-        const response = await axios.post(uploadUrl, formData, {
-          params: { upload_preset: 'chat-app' }
+        const response = await axios.post('/api/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+        }
         });
-        
+  
         console.log('File uploaded successfully:', response.data);
-        setFileUrl(response.data.secure_url);
+        setFileUrl(response.data.url);
         setimgloading(false);
-        return response.data.secure_url;
+        return response.data.url;
       } catch (error) {
         console.error('Error uploading file:', error);
         toast.error('File upload unsuccessful');
