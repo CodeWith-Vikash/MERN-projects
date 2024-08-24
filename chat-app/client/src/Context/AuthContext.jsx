@@ -13,7 +13,7 @@ export const UserProvider = ({ children }) => {
   const [chatuser, setchatuser] = useState(null)
 
     // function to upload image on cloudinary
-    const uploadFile = async (file, setFileUrl) => {
+    const uploadFile = async (file, setFileUrl,setmediaType) => {
       setimgloading(true);
     
       const formData = new FormData();
@@ -32,6 +32,7 @@ export const UserProvider = ({ children }) => {
         return response.data.url;
       } catch (error) {
         console.error('Error uploading file:', error);
+        setmediaType("text")
         toast.error('File upload unsuccessful');
         setimgloading(false);
       }
@@ -89,13 +90,18 @@ const getChat=(id)=>{
 
    // function to scroll chat view to bottom 
   const chatref=useRef(null)
-  const scrollToBottom=()=>{
-    const div= chatref.current
-    div.scrollTo({
-      top: div.scrollHeight,
-      behavior: 'smooth',
-    })
-  }
+  const scrollToBottom = () => {
+    const div = chatref.current;
+    if (div) {
+      setTimeout(() => {
+        div.scrollTo({
+          top: div.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 500); 
+    }
+  };
+  
 
   //  functions to toggle sidenav
    const sideref=useRef(null)
@@ -105,6 +111,11 @@ const getChat=(id)=>{
     const openSide=()=>{
     sideref.current.style.transform='translateX(0%)'
   }
+
+  useEffect(()=>{
+    scrollToBottom()
+  },[chatuser])
+
   useEffect(()=>{
     getuserdetails()
     getUsers()

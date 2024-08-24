@@ -37,7 +37,7 @@ const ChatBox = ({ openSide }) => {
         type = "unknown";
       }
       setmediaType(type);
-      await uploadFile(file, setmediaUrl);
+      await uploadFile(file, setmediaUrl,setmediaType);
       setfilename(file.name)
       console.log(file.name);
       
@@ -47,7 +47,8 @@ const ChatBox = ({ openSide }) => {
   // function to send message
   const sendMessage = (e) => {
     e.preventDefault()
-    setsending(true);
+    if(inputval||mediaUrl){
+      setsending(true);
     axios
       .post(`/api/chat/message/${chat?._id}`, {
         contentType: mediaType,
@@ -69,6 +70,9 @@ const ChatBox = ({ openSide }) => {
         toast.error(err.response.data.message);
         setsending(false);
       });
+    }else{
+      toast.warning("can't send empty content")
+    }
   };
 
   // function to download file from cloudinary
@@ -91,7 +95,7 @@ const ChatBox = ({ openSide }) => {
     }
   };
   return (
-    <div>
+    <div className="relative">
       <nav className="h-[9.2vh] bg-zinc-800 flex items-center px-2 gap-4">
         <FaArrowAltCircleRight
           size="2rem"
@@ -275,14 +279,14 @@ const ChatBox = ({ openSide }) => {
         </div>
       </section>
       {/* selected media section */}
-      {mediaUrl && <section className="bg-gray-950 w-full absolute top-[55px] h-[90.5vh] flex flex-col justify-between items-end">
+      {mediaUrl && <section className="bg-gray-950 w-full absolute top-0 h-screen flex flex-col justify-between items-end">
         <GrClose size='2rem' className="float-right m-6 cursor-pointer" onClick={()=>{
           setmediaUrl("")
           setmediaType("")
         }}/>
           <div className="w-fit my-0 mx-auto">
             {mediaType=='image'?
-              <img src={mediaUrl} className="h-[300px] w-[300px] object-cover object-top"/>
+              <img src={mediaUrl} className="h-[300px] w-[300px] object-contain"/>
             :<video controls className="h-[300px] w-[300px] object-contain">
                <source src={mediaUrl} type="video/mp4" />
              </video>}
