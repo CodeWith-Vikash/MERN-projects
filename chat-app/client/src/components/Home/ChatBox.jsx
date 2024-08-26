@@ -7,6 +7,7 @@ import Picker from "@emoji-mart/react";
 import { MdEmojiEmotions } from "react-icons/md";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { UserContext } from "../../Context/AuthContext";
+import {SocketContext} from '../../Context/SocketContext'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -18,8 +19,14 @@ const ChatBox = ({ openSide }) => {
   const [filename, setfilename] = useState(null)
   const [mediaUrl, setmediaUrl] = useState("");
   const [sending, setsending] = useState(false);
-  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref } =
+  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom } =
     useContext(UserContext);
+  const {socket} = useContext(SocketContext)
+  socket.on('chat',(chat)=>{
+    console.log("chat from socket: ",chat);
+    setchat(chat)
+    scrollToBottom()
+  })
 
   // function to handle media input
   async function handleFileInput(file) {
@@ -50,7 +57,7 @@ const ChatBox = ({ openSide }) => {
     if(inputval||mediaUrl){
       setsending(true);
     axios
-      .post(`/api/chat/message/${chat?._id}`, {
+      .post(`/api/chat/message/${chat?._id}/${chatuser._id}`, {
         contentType: mediaType,
         content: inputval,
         mediaUrl,

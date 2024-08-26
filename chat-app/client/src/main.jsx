@@ -5,10 +5,13 @@ import "./index.css";
 import { UserProvider } from "./Context/AuthContext.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SocketContextProvider } from "./Context/SocketContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <UserProvider>
+    <SocketContextProvider>
     <App />
+    </SocketContextProvider>
     <ToastContainer
       position="top-center"
       autoClose={3000}

@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
   const [allusers, setallusers] = useState([])
   const [chat, setchat] = useState({})
   const [chatuser, setchatuser] = useState(null)
-
+   
     // function to upload image on cloudinary
     const uploadFile = async (file, setFileUrl,setmediaType) => {
       setimgloading(true);
@@ -121,7 +121,7 @@ const getChat=(id)=>{
     getUsers()
   },[])
   return (
-    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide}}>
+    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom}}>
       {children}
     </UserContext.Provider>
   );

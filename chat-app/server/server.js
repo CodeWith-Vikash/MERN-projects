@@ -4,10 +4,11 @@ const dotenv = require('dotenv');
 const chatRoute=require('./routes/chatRoute')
 const userRoute=require('./routes/userRoute')
 const uploadRoute=require('./routes/uploadRoute')
+const {server,app,io}= require('./socket/socket')
+
 
 dotenv.config();
-const app = express();
-app.use(express.json());
+
 
 mongoose.connect(process.env.CONNECTION_URI, {
     useNewUrlParser: true,
@@ -20,10 +21,11 @@ mongoose.connect(process.env.CONNECTION_URI, {
     console.error('MongoDB connection error:', err);
 });
 
+app.use(express.json())
 app.use('/api',userRoute)
 app.use('/api',chatRoute)
 app.use('/api',uploadRoute)
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

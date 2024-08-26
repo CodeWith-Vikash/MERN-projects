@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios'
 import { UserContext } from '../Context/AuthContext';
+import {SocketContext} from '../Context/SocketContext'
 
 const Login = () => {
   const {setuserdata}=useContext(UserContext)
@@ -15,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const passwordref=useRef(null)
   const navigate=useNavigate()
+  const {socket}= useContext(SocketContext)
 
   const toggleye=()=>{
     setisopen(!isopen)
@@ -32,6 +34,7 @@ const Login = () => {
     const password = e.target[1].value;
     axios.post('/api/login',{email,password}).then((result)=>{
        console.log(result);
+       socket?.emit('chatroom',result.data.user)
        setuserdata(result.data.user)
        localStorage.setItem('chatuser',JSON.stringify(result.data.user._id))
        toast.success(result.data.message)
