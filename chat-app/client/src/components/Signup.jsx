@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../Context/AuthContext";
 
 const Signup = () => {
-  const {uploadFile,imgloading}=useContext(UserContext)
+  const {uploadFile,imgloading,baseurl}=useContext(UserContext)
   const [isopen, setisopen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [img, setimg] = useState(null);
@@ -32,7 +32,7 @@ const Signup = () => {
     const email = formdata.get("email");
     const password = formdata.get("password");
     const file = formdata.get("file");
-      axios.post('/api/signup',{
+      axios.post(`${baseurl}/api/signup`,{
         username,
         email,
         password,

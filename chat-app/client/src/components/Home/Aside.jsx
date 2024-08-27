@@ -10,7 +10,7 @@ import axios from 'axios';
 
 const Aside = ({closeSide}) => {
   const [searchval, setsearchval] = useState('')
-  const {setuserdata,userdata,uploadFile,imgloading,getuserdetails,allusers,getChat,chat} = useContext(UserContext)
+  const {setuserdata,userdata,uploadFile,imgloading,getuserdetails,allusers,getChat,chat,baseurl} = useContext(UserContext)
   const [profilepic, setprofilepic] = useState(userdata?.avatar?userdata.avatar:'/user.jfif')
   const [showprofile, setshowprofile] = useState(false)
   const [profileloading, setprofileloading] = useState(false)
@@ -36,7 +36,7 @@ const Aside = ({closeSide}) => {
   const updateProfile=async (imgFile)=>{
     const imgurl= await uploadFile(imgFile,setprofilepic)
     setprofileloading(true)
-    axios.patch(`/api/user/profile/${userdata._id}`,{avatar:imgurl}).then((result)=>{
+    axios.patch(`${baseurl}/api/user/profile/${userdata._id}`,{avatar:imgurl}).then((result)=>{
        console.log(result);
        toast.info(result.data.message)
        setprofileloading(false)
@@ -49,7 +49,7 @@ const Aside = ({closeSide}) => {
   }
   // function to get all chats for current user
   const getAllChats=()=>{
-    axios.get(`/api/chats/${userdata._id}`).then((result)=>{
+    axios.get(`${baseurl}/api/chats/${userdata._id}`).then((result)=>{
       console.log(result);
       setallchats(result.data)
     }).catch((err)=>{

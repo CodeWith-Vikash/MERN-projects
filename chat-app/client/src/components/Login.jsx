@@ -10,7 +10,7 @@ import { UserContext } from '../Context/AuthContext';
 import {SocketContext} from '../Context/SocketContext'
 
 const Login = () => {
-  const {setuserdata}=useContext(UserContext)
+  const {setuserdata,baseurl}=useContext(UserContext)
   const [isopen, setisopen] = useState(false)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ const Login = () => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
-    axios.post('/api/login',{email,password}).then((result)=>{
+    axios.post(`${baseurl}/api/login`,{email,password}).then((result)=>{
        console.log(result);
        socket?.emit('chatroom',result.data.user)
        setuserdata(result.data.user)

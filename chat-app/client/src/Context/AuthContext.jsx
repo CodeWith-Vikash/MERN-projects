@@ -11,6 +11,7 @@ export const UserProvider = ({ children }) => {
   const [allusers, setallusers] = useState([])
   const [chat, setchat] = useState({})
   const [chatuser, setchatuser] = useState(null)
+  const baseurl='https://chat-app-server-production-c721.up.railway.app'
    
     // function to upload image on cloudinary
     const uploadFile = async (file, setFileUrl,setmediaType) => {
@@ -41,7 +42,7 @@ export const UserProvider = ({ children }) => {
  
 // function to get all users
 const getUsers=()=>{
-  axios.get('/api/users').then((result)=>{
+  axios.get(`${baseurl}/api/users`).then((result)=>{
     console.log(result);
     setallusers(result.data)
   }).catch((err)=>{
@@ -52,7 +53,7 @@ const getUsers=()=>{
 
 // function to get user chat
 const getChat=(id)=>{
-  axios.post('/api/chat',{
+  axios.post(`${baseurl}/api/chat`,{
     userId1:id,
     userId2:userdata._id
   }).then((result)=>{
@@ -75,7 +76,7 @@ const getChat=(id)=>{
    const getuserdetails=()=>{
     const data=JSON.parse(localStorage.getItem('chatuser'))
     if(data){
-      axios.get(`/api/user/${data}`).then((result)=>{
+      axios.get(`${baseurl}/api/user/${data}`).then((result)=>{
         console.log(result)
         setuserdata(result.data)
     }).catch((err)=>{
@@ -121,7 +122,7 @@ const getChat=(id)=>{
     getUsers()
   },[])
   return (
-    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom}}>
+    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl}}>
       {children}
     </UserContext.Provider>
   );

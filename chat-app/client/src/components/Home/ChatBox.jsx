@@ -19,7 +19,7 @@ const ChatBox = ({ openSide }) => {
   const [filename, setfilename] = useState(null)
   const [mediaUrl, setmediaUrl] = useState("");
   const [sending, setsending] = useState(false);
-  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom } =
+  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom,baseurl} =
     useContext(UserContext);
     // function to close emoji picker when click outside
     const emojiPickerRef = useRef(null);
@@ -79,7 +79,7 @@ const ChatBox = ({ openSide }) => {
     if(inputval||mediaUrl){
       setsending(true);
     axios
-      .post(`/api/chat/message/${chat?._id}/${chatuser._id}`, {
+      .post(`${baseurl}/api/chat/message/${chat?._id}/${chatuser._id}`, {
         contentType: mediaType,
         content: inputval,
         mediaUrl,
