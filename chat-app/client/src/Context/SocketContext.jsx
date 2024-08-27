@@ -9,7 +9,7 @@ export const SocketContextProvider=({children})=>{
     const [socket, setsocket] = useState(null)
 
     useEffect(()=>{
-        const socket=io('http://localhost:3000')
+        const socket=io('https://hello-chat-server.vercel.app')
         setsocket(socket)
 
         return ()=> socket.close()

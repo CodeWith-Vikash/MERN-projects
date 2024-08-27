@@ -6,7 +6,7 @@ const app= express()
 
 const server=http.createServer(app)
 const io= new Server(server,{
-    cors:['http://localhost:5173/'],
+    cors:['https://hello-chat-app-client.vercel.app'],
     methods:['GET','POST']
 })
 
