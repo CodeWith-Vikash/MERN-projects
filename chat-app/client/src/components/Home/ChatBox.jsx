@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState,useEffect } from "react";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
@@ -21,6 +21,24 @@ const ChatBox = ({ openSide }) => {
   const [sending, setsending] = useState(false);
   const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom } =
     useContext(UserContext);
+    // function to close emoji picker when click outside
+    const emojiPickerRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setisEmojiVisible(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiPickerRef]);
+
+    // reciving live chats
   const {socket} = useContext(SocketContext)
   socket.on('chat',(chat)=>{
     console.log("chat from socket: ",chat);
@@ -43,10 +61,14 @@ const ChatBox = ({ openSide }) => {
       } else {
         type = "unknown";
       }
-      setmediaType(type);
+      if(type=='image' || type=='video'){
+        setmediaType(type);
       await uploadFile(file, setmediaUrl,setmediaType);
       setfilename(file.name)
       console.log(file.name);
+      }else{
+        toast.warning('please select image or video')
+      }
       
     }
   }
@@ -240,7 +262,7 @@ const ChatBox = ({ openSide }) => {
       <section className="relative">
         {/* emoji picker */}
         {isEmojiVisible && (
-          <div className="absolute bottom-[11vh] left-2 z-[0] flex-shrink-0">
+          <div className="absolute bottom-[11vh] left-2 z-[0] flex-shrink-0" ref={emojiPickerRef}>
             <Picker
               data={data}
               onEmojiSelect={(e) => setinputval((prev) => prev + e.native)}
