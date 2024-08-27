@@ -10,7 +10,7 @@ import { UserContext } from '../Context/AuthContext';
 import {SocketContext} from '../Context/SocketContext'
 
 const Login = () => {
-  const {setuserdata,baseurl}=useContext(UserContext)
+  const {setuserdata,baseurl,setSocket,getSocket}=useContext(UserContext)
   const [isopen, setisopen] = useState(false)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,9 +32,10 @@ const Login = () => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
-    axios.post(`${baseurl}/api/login`,{email,password}).then((result)=>{
+    axios.post(`${baseurl}/api/login`,{email,password}).then(async(result)=>{
        console.log(result);
-       socket?.emit('chatroom',result.data.user)
+       await setSocket(result.data.user._id)
+       await getSocket()
        setuserdata(result.data.user)
        localStorage.setItem('chatuser',JSON.stringify(result.data.user._id))
        toast.success(result.data.message)

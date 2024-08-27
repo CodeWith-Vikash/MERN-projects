@@ -19,7 +19,7 @@ const ChatBox = ({ openSide }) => {
   const [filename, setfilename] = useState(null)
   const [mediaUrl, setmediaUrl] = useState("");
   const [sending, setsending] = useState(false);
-  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom,baseurl} =
+  const { userdata, chat, chatuser, uploadFile, getChat,imgloading,chatref,setchat,scrollToBottom,baseurl,socketId} =
     useContext(UserContext);
     // function to close emoji picker when click outside
     const emojiPickerRef = useRef(null);
@@ -40,7 +40,7 @@ const ChatBox = ({ openSide }) => {
 
     // reciving live chats
   const {socket} = useContext(SocketContext)
-  socket.on('chat',(chat)=>{
+  socket?.on('chat',(chat)=>{
     console.log("chat from socket: ",chat);
     setchat(chat)
     scrollToBottom()
@@ -79,7 +79,7 @@ const ChatBox = ({ openSide }) => {
     if(inputval||mediaUrl){
       setsending(true);
     axios
-      .post(`${baseurl}/api/chat/message/${chat?._id}/${chatuser._id}`, {
+      .post(`${baseurl}/api/chat/message/${chat?._id}/${socketId}`, {
         contentType: mediaType,
         content: inputval,
         mediaUrl,

@@ -11,8 +11,29 @@ export const UserProvider = ({ children }) => {
   const [allusers, setallusers] = useState([])
   const [chat, setchat] = useState({})
   const [chatuser, setchatuser] = useState(null)
+  const [socketId, setsocketId] = useState(null)
   const baseurl='https://chat-app-server-production-c721.up.railway.app'
    
+  //  function to set socket id to room
+    const setSocket=(userId)=>{
+      axios.post(`${baseurl}/api/room/${userId}`).then((result)=>{
+         console.log(result)
+      }).catch((err)=>{
+        console.log(err)
+      })
+    }
+
+    // function to get socket id
+    const getSocket=(userId)=>{
+      axios.get(`${baseurl}/api/room`).then((result)=>{
+         console.log(result)
+         let id=result.data.room.find((room)=>room.userId==chatuser?._id)
+         setsocketId(id)
+      }).catch((err)=>{
+        console.log(err)
+      })
+    }
+
     // function to upload image on cloudinary
     const uploadFile = async (file, setFileUrl,setmediaType) => {
       setimgloading(true);
@@ -120,9 +141,10 @@ const getChat=(id)=>{
   useEffect(()=>{
     getuserdetails()
     getUsers()
+    getSocket()
   },[])
   return (
-    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl}}>
+    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl,setSocket,getSocket,socketId}}>
       {children}
     </UserContext.Provider>
   );

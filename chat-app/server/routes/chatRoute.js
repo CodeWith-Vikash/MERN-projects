@@ -3,7 +3,7 @@ const router = express.Router();
 const Chat = require('../models/chatModel');
 const messageModel = require('../models/messageModel');
 const chatModel = require('../models/chatModel');
-const {io,chatroom} = require('../socket/socket')
+const {io} = require('../socket/socket')
 
 // get my chats
 router.get('/chats/:userId',async(req,res)=>{
@@ -57,9 +57,9 @@ router.post('/chat', async (req, res) => {
 });
 
 // Route to create new message
-router.post('/chat/message/:chatId/:chatuserId', async (req, res) => {
+router.post('/chat/message/:chatId/:socketId', async (req, res) => {
   const chatId = req.params.chatId;
-  const chatuserId= req.params.chatuserId
+  const socketId= req.params.socketId
   const { contentType, content, mediaUrl, sender,fileName } = req.body;
 
   try {
@@ -93,8 +93,7 @@ router.post('/chat/message/:chatId/:chatuserId', async (req, res) => {
           });
 
       // Respond with the populated chat
-      let usersocket= chatroom[chatuserId]
-      io.to(usersocket).emit('chat',populatedChat)
+      io.to(socketId).emit('chat',populatedChat)
       return res.status(200).json({ message: 'Message sent', populatedChat});
   } catch (error) {
       console.error('Error sending message:', error);
