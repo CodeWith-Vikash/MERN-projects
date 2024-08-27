@@ -5,9 +5,16 @@ const chatRoute=require('./routes/chatRoute')
 const userRoute=require('./routes/userRoute')
 const uploadRoute=require('./routes/uploadRoute')
 const {server,app,io}= require('./socket/socket')
+const cors= require('cors')
 
 
 dotenv.config();
+
+app.use(cors({
+    origin: "https://hello-chat-app-client.vercel.app",
+    credentials: true, // Allow cookies and credentials to be sent
+}));
+
 
 
 mongoose.connect(process.env.CONNECTION_URI, {
