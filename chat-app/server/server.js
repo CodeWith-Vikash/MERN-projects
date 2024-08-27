@@ -12,7 +12,8 @@ dotenv.config();
 
 app.use(cors({
     origin: "https://hello-chat-app-client.vercel.app",
-    credentials: true, // Allow cookies and credentials to be sent
+    methods: ['GET','POST'],
+    credentials: true
 }));
 
 
