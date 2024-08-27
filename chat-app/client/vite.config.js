@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://hello-chat-server.vercel.app',
+        target: 'https://chat-app-server-production-c721.up.railway.app',
         changeOrigin: true,
         secure: false,
       },
