@@ -33,19 +33,29 @@ const Aside = ({closeSide}) => {
   }
 
   // function to update profile pic
-  const updateProfile=async (imgFile)=>{
-    const imgurl= await uploadFile(imgFile,setprofilepic)
-    setprofileloading(true)
-    axios.patch(`${baseurl}/api/user/profile/${userdata._id}`,{avatar:imgurl}).then((result)=>{
-       console.log(result);
-       toast.info(result.data.message)
-       setprofileloading(false)
-       getuserdetails()
-      }).catch((err)=>{
-        console.log(err);
-        toast.error(err.response.data.message)
-        setprofileloading(false)
-    })
+  const updateProfile=async (file)=>{
+    if (file) {
+      const fileType = file.type;
+
+      if(fileType.startsWith("image/")){
+        setprofileloading(true)
+        const imgurl= await uploadFile(file, setprofilepic);
+        console.log(imgurl);
+        
+        axios.patch(`${baseurl}/api/user/profile/${userdata?._id}`,{avatar:imgurl}).then((result)=>{
+          console.log(result);
+          toast.info(result.data.message)
+          setprofileloading(false)
+          getuserdetails()
+         }).catch((err)=>{
+           console.log(err);
+           toast.error(err.response.data.message?err.response.data.message:'something went wrong')
+           setprofileloading(false)
+       })
+      }else{
+        toast.warning('please select image or video')
+      }
+    }
   }
   // function to get all chats for current user
   const getAllChats=()=>{

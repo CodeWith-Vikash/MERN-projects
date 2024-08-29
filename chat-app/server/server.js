@@ -13,7 +13,7 @@ dotenv.config();
 
 app.use(cors({
     origin: ["https://hello-chat-app-client.vercel.app","http://localhost:5173"],
-    methods: ['GET','POST'],
+    methods: ['GET','POST','PATCH'],
     credentials: true
 }));
 
