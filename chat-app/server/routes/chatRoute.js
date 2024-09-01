@@ -94,7 +94,7 @@ router.post('/chat/message/:chatId/:socketId', async (req, res) => {
 
       // Respond with the populated chat
       io.to(socketId).emit('chat',populatedChat)
-      return res.status(200).json({ message: 'Message sent', populatedChat});
+      return res.status(200).json({ message: `message sent`, populatedChat,socketId});
   } catch (error) {
       console.error('Error sending message:', error);
       return res.status(500).json({ message: 'Server error while messaging', error });

@@ -34,7 +34,7 @@ const Login = () => {
     const password = e.target[1].value;
     axios.post(`${baseurl}/api/login`,{email,password}).then(async(result)=>{
        console.log(result);
-       await setSocket(result.data.user._id)
+       await setSocket(result.data.user._id,result.data.user.username)
        await getSocket()
        setuserdata(result.data.user)
        localStorage.setItem('chatuser',JSON.stringify(result.data.user._id))

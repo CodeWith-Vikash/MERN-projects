@@ -7,7 +7,7 @@ const app = express();
 let socketId = null; 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: ["https://hello-chat-app-client.vercel.app"],
+  cors: ["https://hello-chat-app-client.vercel.app","http://localhost:5173"],
   methods: ["GET", "POST"],
 });
 

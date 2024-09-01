@@ -13,22 +13,28 @@ export const UserProvider = ({ children }) => {
   const [chatuser, setchatuser] = useState(null)
   const [socketId, setsocketId] = useState(null)
   const baseurl='https://chat-app-server-production-c721.up.railway.app'
+  // const baseurl='http://localhost:3000'
    
   //  function to set socket id to room
-    const setSocket=(userId)=>{
-      axios.post(`${baseurl}/api/room/${userId}`).then((result)=>{
-         console.log(result)
-      }).catch((err)=>{
-        console.log(err)
+  const setSocket = (userId, username) => {
+    console.log("Calling setSocket with:", userId, username);
+    axios.post(`${baseurl}/api/room/${userId}/${username}`)
+      .then((result) => {
+        console.log("Socket set successfully:", result);
       })
-    }
+      .catch((err) => {
+        console.log("Error setting socket:", err);
+      });
+  };
+  
 
     // function to get socket id
-    const getSocket=(userId)=>{
+    const getSocket=()=>{
       axios.get(`${baseurl}/api/room`).then((result)=>{
          console.log(result)
-         let id=result.data.room.find((room)=>room.userId==chatuser?._id)
-         setsocketId(id)
+         let chatusersocket=result.data.room.find((room)=>room.userId==chatuser?._id)
+         console.log(chatusersocket.socketId)
+         setsocketId(chatusersocket.socketId)
       }).catch((err)=>{
         console.log(err)
       })
@@ -78,11 +84,11 @@ const getChat=(id)=>{
     userId1:id,
     userId2:userdata._id
   }).then((result)=>{
-     console.log(result);
+    //  console.log('got chats : ',result);
      setchat(result.data)
      let user=result.data.users.find((person)=> person._id!=userdata._id)
      setchatuser(user)
-     console.log(user);
+    //  console.log(user);
      scrollToBottom()
      if(window.innerWidth<768){
       closeSide()
@@ -141,8 +147,20 @@ const getChat=(id)=>{
   useEffect(()=>{
     getuserdetails()
     getUsers()
-    getSocket()
   },[])
+  
+  useEffect(()=>{
+    getSocket()
+  },[chatuser])
+
+  useEffect(() => {
+    if (userdata) {
+      setSocket(userdata._id,userdata.username);
+    } else {
+      console.log("No userdata available");
+    }
+  }, [userdata]);
+  
   return (
     <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl,setSocket,getSocket,socketId}}>
       {children}

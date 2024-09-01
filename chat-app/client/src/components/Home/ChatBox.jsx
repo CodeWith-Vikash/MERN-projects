@@ -40,11 +40,19 @@ const ChatBox = ({ openSide }) => {
 
     // reciving live chats
   const {socket} = useContext(SocketContext)
-  socket?.on('chat',(chat)=>{
-    console.log("chat from socket: ",chat);
-    setchat(chat)
-    scrollToBottom()
-  })
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('chat', (chats) => {
+      console.log('got chats from socket : ',chat)
+      setchat(chats)
+      scrollToBottom()
+    });
+
+    return () => {
+      socket.off('chat');
+    };
+  }, [socket]);
 
   // function to handle media input
   async function handleFileInput(file) {

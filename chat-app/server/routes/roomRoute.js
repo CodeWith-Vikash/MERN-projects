@@ -3,8 +3,9 @@ const router = express.Router();
 const RoomModel = require("../models/RoomModel");
 const { getSocketId } = require("../socket/socket");
 
-router.post("/room/:userId", async (req, res) => {
+router.post("/room/:userId/:username", async (req, res) => {
   const userId = req.params.userId;
+  const username = req.params.username;
   try {
     let socketId= await getSocketId()
     let room = await RoomModel.findOne({ userId });
@@ -12,6 +13,7 @@ router.post("/room/:userId", async (req, res) => {
       room = new RoomModel({
         userId,
         socketId,
+        username
       });
     }
     room.socketId = socketId;
