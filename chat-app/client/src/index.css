@@ -12,3 +12,7 @@
     transition: all ease 0.3s;
     transform: translateX(-100%);
 }
+
+.profile{
+  transition: all ease 0.3s;
+}

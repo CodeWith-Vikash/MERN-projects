@@ -131,8 +131,23 @@ const ChatBox = ({ openSide }) => {
        console.log(error);
     }
   };
+
+  // functionality to toggle profile
+  const profileref=useRef(null)
+  const showProfile=()=>{
+    profileref.current.style.width="300px"
+    profileref.current.style.height="300px"
+    profileref.current.style.left="10px"
+    profileref.current.style.top="10px"
+  }
+  const hideprofile=()=>{
+    profileref.current.style.top="20px"
+    profileref.current.style.width="0"
+    profileref.current.style.height="0"
+    profileref.current.style.left="70px"
+  }
   return (
-    <div className="relative">
+    <div className="">
       <nav className="h-[9.2vh] bg-zinc-800 flex items-center px-2 gap-4">
         <FaArrowAltCircleRight
           size="2rem"
@@ -142,10 +157,14 @@ const ChatBox = ({ openSide }) => {
         {chatuser && <div className="flex items-center gap-1">
           <img
             src={chatuser?.avatar ? chatuser.avatar : "/user.jfif"}
-            className="h-10 rounded-full w-10 object-cover"
+            className="h-10 rounded-full w-10 object-cover cursor-pointer" onClick={showProfile}
           />
           <span>{chatuser?.username}</span>
         </div>}
+        <div className="absolute top-[20px] left-[70px] h-0 w-0 bg-white flex flex-col justify-center rounded profile" ref={profileref}>
+          <GrClose size='1.5rem' color="red" className="my-2 mx-4 cursor-pointer" onClick={hideprofile}/>
+          <img src={chatuser?.avatar} className="rounded-full h-[80%] w-[80%] object-cover m-auto"/>
+        </div>
       </nav>
       {/* chat box */}
       <section className=" h-[80.8vh] bg-gradient-to-b from-zinc-900 via-black to-zinc-900 p-4 overflow-auto flex flex-col gap-4" ref={chatref}>
