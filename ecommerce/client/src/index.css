@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.glass{
+    background-color: rgb(9, 9, 9,0.5);
+    backdrop-filter: blur(5px);
+    transition: all ease 0.3s;
+    transform: translateX(100%);
+}
