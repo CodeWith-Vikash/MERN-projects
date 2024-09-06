@@ -70,7 +70,7 @@ const Navbar = () => {
 
       </nav>
 
-      <section className='glass flex flex-col gap-4 items-center text-white h-[90vh] w-full absolute pt-10' ref={navref}>
+      <section className='glass flex flex-col gap-4 items-center text-white h-[90vh] w-full absolute pt-10 z-[999]' ref={navref}>
             <div className='flex items-center gap-1'>
                 <img src="https://tse1.mm.bing.net/th?id=OIP.L9TDz5qgN6cJxSnqK8XDGQHaHa&pid=Api&P=0&h=220" className='h-10 w-10 rounded-full' />
                 <p className='font-semibold'>Vikash kumar</p>

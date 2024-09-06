@@ -3,8 +3,23 @@
 @tailwind utilities;
 
 .glass{
-    background-color: rgb(9, 9, 9,0.5);
-    backdrop-filter: blur(5px);
+    background-color: rgb(9, 9, 9,0.3);
+    backdrop-filter: blur(7px);
     transition: all ease 0.3s;
     transform: translateX(100%);
+}
+.shad{
+    box-shadow: 0px 0px 10px rgb(0, 0, 0,0.2);
+}
+.card{
+    box-shadow: 0px 0px 10px rgb(0, 0, 0,0.2);
+    background: linear-gradient(360deg,rgb(31, 56, 89),rgb(102, 198, 253));
+    /* background: linear-gradient(360deg,rgb(5, 80, 51),rgb(0, 255, 208)); */
+}
+.prod{
+    background: linear-gradient(to top right, rgb(102, 198, 253), rgb(31, 56, 89));
+}
+
+::-webkit-scrollbar{
+    display: none;
 }
