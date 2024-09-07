@@ -59,7 +59,7 @@ export const MainContextProvider = ({ children }) => {
     }
   };
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile }}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl }}>
       {children}
     </MainContext.Provider>
   );

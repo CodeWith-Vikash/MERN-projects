@@ -4,6 +4,9 @@ import { NavLink } from "react-router-dom";
 import { RiEyeCloseFill } from "react-icons/ri";
 import { RxEyeOpen } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
+import { MainContext } from '../context/MainContext';
+import axios from 'axios';
+import Cookies from 'js-cookie';  // Import js-cookie to easily access cookies
 
 const Signup = () => {
   const [isopen, setisopen] = useState(false);
@@ -11,7 +14,7 @@ const Signup = () => {
   const [img, setimg] = useState(null);
   const passwordref = useRef(null);
   const navigate = useNavigate();
-
+  const { baseurl } = useContext(MainContext);
 
   const toggleye = () => {
     setisopen(!isopen);
@@ -21,11 +24,32 @@ const Signup = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true);  // Enable loading state
     const formdata = new FormData(e.target);
     const username = formdata.get("username");
     const email = formdata.get("email");
     const password = formdata.get("password");
+
+    try {
+      const result = await axios.post(`${baseurl}/api/signup`, { username, email, password }, {
+        withCredentials: true,  // Include cookies in the request
+      });
+      
+      console.log(result.data);  // Log the response data
+
+      // Access the token cookie if needed
+      const token = Cookies.get("token");
+      console.log("JWT Token from cookie:", token);
+
+      // Redirect user after successful signup (optional)
+      if (token) {
+        navigate("/");  // Redirect to a dashboard or home page
+      }
+    } catch (err) {
+      console.error("Error during signup:", err);
+    } finally {
+      setLoading(false);  // Disable loading state
+    }
   };
 
   return (
@@ -42,13 +66,13 @@ const Signup = () => {
               <RiEyeCloseFill aria-label="Show password" className="absolute top-3 right-3 cursor-pointer text-violet-800" size="1.3rem" onClick={toggleye} />
             )}
           </div>
-          <input type="file" id="file" className="hidden" name="file"/>
+          <input type="file" id="file" className="hidden" name="file" />
           <label htmlFor="file" className="flex items-center gap-2 cursor-pointer">
-            <BiSolidImageAdd size="1.7rem" className="text-violet-800"/>
+            <BiSolidImageAdd size="1.7rem" className="text-violet-800" />
             <b>Add an avatar</b>
-             <div>
-             {img && <img src={img} alt="" className="h-[40px] w-[40px] object-cover rounded-md shadow-md shadow-black" />}
-             </div>
+            <div>
+              {img && <img src={img} alt="" className="h-[40px] w-[40px] object-cover rounded-md shadow-md shadow-black" />}
+            </div>
           </label>
           <button type="submit" className="bg-violet-800 text-white font-semibold py-1 px-2 rounded" disabled={loading}>
             {loading ? "Registering..." : "Register"}
