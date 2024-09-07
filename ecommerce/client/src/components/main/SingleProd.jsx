@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import BasicRating from "./Rating";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { FcAddImage } from "react-icons/fc";
 import Review from "./Review";
+import { MainContext } from "../context/MainContext";
+import { toast } from "react-toastify";
 
 const SingleProd = () => {
   const [count, setcount] = useState(0);
@@ -12,6 +14,42 @@ const SingleProd = () => {
   const [imageurl, setimageurl] = useState("")
   const [showRatingBox, setshowRatingBox] = useState(false)
   const [review, setreview] = useState("")
+  const [imgloading, setimgloading] = useState(false)
+  const {uploadBlob} = useContext(MainContext)
+
+  // function to remove background of an image
+  const handleFileChange=async (file)=>{
+     if(file){
+      setimgloading(true)
+      const formData = new FormData();
+      formData.append('image_file', file);
+      formData.append('size', 'auto');
+      const apiKey = '96jMJaQDnhK8G8hc2fdkdbdh';
+      fetch('https://api.remove.bg/v1.0/removebg',{
+          method:'POST',
+          headers: {
+          'X-Api-Key': apiKey
+       },
+       body: formData
+      })
+      .then(function(reponse){
+              return reponse.blob()
+      })
+      .then(async function(blob){
+              const url = URL.createObjectURL(blob);
+              const imgurl=await uploadBlob(url)
+              setimageurl(imgurl)
+              setimgloading(false)
+      })
+      .catch((err)=>{
+        console.log(err)
+        toast.error('can,t upload file')
+        setimgloading(false)
+      });
+      
+     }
+  }
+  
   return (
     <div className="min-h-screen bg-blue-500 text-white">
       <section className="md:h-[500px] flex flex-col items-center justify-center py-10 md:flex-row">
@@ -100,11 +138,13 @@ const SingleProd = () => {
           {/* add image */}
           <div className="flex justify-between items-center p-2">
             <div className="flex items-center gap-2">
-            <label htmlFor="image">
+            {imgloading?
+             <img src="/loader.gif" className="h-10 rounded-full"/>
+            :<label htmlFor="image">
             <FcAddImage size='3rem'/>
-            </label>
-            <input type="file" id="image"  className="hidden" onChange={(e)=>setimageurl(URL.createObjectURL(e.target.files[0]))}/>
-            {imageurl && <img src={imageurl} className="h-10 w-10 object-cover rounded shad"/>}
+            </label>}
+            <input type="file" id="image"  className="hidden" onChange={(e)=> handleFileChange(e.target.files[0])}/>
+            {imageurl && <img src={imageurl} className="h-10 w-10 object-cover rounded shad bg-blue-500"/>}
           </div>
           <button className="bg-violet-800 py-1 px-2 rounded text-white">submit</button>
           </div>

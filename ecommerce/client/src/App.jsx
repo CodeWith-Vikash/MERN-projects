@@ -15,12 +15,12 @@ const AppContent = () => {
   const location = useLocation();
 
   // Define routes where Navbar and Footer should not be rendered
-  const noNavFooterRoutes = ['/', '/cart','/products','/product','/search'];
+  const noNavFooterRoutes = ['/signup','/login'];
 
   return (
     <>
       {/* Conditionally render Navbar */}
-      {noNavFooterRoutes.some((item)=>location.pathname.startsWith(item)) && <Navbar/>}
+      {!noNavFooterRoutes.some((item)=>location.pathname.startsWith(item)) && <Navbar/>}
       
       <Routes>
         <Route path='/' element={<Home />} />
@@ -34,7 +34,7 @@ const AppContent = () => {
       </Routes>
       
       {/* Conditionally render Footer */}
-      {noNavFooterRoutes.some((item)=>location.pathname.startsWith(item)) && <Footer/>}
+      {!noNavFooterRoutes.some((item)=>location.pathname.startsWith(item)) && <Footer/>}
     </>
   );
 }
