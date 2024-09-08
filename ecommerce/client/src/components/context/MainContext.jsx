@@ -1,10 +1,14 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Cookies from 'js-cookie'
 
 export const MainContext = createContext();
 
 export const MainContextProvider = ({ children }) => {
+  const [token, settoken] = useState(null)
+  const [userdata, setuserdata] = useState(null)
+  const [avatarloading, setavatarloading] = useState(false)
   const baseurl = "http://localhost:3000";
   // function to upload blob on cloudinary
   const uploadBlob = async (blobUrl) => {
@@ -34,8 +38,8 @@ export const MainContextProvider = ({ children }) => {
   };
 
   // function to upload image on cloudinary
-  const uploadFile = async (file, setFileUrl, setmediaType) => {
-    setimgloading(true);
+  const uploadFile = async (file, setFileUrl) => {
+    setavatarloading(true);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -49,17 +53,43 @@ export const MainContextProvider = ({ children }) => {
 
       console.log("File uploaded successfully:", response.data);
       setFileUrl(response.data.url);
-      setimgloading(false);
+      setavatarloading(false);
       return response.data.url;
     } catch (error) {
       console.error("Error uploading file:", error);
-      setmediaType("text");
       toast.error("File upload unsuccessful");
-      setimgloading(false);
+      setavatarloading(false);
     }
   };
+
+  // function to get localstorage
+   const getlocalUser = ()=>{
+     let data =localStorage.getItem('techstuffuser')
+     if(data){
+       console.log(data)
+       data=JSON.parse(data)
+       setuserdata(data)
+     }else{
+       setuserdata(null)
+     }
+   }
+  //  function to getToken
+  const getAuthToken = ()=>{
+    const getToken= Cookies.get('token')
+    if(getToken){
+      settoken(getToken)
+    }else{
+      settoken(null)
+    }
+  }
+
+
+  useEffect(()=>{
+    getAuthToken()
+    getlocalUser()
+  },[])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl }}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading}}>
       {children}
     </MainContext.Provider>
   );

@@ -6,7 +6,8 @@ import { RxEyeOpen } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { MainContext } from '../context/MainContext';
 import axios from 'axios';
-import Cookies from 'js-cookie';  // Import js-cookie to easily access cookies
+import Cookies from 'js-cookie'; 
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [isopen, setisopen] = useState(false);
@@ -14,8 +15,19 @@ const Signup = () => {
   const [img, setimg] = useState(null);
   const passwordref = useRef(null);
   const navigate = useNavigate();
-  const { baseurl } = useContext(MainContext);
+  const { baseurl,settoken,setuserdata,avatarloading,uploadFile} = useContext(MainContext);
+//  function to handleavatar
+  const handleFileChange=(file)=>{
+     if(file){
+       if(file.type.startsWith('image/')){
+         uploadFile(file,setimg)
+       }else{
+         toast.error('please select an image')
+       }
+     }
+  }  
 
+  // function to toggle passwrod
   const toggleye = () => {
     setisopen(!isopen);
     const passwordFieldType = passwordref.current.getAttribute('type');
@@ -24,18 +36,18 @@ const Signup = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);  // Enable loading state
+    setLoading(true);
     const formdata = new FormData(e.target);
     const username = formdata.get("username");
     const email = formdata.get("email");
     const password = formdata.get("password");
 
     try {
-      const result = await axios.post(`${baseurl}/api/signup`, { username, email, password }, {
+      const result = await axios.post(`${baseurl}/api/signup`, { username, email, password,avatar:img?img:'/user.jfif' }, {
         withCredentials: true,  // Include cookies in the request
       });
       
-      console.log(result.data);  // Log the response data
+      console.log(result.data); 
 
       // Access the token cookie if needed
       const token = Cookies.get("token");
@@ -43,12 +55,17 @@ const Signup = () => {
 
       // Redirect user after successful signup (optional)
       if (token) {
-        navigate("/");  // Redirect to a dashboard or home page
+        settoken(token)
+        setuserdata(result.data.user)
+        localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+        toast.success(result.data.message)
+        navigate('/')
       }
     } catch (err) {
-      console.error("Error during signup:", err);
+      console.log("Error during signup:", err);
+      toast.error(err.response.data.message)
     } finally {
-      setLoading(false);  // Disable loading state
+      setLoading(false); 
     }
   };
 
@@ -66,13 +83,17 @@ const Signup = () => {
               <RiEyeCloseFill aria-label="Show password" className="absolute top-3 right-3 cursor-pointer text-violet-800" size="1.3rem" onClick={toggleye} />
             )}
           </div>
-          <input type="file" id="file" className="hidden" name="file" />
+          <input type="file" id="file" className="hidden" name="file"
+            onChange={(e)=>handleFileChange(e.target.files[0])}
+          />
           <label htmlFor="file" className="flex items-center gap-2 cursor-pointer">
             <BiSolidImageAdd size="1.7rem" className="text-violet-800" />
             <b>Add an avatar</b>
-            <div>
+            {avatarloading?
+             <img src="/loader.gif" className='h-10 rounded-full'/>
+            :<div>
               {img && <img src={img} alt="" className="h-[40px] w-[40px] object-cover rounded-md shadow-md shadow-black" />}
-            </div>
+            </div>}
           </label>
           <button type="submit" className="bg-violet-800 text-white font-semibold py-1 px-2 rounded" disabled={loading}>
             {loading ? "Registering..." : "Register"}

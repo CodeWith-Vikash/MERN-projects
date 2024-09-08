@@ -3,6 +3,9 @@ import { NavLink } from 'react-router-dom'
 import { RiEyeCloseFill } from "react-icons/ri";
 import { RxEyeOpen } from "react-icons/rx";
 import { useNavigate } from 'react-router-dom';
+import {MainContext} from '../context/MainContext'
+import axios from 'axios'
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [isopen, setisopen] = useState(false)
@@ -10,6 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const passwordref=useRef(null)
   const navigate=useNavigate()
+  const {baseurl,getlocalUser,getAuthToken}=useContext(MainContext)
 
   const toggleye=()=>{
     setisopen(!isopen)
@@ -21,10 +25,23 @@ const Login = () => {
   }
 
   const handleLogin = async (e) => {
-    setLoading(true)
     e.preventDefault();
+    setLoading(true)
     const email = e.target[0].value;
     const password = e.target[1].value;
+    axios.post(`${baseurl}/api/login`,{email,password},{withCredentials:true}).then((result)=>{
+      console.log(result);
+      localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+      getlocalUser()
+      getAuthToken()
+      toast.success(result.data.message)
+      navigate('/')
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response.data.message)
+    }).finally(()=>{
+      setLoading(false)
+    })
   };
   return (
     <div className="h-screen bg-blue-500 flex justify-center items-center">

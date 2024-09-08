@@ -8,6 +8,7 @@ import Navbar from './components/main/Navbar';
 import Signup from './components/auth/Signup';
 import Login from './components/auth/Login';
 import AllProducts from './components/main/AllProducts'
+import Dashboard from './components/main/Dashboard'
 import SingleProd from './components/main/SingleProd'
 import Query from './components/main/Qurey'
 
@@ -28,6 +29,7 @@ const AppContent = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/products' element={<AllProducts/>} />
+        <Route path='/admin' element={<Dashboard/>} />
         <Route path='/product/:id' element={<SingleProd/>} />        
         <Route path='/search/:query' element={<Query/>} />        
         <Route path='*' element={<Error />} />
