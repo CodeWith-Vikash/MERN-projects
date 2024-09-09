@@ -1,9 +1,11 @@
 import React, { useContext, useRef, useState } from "react";
 import ProductTable from "./ProductTable";
 import { FcAddImage } from "react-icons/fc";
+import { MdAddBusiness } from "react-icons/md";
 import { toast } from "react-toastify";
 import { MainContext } from "../context/MainContext";
 import axios from "axios";
+import ManageProd from "./ManageProd";
 
 const Dashboard = () => {
   const [imageurl, setimageurl] = useState(null);
@@ -11,6 +13,7 @@ const Dashboard = () => {
   const [imgloading, setimgloading] = useState(false);
   const [formloading, setformloading] = useState(false);
   const { uploadBlob, baseurl,getProducts } = useContext(MainContext);
+  const [managedata, setmanagedata] = useState(null)
 
   // function to add product
   const formref= useRef(null)
@@ -73,12 +76,16 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-blue-500 text-white px-4 py-10">
-      <section className="flex flex-col gap-2 items-end mb-5">
+       {managedata?
+        <ManageProd data={managedata} setdata={setmanagedata} baseurl={baseurl} getdata={getProducts}/>
+       :<section>
+       <section className="flex flex-col gap-2 items-end mb-5">
         <button
-          className="bg-teal-900 py-1 px-2 rounded "
+          className="bg-violet-900 py-1 px-2 rounded flex items-center gap-2"
           onClick={() => setshowform(!showform)}
         >
           Add Product
+         <MdAddBusiness size='1.5rem'/>
         </button>
         {showform && (
           <form className="bg-gray-200 rounded-lg max-w-[500px] flex flex-col gap-2 p-2" onSubmit={handlesubmit} ref={formref}>
@@ -148,7 +155,8 @@ const Dashboard = () => {
           </form>
         )}
       </section>
-      <ProductTable />
+      <ProductTable setdata={setmanagedata}/>
+       </section>}
     </div>
   );
 };

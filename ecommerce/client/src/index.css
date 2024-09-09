@@ -19,6 +19,9 @@
 .prod{
     background: linear-gradient(to top right, rgb(102, 198, 253), rgb(31, 56, 89));
 }
+.prodform{
+    background: linear-gradient(to top right, rgb(31, 56, 89),rgb(102, 198, 253));
+}
 .img{
     transition: all ease 1s;
 }

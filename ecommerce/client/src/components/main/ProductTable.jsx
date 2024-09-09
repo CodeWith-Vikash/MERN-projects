@@ -1,48 +1,60 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { useTable } from 'react-table';
-import {MainContext} from '../context/MainContext'
+import { MainContext } from '../context/MainContext';
 
-// Define the columns array
-const columns = [
-  {
-    Header: 'Photo',
-    accessor: 'image',
-    Cell: ({ cell: { value } }) => (
-      <img src={value} alt="Product" className="w-12 h-12 object-cover bg-blue-500" />
-    ),
-  },
-  {
-    Header: 'Name',
-    accessor: 'name',
-  },
-  {
-    Header: 'Price',
-    accessor: 'price',
-  },
-  {
-    Header: 'Stock',
-    accessor: 'stock',
-  },
-  {
-    Header: 'Action',
-    Cell: () => (
-      <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition">
-        Manage
-      </button>
-    ),
-  },
-];
+const ProductTable = ({ setdata }) => {
+  const { allproducts } = useContext(MainContext);
 
-// Main ProductTable Component
-const ProductTable = () => {
-  const {allproducts}=useContext(MainContext)
+  // Handle Manage button click
+  const handleManage = (product) => {
+    console.log('Product data:', product);
+    setdata(product); // Pass the product data to parent or state
+  };
+
+  // Memoize the columns to prevent unnecessary re-renders
+  const columns = useMemo(() => [
+    {
+      Header: 'Photo',
+      accessor: 'image',
+      Cell: ({ cell: { value } }) => (
+        <img src={value} alt="Product" className="w-12 h-12 object-cover bg-blue-500" />
+      ),
+    },
+    {
+      Header: 'Name',
+      accessor: 'name',
+    },
+    {
+      Header: 'Price',
+      accessor: 'price',
+    },
+    {
+      Header: 'Stock',
+      accessor: 'stock',
+    },
+    {
+      Header: 'Action',
+      Cell: ({ row }) => (
+        <button
+          className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition"
+          onClick={() => handleManage(row.original)}  // Access handleManage here
+        >
+          Manage
+        </button>
+      ),
+    },
+  ], []);
+
+  // Memoize the data to prevent unnecessary re-renders
+  const data = useMemo(() => allproducts, [allproducts]);
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data:allproducts });
+  } = useTable({ columns, data });
 
   return (
     <div className="overflow-x-auto">
