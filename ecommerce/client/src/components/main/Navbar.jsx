@@ -94,6 +94,9 @@ const Navbar = () => {
           </div>
           {token ? (
             <div className="hidden md:flex gap-4 items-center">
+              {userdata?.email == "admin@techstuff.com" && <Link to='/admin'>
+              <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
+            </Link>}
               <button
                 className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700"
                 onClick={logout}
@@ -128,6 +131,9 @@ const Navbar = () => {
               />
               <p className="font-semibold">{userdata?.username}</p>
             </div>
+            {userdata?.email == "admin@techstuff.com" && <Link to='/admin'>
+              <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
+            </Link>}
             <button
               className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700"
               onClick={logout}

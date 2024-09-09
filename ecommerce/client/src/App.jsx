@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './components/main/Home';
 import Cart from './components/main/Cart';
@@ -14,7 +14,11 @@ import Query from './components/main/Qurey'
 
 const AppContent = () => {
   const location = useLocation();
+  const pathname= location.pathname
 
+  useEffect(()=>{
+    window.scrollTo(0,0)
+  },[pathname])
   // Define routes where Navbar and Footer should not be rendered
   const noNavFooterRoutes = ['/signup','/login'];
 

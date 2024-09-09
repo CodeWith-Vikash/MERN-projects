@@ -1,30 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTable } from 'react-table';
-
-// Sample product data
-const data = [
-  {
-    photo: '/path-to-image/shoe1.png', // Replace with actual image paths
-    name: 'Puma Shoes Air Jordan Cook Niga 2023',
-    price: 690,
-    stock: 3,
-  },
-  {
-    photo: '/path-to-image/macbook.png',
-    name: 'Macbook',
-    price: 232223,
-    stock: 213,
-  },
-  // Add more products if needed
-];
+import {MainContext} from '../context/MainContext'
 
 // Define the columns array
 const columns = [
   {
     Header: 'Photo',
-    accessor: 'photo',
+    accessor: 'image',
     Cell: ({ cell: { value } }) => (
-      <img src={value} alt="Product" className="w-12 h-12 object-cover" />
+      <img src={value} alt="Product" className="w-12 h-12 object-cover bg-blue-500" />
     ),
   },
   {
@@ -51,13 +35,14 @@ const columns = [
 
 // Main ProductTable Component
 const ProductTable = () => {
+  const {allproducts}=useContext(MainContext)
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data });
+  } = useTable({ columns, data:allproducts });
 
   return (
     <div className="overflow-x-auto">

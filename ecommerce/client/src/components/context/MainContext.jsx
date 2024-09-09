@@ -9,6 +9,7 @@ export const MainContextProvider = ({ children }) => {
   const [token, settoken] = useState(null)
   const [userdata, setuserdata] = useState(null)
   const [avatarloading, setavatarloading] = useState(false)
+  const [allproducts, setallproducts] = useState([])
   const baseurl = "http://localhost:3000";
   // function to upload blob on cloudinary
   const uploadBlob = async (blobUrl) => {
@@ -22,7 +23,7 @@ export const MainContextProvider = ({ children }) => {
       formData.append("file", blob, "image.png"); // Append blob with a filename
 
       // Upload the file to your backend server
-      const uploadResponse = await fetch("http://localhost:3000/api/upload", {
+      const uploadResponse = await fetch(`${baseurl}/api/upload`, {
         // Update with your backend URL
         method: "POST",
         body: formData,
@@ -62,6 +63,17 @@ export const MainContextProvider = ({ children }) => {
     }
   };
 
+  // function to get all products
+  const getProducts=()=>{
+    axios.get(`${baseurl}/api/products`).then((result)=>{
+      console.log(result)
+      setallproducts(result.data.products)
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response.data.message)
+    })
+  }
+
   // function to get localstorage
    const getlocalUser = ()=>{
      let data =localStorage.getItem('techstuffuser')
@@ -87,9 +99,10 @@ export const MainContextProvider = ({ children }) => {
   useEffect(()=>{
     getAuthToken()
     getlocalUser()
+    getProducts()
   },[])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts}}>
       {children}
     </MainContext.Provider>
   );

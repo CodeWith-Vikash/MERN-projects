@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import BasicRating from "./Rating";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -6,6 +6,8 @@ import { FcAddImage } from "react-icons/fc";
 import Review from "./Review";
 import { MainContext } from "../context/MainContext";
 import { toast } from "react-toastify";
+import {useParams} from 'react-router-dom'
+import axios from "axios";
 
 const SingleProd = () => {
   const [count, setcount] = useState(0);
@@ -15,62 +17,58 @@ const SingleProd = () => {
   const [showRatingBox, setshowRatingBox] = useState(false)
   const [review, setreview] = useState("")
   const [imgloading, setimgloading] = useState(false)
-  const {uploadBlob} = useContext(MainContext)
+  const {uploadBlob,baseurl} = useContext(MainContext)
 
-  // function to remove background of an image
-  const handleFileChange=async (file)=>{
-     if(file){
-      setimgloading(true)
-      const formData = new FormData();
-      formData.append('image_file', file);
-      formData.append('size', 'auto');
-      const apiKey = '96jMJaQDnhK8G8hc2fdkdbdh';
-      fetch('https://api.remove.bg/v1.0/removebg',{
-          method:'POST',
-          headers: {
-          'X-Api-Key': apiKey
-       },
-       body: formData
-      })
-      .then(function(reponse){
-              return reponse.blob()
-      })
-      .then(async function(blob){
-              const url = URL.createObjectURL(blob);
-              const imgurl=await uploadBlob(url)
-              setimageurl(imgurl)
-              setimgloading(false)
-      })
-      .catch((err)=>{
-        console.log(err)
-        toast.error('can,t upload file')
-        setimgloading(false)
-      });
-      
-     }
+  const handleFileChange=()=>{}
+  const [singledata, setsingledata] = useState(null)
+  const [loading, setloading] = useState(false)
+  const {id} = useParams()
+  // function to get single product
+  const actualprice= singledata?.price-((singledata?.price*singledata?.discount)/100)
+  const getsingleproduct=()=>{
+    setloading(true)
+    axios.get(`${baseurl}/api/product/${id}`).then((result)=>{
+      console.log(result)
+      setsingledata(result.data.product)
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response.data.message)
+    }).finally(()=> setloading(false))
   }
+  
+  // function to animate image
+  const imageref=useRef(null)
+  const animateimage=()=>{
+    imageref.current.style.height='300px'
+  }
+  useEffect(()=>{
+    getsingleproduct()
+  },[id])
+
+  useEffect(()=>{
+    animateimage()
+  },[singledata])
   
   return (
     <div className="min-h-screen bg-blue-500 text-white">
-      <section className="md:h-[500px] flex flex-col items-center justify-center py-10 md:flex-row">
-        <div className="prod h-[300px] w-[250px] rounded relative md:rounded-r-none">
+      {loading?<b>loading...</b>
+      :<section className="md:h-[500px] flex flex-col items-center justify-center py-10 md:flex-row">
+        <div className="prod h-[300px] w-[250px] rounded relative md:rounded-r-none flex items-center">
           <img
-            src="/phone1.png"
-            className="absolute h-[300px] w-[300px] object-cotain left-[-40px]"
+            src={singledata?.image}
+            className="img absolute h-[0] min-w-[300px] object-cover left-[-40px]"
+            ref={imageref}
           />
         </div>
 
         <section className="h-fit w-[250px] rounded rounded-t-none text-white flex flex-col gap-2 p-2 md:h-[300px] md:w-[350px] md:p-4 md:rounded md:rounded-l-none shad">
           <p className="leading-5 max-h-[100px] md:max-h-[300px] font-semibold md:text-lg md:leading-[1.1] overflow-auto">
-            Xyron X10 Pro: 6.7" OLED display with 144Hz refresh rate and HDR10+,
-            powered by a Snapdragon 8 Gen 3 octa-core processor clocked at 3.2
-            GHz, paired with 12 GB LPDDR5 RAM and 256 GB UFS 3.1 storage
-            (expandable up to 1TB)
+            {singledata?.name}
           </p>
           <div className="flex items-center gap-2">
             <b>price : </b>
-            <p className="text-gray-800 line-through">$5000</p>
-            <p className="font-semibold">$3999</p>
+            <p className="text-gray-800 line-through">${singledata?.price}</p>
+            <p className="font-semibold">${actualprice}</p>
           </div>
 
           <div className="flex flex-col leading-3 gap-2 md:flex-row md:items-center">
@@ -101,9 +99,9 @@ const SingleProd = () => {
             </button>
           </section>
         </section>
-      </section>
+      </section>}
       {/* rating and reviews */}
-      <section className="flex flex-col gap-2 px-4 pb-10">
+      {singledata && <section className="flex flex-col gap-2 px-4 pb-10">
         <h3 className="text-3xl font-semibold">Rating and Reviews</h3>
         <div className="flex items-center gap-2 mt-5">
           <div className="w-[50px] bg-white rounded-full">
@@ -153,7 +151,7 @@ const SingleProd = () => {
          <div className="flex flex-col gap-4 p-2">
            <Review/>
          </div>
-      </section>
+      </section>}
     </div>
   );
 };
