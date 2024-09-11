@@ -2,7 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 
 const Product = ({data}) => {
-  const actualprice= data?.price-((data?.price*data?.discount)/100)
+  const actualprice= (data?.price-((data?.price*data?.discount)/100)).toFixed(0)
   return (
     <>
       <Link to={`/product/${data?._id}`}>

@@ -5,7 +5,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify';
 
 
-const ManageProd = ({data,setdata,baseurl,getdata}) => {
+const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
     const [imageurl, setimageurl] = useState(data.image)
     const [imgloading, setimgloading] = useState(false)
     const [deleting, setdeleting] = useState(false)
@@ -16,8 +16,36 @@ const ManageProd = ({data,setdata,baseurl,getdata}) => {
     const [discount, setdiscount] = useState(data.discount)
     
     const handleFileChange=(file)=>{
-        setimageurl(file)
+      if (file) {
+      setimgloading(true);
+      const formData = new FormData();
+      formData.append("image_file", file);
+      formData.append("size", "auto");
+      const apiKey = "96jMJaQDnhK8G8hc2fdkdbdh";
+      fetch("https://api.remove.bg/v1.0/removebg", {
+        method: "POST",
+        headers: {
+          "X-Api-Key": apiKey,
+        },
+        body: formData,
+      })
+        .then(function (reponse) {
+          return reponse.blob();
+        })
+        .then(async function (blob) {
+          const url = URL.createObjectURL(blob);
+          const imgurl = await uploadBlob(url);
+          setimageurl(imgurl);
+          setimgloading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("can,t upload file");
+          setimgloading(false);
+        });
     }
+    }
+
     const handledelte=()=>{
         const confirmDelete=confirm('Do you really want to delte this product')
         if(confirmDelete){
@@ -37,8 +65,16 @@ const ManageProd = ({data,setdata,baseurl,getdata}) => {
 
     const handleUpdate=()=>{
       setupdating(true)
-      axios.patch(`${baseurl}/api/product/update/${data._id}`).then((result)=>{
+      axios.patch(`${baseurl}/api/product/update/${data._id}`,{
+        name,
+        price,
+        discount,
+        stock,
+        image:imageurl
+      }).then((result)=>{
         console.log(result)
+        getdata()
+        setdata(null)
         toast.info(result.data.message)
       }).catch((err)=>{
         console.log(err)
@@ -51,11 +87,11 @@ const ManageProd = ({data,setdata,baseurl,getdata}) => {
          <section className='flex flex-col gap-2 items-center md:flex-row justify-center md:h-[600px]'>
          <div className="prod h-[480px] w-[250px] rounded relative md:rounded-r-none flex items-center">
           <img
-            src={data?.image}
+            src={imageurl}
             className="img absolute h-[300px] min-w-[300px] object-cover left-[-40px]"
           />
         </div>
-        <section className="prodform rounded w-[250px] flex flex-col gap-2 p-2">
+        <section className="prodform rounded w-[250px] flex flex-col gap-2 p-2 md:rounded-l-none">
             <label htmlFor="name">Name</label>
             <input
               className="outline-none p-2 rounded-lg text-black border-2 border-blue-500"
@@ -117,18 +153,12 @@ const ManageProd = ({data,setdata,baseurl,getdata}) => {
                     className="hidden"
                     onChange={(e) => handleFileChange(e.target.files[0])}
                   />
-                  {imageurl && (
-                    <img
-                      src={imageurl}
-                      className="h-10 w-10 object-cover rounded shad bg-blue-500"
-                    />
-                  )}
                 </div>
               </div>
 
-            <button className="py-1 px-2 bg-green-500 rounded flex items-center gap-2 justify-center">
+            <button className="py-1 px-2 bg-green-500 rounded flex items-center gap-2 justify-center" onClick={handleUpdate}>
               Update Product
-              {updating && <img src="/loader.gif" className="h-5 rounded-full" onClick={handleUpdate}/>}
+              {updating && <img src="/loader.gif" className="h-5 rounded-full"/>}
             </button>
             <button className="py-1 px-2 bg-red-500 rounded flex items-center gap-2 justify-center" onClick={handledelte}>
               Delete Product

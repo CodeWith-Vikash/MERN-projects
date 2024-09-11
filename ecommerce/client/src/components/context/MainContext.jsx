@@ -53,7 +53,9 @@ export const MainContextProvider = ({ children }) => {
       });
 
       console.log("File uploaded successfully:", response.data);
-      setFileUrl(response.data.url);
+      if(setFileUrl){
+        setFileUrl(response.data.url)
+      } 
       setavatarloading(false);
       return response.data.url;
     } catch (error) {

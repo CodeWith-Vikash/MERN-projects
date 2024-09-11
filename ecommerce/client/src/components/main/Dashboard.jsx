@@ -33,6 +33,7 @@ const Dashboard = () => {
         getProducts()
         setimageurl(null)
         formref.current.reset()
+        toast.success('product added')
       }).catch((err)=>{
         console.log(err)
         toast.error(res.response.data.message)
@@ -77,7 +78,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-blue-500 text-white px-4 py-10">
        {managedata?
-        <ManageProd data={managedata} setdata={setmanagedata} baseurl={baseurl} getdata={getProducts}/>
+        <ManageProd data={managedata} setdata={setmanagedata} baseurl={baseurl} getdata={getProducts} uploadBlob={uploadBlob}/>
        :<section>
        <section className="flex flex-col gap-2 items-end mb-5">
         <button

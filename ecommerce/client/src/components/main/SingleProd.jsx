@@ -13,18 +13,25 @@ const SingleProd = () => {
   const [count, setcount] = useState(0);
   const [avgrating, setavgrating] = useState(3.5)
   const [rating, setrating] = useState(0)
-  const [imageurl, setimageurl] = useState("")
+  const [images, setimages] = useState([])
   const [showRatingBox, setshowRatingBox] = useState(false)
   const [review, setreview] = useState("")
-  const [imgloading, setimgloading] = useState(false)
-  const {uploadBlob,baseurl} = useContext(MainContext)
-
-  const handleFileChange=()=>{}
+  const [adding, setadding] = useState(false)
   const [singledata, setsingledata] = useState(null)
   const [loading, setloading] = useState(false)
+  const {uploadFile,baseurl,avatarloading,userdata} = useContext(MainContext)
+
+  const handleFileChange= async (file)=>{
+    if(file){
+      const url= await uploadFile(file)
+      const newimages=[...images,url]
+      setimages(newimages)
+    }
+  }
+
   const {id} = useParams()
   // function to get single product
-  const actualprice= singledata?.price-((singledata?.price*singledata?.discount)/100)
+  const actualprice= (singledata?.price-((singledata?.price*singledata?.discount)/100)).toFixed(0)
   const getsingleproduct=()=>{
     setloading(true)
     axios.get(`${baseurl}/api/product/${id}`).then((result)=>{
@@ -32,10 +39,32 @@ const SingleProd = () => {
       setsingledata(result.data.product)
     }).catch((err)=>{
       console.log(err)
-      toast.error(err.response.data.message)
+      toast.error(err.response.data.message ? err.response.data.message:'something went wrong')
     }).finally(()=> setloading(false))
   }
   
+  // function to add review
+  const addReview=(e)=>{
+    e.preventDefault()
+    setadding(true)
+    axios.patch(`${baseurl}/api/product/review/${singledata._id}`,{
+       rating,
+       description:review,
+       images,
+       userInfo:userdata._id
+    }).then((result)=>{
+      console.log(result)
+      setrating(0)
+      setreview("")
+      setimages([])
+      getsingleproduct()
+      toast.info(result.data.message)
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response.data.message)
+    }).finally(()=> setadding(false))
+  }
+
   // function to animate image
   const imageref=useRef(null)
   const animateimage=()=>{
@@ -73,7 +102,7 @@ const SingleProd = () => {
 
           <div className="flex flex-col leading-3 gap-2 md:flex-row md:items-center">
             <BasicRating type="readonly" rate="3.5" />
-            <p>(69 costumer reviews)</p>
+            <p>({singledata?.reviews.length} costumer reviews)</p>
           </div>
 
           <section className="flex flex-col gap-2 md:flex-row">
@@ -124,7 +153,7 @@ const SingleProd = () => {
           <button className="bg-teal-900 py-1 px-2 rounded" onClick={()=> setshowRatingBox(!showRatingBox)}>Rate this product</button>
         </div>
         {/*rating box */}
-        {showRatingBox && <form className="bg-white text-black rounded-lg my-2 p-2 flex flex-col gap-2 max-w-[500px]">
+        {showRatingBox && <form className="bg-white text-black rounded-lg my-2 p-2 flex flex-col gap-2 max-w-[500px]" onSubmit={addReview}>
           <div>
           <p className="text-lg ">Rate this product</p>
           <BasicRating  setrating={setrating} rating={rating}/>
@@ -136,20 +165,29 @@ const SingleProd = () => {
           {/* add image */}
           <div className="flex justify-between items-center p-2">
             <div className="flex items-center gap-2">
-            {imgloading?
+            {avatarloading?
              <img src="/loader.gif" className="h-10 rounded-full"/>
             :<label htmlFor="image">
             <FcAddImage size='3rem'/>
             </label>}
             <input type="file" id="image"  className="hidden" onChange={(e)=> handleFileChange(e.target.files[0])}/>
-            {imageurl && <img src={imageurl} className="h-10 w-10 object-cover rounded shad bg-blue-500"/>}
+            {images.length>0 && <div className="flex gap-2 items-center flex-wrap">
+               {images.map((imageurl)=>{
+                  return <img src={imageurl} className="h-10 w-10 object-cover rounded shad bg-blue-500"/>
+               })}
+              </div>}
           </div>
-          <button className="bg-violet-800 py-1 px-2 rounded text-white">submit</button>
+          <button className="py-1 px-2 bg-violet-800 text-white rounded flex items-center gap-2 justify-center">
+              submit
+              {adding && <img src="/loader.gif" className="h-5 rounded-full"/>}
+              </button>
           </div>
         </form>}
         {/* reviews */}
          <div className="flex flex-col gap-4 p-2">
-           <Review/>
+           {singledata?.reviews.map((data)=>{
+              return <Review data={data}/>
+           })}
          </div>
       </section>}
     </div>

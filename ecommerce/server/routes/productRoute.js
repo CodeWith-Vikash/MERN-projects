@@ -32,7 +32,7 @@ router.get('/products',async (req,res)=>{
 router.get('/product/:id',async (req,res)=>{
     const id = req.params.id
     try {
-        const product= await productModel.findById(id)
+        const product= await productModel.findById(id).populate('reviews.userInfo')
         if(!product){
             return res.status(404).json({message:'product not found'})
         }
@@ -68,6 +68,23 @@ router.patch('/product/update/:prodid',async(req,res)=>{
         res.status(200).json({message:'product updated',product})
     } catch (error) {
         res.status(500).json({message:'something went wrong while updating product',error})
+    }
+})
+
+// route to add a review 
+router.patch('/product/review/:prodid',async(req,res)=>{
+    const id= req.params.prodid
+    const {rating,description,images,userInfo} = req.body
+    try {
+        const product= await productModel.findById(id)
+        if(!product){
+            res.status(404).json({message:'product not found'})
+        }
+        product.reviews.push({rating,description,images,userInfo})
+        product.save()
+        res.status(200).json({message:'review added',product})
+    } catch (error) {
+        res.status(500).json({message:'something went wrong while adding review',error})
     }
 })
 
