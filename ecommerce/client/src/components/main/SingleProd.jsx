@@ -11,7 +11,7 @@ import axios from "axios";
 
 const SingleProd = () => {
   const [count, setcount] = useState(0);
-  const [avgrating, setavgrating] = useState(3.5)
+  const [avgrating, setavgrating] = useState(0)
   const [rating, setrating] = useState(0)
   const [images, setimages] = useState([])
   const [showRatingBox, setshowRatingBox] = useState(false)
@@ -46,6 +46,7 @@ const SingleProd = () => {
   // function to add review
   const addReview=(e)=>{
     e.preventDefault()
+    if(rating>0){
     setadding(true)
     axios.patch(`${baseurl}/api/product/review/${singledata._id}`,{
        rating,
@@ -54,17 +55,27 @@ const SingleProd = () => {
        userInfo:userdata._id
     }).then((result)=>{
       console.log(result)
+      getsingleproduct()
       setrating(0)
       setreview("")
       setimages([])
-      getsingleproduct()
       toast.info(result.data.message)
     }).catch((err)=>{
       console.log(err)
       toast.error(err.response.data.message)
     }).finally(()=> setadding(false))
+    }else{
+      toast.warning('rate this product first to submit')
+    }
   }
-
+ 
+  // fuction to find average rating
+  const findAverage=()=>{
+    const sum= singledata.reviews.reduce((acc,cur)=>{
+       return acc+cur.rating
+    },0)
+    setavgrating(sum/singledata.reviews.length)
+  }
   // function to animate image
   const imageref=useRef(null)
   const animateimage=()=>{
@@ -76,6 +87,9 @@ const SingleProd = () => {
 
   useEffect(()=>{
     animateimage()
+    if(singledata){
+      findAverage()
+    }
   },[singledata])
   
   return (
@@ -101,7 +115,7 @@ const SingleProd = () => {
           </div>
 
           <div className="flex flex-col leading-3 gap-2 md:flex-row md:items-center">
-            <BasicRating type="readonly" rate="3.5" />
+            <BasicRating type="readonly" rate={avgrating} />
             <p>({singledata?.reviews.length} costumer reviews)</p>
           </div>
 
@@ -160,7 +174,7 @@ const SingleProd = () => {
           </div>
           <div>
             <p className="text-lg">Review this product</p>
-            <textarea className="border-2 w-full rounded h-[100px] p-2 outline-none text-sm" value={review} onChange={(e)=> setreview(e.target.value)} placeholder="description.."></textarea>
+            <textarea className="border-2 w-full rounded h-[100px] p-2 outline-none text-sm" required value={review} onChange={(e)=> setreview(e.target.value)} placeholder="description.."></textarea>
           </div>
           {/* add image */}
           <div className="flex justify-between items-center p-2">
@@ -186,7 +200,7 @@ const SingleProd = () => {
         {/* reviews */}
          <div className="flex flex-col gap-4 p-2">
            {singledata?.reviews.map((data)=>{
-              return <Review data={data}/>
+              return <Review userdata={userdata} data={data} getsingleproduct={getsingleproduct} baseurl={baseurl} singledata={singledata}/>
            })}
          </div>
       </section>}

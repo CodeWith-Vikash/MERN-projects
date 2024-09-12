@@ -88,4 +88,59 @@ router.patch('/product/review/:prodid',async(req,res)=>{
     }
 })
 
+// route to delete a review
+router.patch('/product/review/delete/:prodid',async(req,res)=>{
+    const id= req.params.prodid
+    const reviewId = req.body.reviewId
+    try {
+        const product= await productModel.findById(id)
+        if(!product){
+            res.status(404).json({message:'product not found'})
+        }
+        product.reviews=product.reviews.filter((review)=> review._id != reviewId)
+        product.save()
+        res.status(200).json({message:'review deleted',product})
+    } catch (error) {
+        res.status(500).json({message:'something went wrong while deletting review',error})
+    }
+})
+
+// route to like a review
+router.patch('/product/review/like/:prodid',async(req,res)=>{
+    const id= req.params.prodid
+    const {reviewId,userId} = req.body
+    try {
+        const product= await productModel.findById(id)
+        if(!product){
+            res.status(404).json({message:'product not found'})
+        }
+        const review=product.reviews.find((review)=> review._id == reviewId)
+        review.likes.push(userId)
+        review.dislikes= review.dislikes.filter((dislikeid)=> dislikeid != userId)
+        product.save()
+        res.status(200).json({message:'like added',product})
+    } catch (error) {
+        res.status(500).json({message:'something went wrong while likinging review',error})
+    }
+})
+
+// route to dislike a review
+router.patch('/product/review/dislike/:prodid',async(req,res)=>{
+    const id= req.params.prodid
+    const {reviewId,userId} = req.body
+    try {
+        const product= await productModel.findById(id)
+        if(!product){
+            res.status(404).json({message:'product not found'})
+        }
+        const review=product.reviews.find((review)=> review._id == reviewId)
+        review.dislikes.push(userId)
+        review.likes= review.likes.filter((likeid)=> likeid != userId)
+        product.save()
+        res.status(200).json({message:'dislike added',product})
+    } catch (error) {
+        res.status(500).json({message:'something went wrong while likinging review',error})
+    }
+})
+
 module.exports = router;

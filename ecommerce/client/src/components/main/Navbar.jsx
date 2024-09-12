@@ -103,10 +103,12 @@ const Navbar = () => {
               >
                 Logout
               </button>
+              <Link to='/profile'>
               <img
                 src={userdata?.avatar}
                 className="h-10 w-10 rounded-full object-cover"
               />
+              </Link>
             </div>
           ) : (
             <Link to={"/login"}>
@@ -124,6 +126,7 @@ const Navbar = () => {
       >
         {token ? (
           <div className="flex flex-col gap-4 items-center">
+            <Link to={'/profile'}>
             <div className="flex items-center gap-1">
               <img
                 src={userdata?.avatar}
@@ -131,6 +134,7 @@ const Navbar = () => {
               />
               <p className="font-semibold">{userdata?.username}</p>
             </div>
+            </Link>
             {userdata?.email == "admin@techstuff.com" && <Link to='/admin'>
               <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
             </Link>}

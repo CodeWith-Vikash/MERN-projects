@@ -41,9 +41,12 @@ const Signup = () => {
     const username = formdata.get("username");
     const email = formdata.get("email");
     const password = formdata.get("password");
+    const city = formdata.get("City");
+    const nearby = formdata.get("Nearby");
+    const state = formdata.get("State");
 
     try {
-      const result = await axios.post(`${baseurl}/api/signup`, { username, email, password,avatar:img?img:'/user.jfif' }, {
+      const result = await axios.post(`${baseurl}/api/signup`, { username, email, password,avatar:img?img:'/user.jfif',city,nearby,state }, {
         withCredentials: true,  // Include cookies in the request
       });
       
@@ -83,6 +86,10 @@ const Signup = () => {
               <RiEyeCloseFill aria-label="Show password" className="absolute top-3 right-3 cursor-pointer text-violet-800" size="1.3rem" onClick={toggleye} />
             )}
           </div>
+          <b>Address :</b>
+          <input required type="text" className="bg-gray-300 p-2 rounded-lg w-[270px] outline-none" placeholder="City" name="City" />
+          <input required type="text" className="bg-gray-300 p-2 rounded-lg w-[270px] outline-none" placeholder="Nearby" name="Nearby" />
+          <input required type="text" className="bg-gray-300 p-2 rounded-lg w-[270px] outline-none" placeholder="State" name="State" />
           <input type="file" id="file" className="hidden" name="file"
             onChange={(e)=>handleFileChange(e.target.files[0])}
           />
