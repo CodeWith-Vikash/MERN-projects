@@ -6,6 +6,7 @@ const productSchema = mongoose.Schema({
   price: { type: Number, required: true },
   discount: { type: Number, required: true },
   stock: { type: Number, default: 0, required: true },
+  category: { type: String, enum:['camera','phone','laptop','keyboard','mouse'], required: true },
   reviews: [
     {
       rating: { type: Number, default: 0 },

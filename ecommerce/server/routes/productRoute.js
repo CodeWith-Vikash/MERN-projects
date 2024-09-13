@@ -4,13 +4,13 @@ const router = express.Router();
 
 // route to add a product
 router.post('/addproduct',async (req,res)=>{
-    const {name,price,discount,stock,image}= req.body
+    const {name,price,discount,stock,image,category}= req.body
     try {
         const product= await productModel.findOne({name})
         if(product){
             return res.status(500).json({message:'this product already exist'})
         }
-        const newproduct= new productModel({name,price,discount,stock,image})
+        const newproduct= new productModel({name,price,discount,stock,image,category})
         newproduct.save()
         return res.status(200).json({message:'product added successfully',product:newproduct})
     } catch (error) {

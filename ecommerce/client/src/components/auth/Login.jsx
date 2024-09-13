@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {MainContext} from '../context/MainContext'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import Cookies from 'js-cookie'
 
 const Login = () => {
   const [isopen, setisopen] = useState(false)
@@ -31,14 +32,14 @@ const Login = () => {
     const password = e.target[1].value;
     axios.post(`${baseurl}/api/login`,{email,password},{withCredentials:true}).then((result)=>{
       console.log(result);
-      localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+      Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
       getlocalUser()
       getAuthToken()
       toast.success(result.data.message)
       navigate('/')
     }).catch((err)=>{
       console.log(err)
-      toast.error(err.response.data.message)
+      toast.error(err.response.data.message?err.response.data.message:'something went wrong')
     }).finally(()=>{
       setLoading(false)
     })

@@ -19,12 +19,13 @@ router.post("/signup", async (req, res) => {
     const user = new userModel({ username, email, password: hash, avatar,address:{city,nearby,state} });
 
     await user.save();
-    const token = jwt.sign({ email }, process.env.SECRET);
+    const token = jwt.sign({ email }, process.env.SECRET,{expiresIn:'1h'});
 
     // Set the cookie without httpOnly so it can be accessed in frontend
     res.cookie("token", token, {
       secure: process.env.NODE_ENV === "production", // secure only in production (https)
       sameSite: "strict", // helps with CSRF
+      maxAge: 60 * 60 * 1000,
     });
 
     return res.status(200).json({ message: "User signup successful", user });

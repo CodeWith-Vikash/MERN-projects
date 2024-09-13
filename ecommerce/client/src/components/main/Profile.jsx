@@ -3,6 +3,7 @@ import { FaCamera } from "react-icons/fa";
 import {MainContext} from '../context/MainContext'
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import Cookies from 'js-cookie'
 
 const Profile = () => {
   const {baseurl,userdata,uploadFile}= useContext(MainContext)
@@ -21,7 +22,7 @@ const Profile = () => {
            const url= await uploadFile(file,setimageurl)
            axios.patch(`${baseurl}/api/profile/${userdata._id}`,{avatar:url}).then((result)=>{
             console.log(result)
-            localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+            Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
             toast.info(result.data.message)
            }).catch((err)=>{
               console.log(err)
@@ -39,7 +40,7 @@ const Profile = () => {
     setsaving(true)
     axios.patch(`${baseurl}/api/address/${userdata._id}`,{nearby,city,state}).then((result)=>{
       console.log(result)
-      localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+      Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
       setediting(false)
       toast.info(result.data.message)
      }).catch((err)=>{

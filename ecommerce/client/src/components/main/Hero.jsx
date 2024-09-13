@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
 const Hero = () => {
   return (
@@ -13,7 +14,9 @@ const Hero = () => {
              <img src="/logo.png" className='h-6 absolute top-[-5px]'/>
            </div>
            <p className='font-semibold text-white text-sm'>Tech Essentials for Everyone</p>
+           <Link to='/products'>
            <button className='bg-violet-800 py-1 px-2 rounded text-white my-2'>Shop now</button>
+           </Link>
         </div>
     </div>
   )

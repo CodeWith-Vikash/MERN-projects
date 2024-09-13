@@ -5,8 +5,10 @@ import { AiFillLike,AiFillDislike } from "react-icons/ai";
 import axios from 'axios'
 import {toast} from 'react-toastify'
 import {MainContext} from '../context/MainContext'
+import {useNavigate} from 'react-router-dom'
 
 const Review = ({data,getsingleproduct,singledata}) => {
+  const navigate=useNavigate()
   const {userdata,baseurl} = useContext(MainContext)
   const [deleting, setdeleting] = useState(false)
   // console.log(data,userdata)
@@ -25,26 +27,34 @@ const Review = ({data,getsingleproduct,singledata}) => {
 
   // function to like a review
   const likeReview=(e)=>{
-    axios.patch(`${baseurl}/api/product/review/like/${singledata._id}`,{reviewId: data._id,userId:userdata._id}).then((result)=>{
-      console.log(result)
-      getsingleproduct()
-      toast.info(result.data.message)
-    }).catch((err)=>{
-      console.log(err)
-      toast.error(err.response.data.message)
-    })
+    if(userdata){
+      axios.patch(`${baseurl}/api/product/review/like/${singledata._id}`,{reviewId: data._id,userId:userdata._id}).then((result)=>{
+        console.log(result)
+        getsingleproduct()
+        toast.info(result.data.message)
+      }).catch((err)=>{
+        console.log(err)
+        toast.error(err.response.data.message)
+      })
+    }else{
+      navigate('/login')
+    }
   }
 
   // function to dislike a review
   const dislikeReview=(e)=>{
-    axios.patch(`${baseurl}/api/product/review/dislike/${singledata._id}`,{reviewId: data._id,userId:userdata._id}).then((result)=>{
-      console.log(result)
-      getsingleproduct()
-      toast.info(result.data.message)
-    }).catch((err)=>{
-      console.log(err)
-      toast.error(err.response.data.message)
-    })
+     if(userdata){
+      axios.patch(`${baseurl}/api/product/review/dislike/${singledata._id}`,{reviewId: data._id,userId:userdata._id}).then((result)=>{
+        console.log(result)
+        getsingleproduct()
+        toast.info(result.data.message)
+      }).catch((err)=>{
+        console.log(err)
+        toast.error(err.response.data.message)
+      })
+     }else{
+       navigate('/login')
+     }
   }
 
   return (

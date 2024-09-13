@@ -10,7 +10,7 @@ const Navbar = () => {
   const [query, setQuery] = useState("");
   const [isFocus, setIsFocus] = useState(false);
   const [isnav, setisnav] = useState(false);
-  const { token, userdata, getlocalUser, getAuthToken,} =
+  const { token, userdata, getlocalUser, getAuthToken,cart} =
     useContext(MainContext);
   const navref = useRef(null);
 
@@ -26,7 +26,7 @@ const Navbar = () => {
   // function to logout user
   const logout = () => {
     document.cookie = "token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
-    localStorage.removeItem('techstuffuser')
+    document.cookie = "userdata=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
     getlocalUser()
     getAuthToken()
     toast.warning("user loggged out");
@@ -73,9 +73,9 @@ const Navbar = () => {
             <Link to="/cart">
               <div className="relative">
                 <FaCartShopping size="1.7rem" />
-                <div className="h-4 min-w-4 w-fit rounded-full bg-violet-800 absolute top-[-4px] right-[-5px] flex justify-center items-center text-sm font-semibold p-1">
-                  2
-                </div>
+                {cart.length > 0 && <div className="h-4 min-w-4 w-fit rounded-full bg-violet-800 absolute top-[-4px] right-[-5px] flex justify-center items-center text-sm font-semibold p-1">
+                  {cart.length}
+                </div>}
               </div>
             </Link>
             {isnav ? (

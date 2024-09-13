@@ -10,6 +10,7 @@ export const MainContextProvider = ({ children }) => {
   const [userdata, setuserdata] = useState(null)
   const [avatarloading, setavatarloading] = useState(false)
   const [allproducts, setallproducts] = useState([])
+  const [cart, setcart] = useState([])
   const baseurl = "http://localhost:3000";
   // function to upload blob on cloudinary
   const uploadBlob = async (blobUrl) => {
@@ -72,13 +73,13 @@ export const MainContextProvider = ({ children }) => {
       setallproducts(result.data.products)
     }).catch((err)=>{
       console.log(err)
-      toast.error(err.response.data.message)
+      toast.error(err.response?err.response.data.message:'something went wrong')
     })
   }
 
   // function to get localstorage
    const getlocalUser = ()=>{
-     let data =localStorage.getItem('techstuffuser')
+     let data=Cookies.get('userdata')
      if(data){
        console.log(data)
        data=JSON.parse(data)
@@ -104,7 +105,7 @@ export const MainContextProvider = ({ children }) => {
     getProducts()
   },[])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart}}>
       {children}
     </MainContext.Provider>
   );

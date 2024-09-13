@@ -24,10 +24,11 @@ const Dashboard = () => {
     const price= formdata.get('price')
     const discount= formdata.get('discount')
     const stock= formdata.get('stock')
+    const category= formdata.get('category')
     if(imageurl){
       setformloading(true);
       axios.post(`${baseurl}/api/addproduct`,{
-        name,price,discount,stock,image:imageurl
+        name,price,discount,stock,category,image:imageurl
       }).then((result)=>{
         console.log(result)
         getProducts()
@@ -88,6 +89,7 @@ const Dashboard = () => {
           Add Product
          <MdAddBusiness size='1.5rem'/>
         </button>
+        {/* add product form */}
         {showform && (
           <form className="bg-gray-200 rounded-lg max-w-[500px] flex flex-col gap-2 p-2" onSubmit={handlesubmit} ref={formref}>
             <input
@@ -97,7 +99,7 @@ const Dashboard = () => {
               type="text"
               placeholder="product name"
             />
-            <div className="flex flex-wrap gap-4">
+            <section className="flex flex-wrap gap-4">
               <input
                 className="outline-none p-2 rounded-lg text-black border-2 border-blue-500"
                 required
@@ -122,6 +124,14 @@ const Dashboard = () => {
                 min={"1"}
                 placeholder="stock"
               />
+              <select name="category" className="outline-none p-2 rounded-lg text-black border-2 border-blue-500 w-[200px]">
+                <option value="camera">Camera</option>
+                <option value="phone">Phone</option>
+                <option value="laptop">Laptop</option>
+                <option value="keyboard">keyboard</option>
+                <option value="mouse">Mouse</option>
+              </select>
+            </section>
               <div>
                 <div className="flex items-center gap-2">
                   {imgloading ? (
@@ -148,7 +158,6 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
-            </div>
             <button className="py-1 px-2 bg-blue-500 rounded w-fit flex items-center gap-2">
               submit
               {formloading && <img src="/loader.gif" className="h-5 rounded-full"/>}

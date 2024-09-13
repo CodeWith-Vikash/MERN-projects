@@ -3,6 +3,7 @@ const app = express()
 const uploadRoute= require('./routes/uploadRoute')
 const userRoute= require('./routes/userRoute')
 const productRoute = require('./routes/productRoute')
+const cartRoute = require('./routes/cartRoute')
 const cors = require('cors')
 const dotenv= require('dotenv')
 const mongoose= require('mongoose')
@@ -31,6 +32,7 @@ app.get('/',(req,res)=>{
 app.use('/api',uploadRoute)
 app.use('/api',userRoute)
 app.use('/api',productRoute)
+app.use('/api',cartRoute)
 const port=process.env.PORT || 3000
 app.listen(port,()=>{
     console.log("server is running on port "+port)

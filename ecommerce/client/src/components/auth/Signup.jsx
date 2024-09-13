@@ -60,7 +60,7 @@ const Signup = () => {
       if (token) {
         settoken(token)
         setuserdata(result.data.user)
-        localStorage.setItem('techstuffuser',JSON.stringify(result.data.user))
+        Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
         toast.success(result.data.message)
         navigate('/')
       }
