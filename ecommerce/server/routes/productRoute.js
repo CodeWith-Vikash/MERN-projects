@@ -59,9 +59,9 @@ router.delete('/product/delete/:prodid',async(req,res)=>{
 // route to update product
 router.patch('/product/update/:prodid',async(req,res)=>{
     const id= req.params.prodid
-    const {name,image,price,stock,discount} = req.body
+    const {name,image,price,stock,discount,category} = req.body
     try {
-        const product= await productModel.findByIdAndUpdate(id,{name,image,price,stock,discount},{new:true})
+        const product= await productModel.findByIdAndUpdate(id,{name,image,price,stock,discount,category},{new:true})
         if(!product){
             res.status(404).json({message:'product not found'})
         }
