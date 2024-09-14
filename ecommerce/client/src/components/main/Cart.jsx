@@ -41,12 +41,12 @@ const Cart = () => {
     }
   },[userdata])
   return (
-    <div className='h-screen bg-blue-500 text-white py-10 px-2 flex flex-col gap-2 items-end'>
+    <div className='min-h-screen bg-blue-500 text-white py-10 px-2 flex flex-col gap-2 items-center'>
       {cart.length< 1 ?
         <div className='flex flex-col items-center w-full pt-10 gap-2'>
           <b className='text-xl'>No items in cart</b>
-          <Link to='/'>
-          <button className='bg-violet-800 py-1 px-2 rounded text-white'>Go to homepage</button>
+          <Link to='/products'>
+          <button className='bg-violet-800 py-1 px-2 rounded text-white'>Shop now</button>
           </Link>
         </div>
        :

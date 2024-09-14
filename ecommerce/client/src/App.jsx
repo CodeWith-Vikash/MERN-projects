@@ -10,7 +10,6 @@ import Login from './components/auth/Login';
 import AllProducts from './components/main/AllProducts'
 import Dashboard from './components/main/Dashboard'
 import SingleProd from './components/main/SingleProd'
-import Query from './components/main/Qurey'
 import Profile from './components/main/Profile'
 
 const AppContent = () => {
@@ -36,8 +35,7 @@ const AppContent = () => {
         <Route path='/products' element={<AllProducts/>} />
         <Route path='/admin' element={<Dashboard/>} />
         <Route path='/profile' element={<Profile/>} />
-        <Route path='/product/:id' element={<SingleProd/>} />        
-        <Route path='/search/:query' element={<Query/>} />        
+        <Route path='/product/:id' element={<SingleProd/>} />             
         <Route path='*' element={<Error />} />
       </Routes>
       

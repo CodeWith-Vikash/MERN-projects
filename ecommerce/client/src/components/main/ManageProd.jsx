@@ -14,6 +14,7 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
     const [price, setprice] = useState(data.price)
     const [stock, setstock] = useState(data.stock)
     const [discount, setdiscount] = useState(data.discount)
+    const [category, setcategory] = useState(data.category)
     
     const handleFileChange=(file)=>{
       if (file) {
@@ -70,7 +71,8 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
         price,
         discount,
         stock,
-        image:imageurl
+        image:imageurl,
+        category
       }).then((result)=>{
         console.log(result)
         getdata()
@@ -84,15 +86,17 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
   return (
     <div className='flex flex-col gap-4 md:gap-0'>
          <button className="bg-violet-900 py-1 px-2 rounded w-fit flex items-center gap-2" onClick={()=> setdata(null)}><TiArrowLeftThick size='1.5rem'/>Go back</button>
-         <section className='flex flex-col gap-2 items-center md:flex-row justify-center md:h-[600px]'>
-         <div className="prod h-[480px] w-[250px] rounded relative md:rounded-r-none flex items-center">
+         <section className='flex flex-col gap-2 items-center md:flex-row justify-center md:h-[400px]'>
+         <div className="prod h-[303px] w-[250px] rounded relative md:rounded-r-none flex items-center">
           <img
             src={imageurl}
-            className="img absolute h-[300px] min-w-[300px] object-cover left-[-40px]"
+            className="img absolute h-[200px] min-w-[300px] object-contain left-[-40px]"
           />
         </div>
-        <section className="prodform rounded w-[250px] flex flex-col gap-2 p-2 md:rounded-l-none">
-            <label htmlFor="name">Name</label>
+        <main className="prodform rounded w-[250px] flex flex-col gap-2 p-2 md:rounded-l-none md:w-fit">
+              <section className='flex flex-col md:flex-row gap-2'>
+              <div className='flex flex-col gap-2'>
+              <label htmlFor="name">Name</label>
             <input
               className="outline-none p-2 rounded-lg text-black border-2 border-blue-500"
               required
@@ -124,7 +128,10 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
                 min={"1"}
                 placeholder="discount"
               />
-              <label htmlFor="stock">Stock</label>
+              </div>
+             
+             <div className='flex flex-col gap-2'>
+             <label htmlFor="stock">Stock</label>
               <input
                 className="outline-none p-2 rounded-lg text-black border-2 border-blue-500"
                 required
@@ -135,17 +142,27 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
                 min={"1"}
                 placeholder="stock"
               />
+              <label htmlFor="category">Category</label>
+              <select name="category" className="outline-none p-2 rounded-lg text-black border-2 border-blue-500" value={category} onChange={(e)=> setcategory(e.target.value)}>
+                <option value="camera">Camera</option>
+                <option value="phone">Phone</option>
+                <option value="laptop">Laptop</option>
+                <option value="keyboard">keyboard</option>
+                <option value="mouse">Mouse</option>
+              </select>
               <div>
                 <div className="flex items-center gap-2">
                   {imgloading ? (
                     <img src="/loader.gif" className="h-10 rounded-full" />
                   ) : (
-                    <label htmlFor="image" className="flex items-center gap-2">
-                      <FcAddImage size="3rem" />
-                      <p className="text-black font-semibold">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-white font-semibold">
                     change product image
                       </p>
+                    <label htmlFor="image" >
+                      <FcAddImage size="3rem" />
                     </label>
+                    </div>
                   )}
                   <input
                     type="file"
@@ -155,8 +172,11 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
                   />
                 </div>
               </div>
+             </div>
+              </section>
 
-            <button className="py-1 px-2 bg-green-500 rounded flex items-center gap-2 justify-center" onClick={handleUpdate}>
+              <section className='flex flex-col gap-2 md:flex-row'>
+              <button className="py-1 px-2 bg-green-500 rounded flex items-center gap-2 justify-center" onClick={handleUpdate}>
               Update Product
               {updating && <img src="/loader.gif" className="h-5 rounded-full"/>}
             </button>
@@ -164,7 +184,8 @@ const ManageProd = ({data,setdata,baseurl,getdata,uploadBlob}) => {
               Delete Product
               {deleting && <img src="/loader.gif" className="h-5 rounded-full"/>}
             </button>
-          </section>
+              </section>
+          </main>
          </section>
     </div>
   )

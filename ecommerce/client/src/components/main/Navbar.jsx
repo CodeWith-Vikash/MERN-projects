@@ -2,17 +2,29 @@ import React, { useContext, useRef, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaCartShopping, FaXmark } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MainContext } from "../context/MainContext";
 import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const [query, setQuery] = useState("");
+  const navigate=useNavigate()
   const [isFocus, setIsFocus] = useState(false);
+  const [filteredArr, setfilteredArr] = useState(null)
   const [isnav, setisnav] = useState(false);
-  const { token, userdata, getlocalUser, getAuthToken,cart} =
+  const { token, userdata, getlocalUser, getAuthToken,cart,allproducts} =
     useContext(MainContext);
   const navref = useRef(null);
+
+
+  // function to serach product
+  const searchProduct=(search)=>{
+    if(!search=="" && !search==" "){
+      const filteredprod = allproducts?.filter((prod)=> prod.name.includes(search) || prod.category.includes(search))
+    setfilteredArr(filteredprod)
+    }else{
+      setfilteredArr(null)
+    }
+  }
 
   const togglenav = () => {
     if (isnav) {
@@ -49,8 +61,7 @@ const Navbar = () => {
               className={`outline-none border-none px-4 rounded-full w-[30vw] md:w-[250px] h-8 ${
                 isFocus && "w-[95vw] md:w-[250px]"
               }`}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) =>searchProduct(e.target.value)}
               //   onKeyDown={(e) => e.key === "Enter" && searchProduct()}
               onFocus={() => setIsFocus(true)}
               onBlur={() => {
@@ -70,6 +81,9 @@ const Navbar = () => {
               isFocus ? "hidden md:flex" : ""
             }`}
           >
+            <Link to='/products' className="md:block hidden">
+             <button  className="py-1 px-2 border-2 hover:border-violet-800 hover:bg-violet-800 rounded-lg">Products</button>
+            </Link>
             <Link to="/cart">
               <div className="relative">
                 <FaCartShopping size="1.7rem" />
@@ -98,7 +112,7 @@ const Navbar = () => {
               <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
             </Link>}
               <button
-                className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700"
+                className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700 hover:border-red-700"
                 onClick={logout}
               >
                 Logout
@@ -112,14 +126,27 @@ const Navbar = () => {
             </div>
           ) : (
             <Link to={"/login"}>
-              <button className=" hidden md:block border-2 py-1 px-4 rounded-full font-semibold hover:bg-violet-700">
+              <button className=" hidden md:block border-2 py-1 px-4 rounded-full font-semibold hover:bg-violet-700 hover:border-violet-700">
                 Login
               </button>
             </Link>
           )}
         </section>
       </nav>
-
+      {/* search val */}
+      {<section className="absolute top-[60px] bg-white text-black w-full flex flex-col gap-1 z-[10]">
+         {filteredArr?.map((prod)=>{
+           return <div className="flex gap-2 items-center hover:bg-gray-300 p-2 cursor-pointer" onClick={()=>{
+            setfilteredArr(null)
+            navigate(`/product/${prod._id}`)
+           }}>
+            <img src={prod.image} className="h-10 w-10 object-contain"/>
+            <p className="">{prod.name}</p>
+           </div>
+         })}
+        </section>}
+     
+     {/* sidenav */}
       <section
         className="glass flex justify-center text-white h-[90vh] w-full absolute pt-10 z-[999]"
         ref={navref}
@@ -135,11 +162,14 @@ const Navbar = () => {
               <p className="font-semibold">{userdata?.username}</p>
             </div>
             </Link>
+            <Link to='/products'>
+             <button  className="py-1 px-2 border-2 hover:border-violet-800 hover:bg-violet-800 rounded-lg">Products</button>
+            </Link>
             {userdata?.email == "admin@techstuff.com" && <Link to='/admin'>
               <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
             </Link>}
             <button
-              className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700"
+              className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-red-700 hover:border-red-700"
               onClick={logout}
             >
               Logout
@@ -147,7 +177,7 @@ const Navbar = () => {
           </div>
         ) : (
           <Link to={"/login"}>
-            <button className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-violet-700">
+            <button className="border-2 py-1 px-4 rounded-full font-semibold hover:bg-violet-700 hover:border-violet-700">
               Login
             </button>
           </Link>

@@ -23,6 +23,9 @@ const ProductTable = ({ setdata }) => {
     {
       Header: 'Name',
       accessor: 'name',
+      // Add classes to hide on smaller screens
+      headerClassName: 'hidden md:table-cell', // Hide header on smaller screens
+      cellClassName: 'hidden md:table-cell',   // Hide cell on smaller screens
     },
     {
       Header: 'Price',
@@ -31,6 +34,9 @@ const ProductTable = ({ setdata }) => {
     {
       Header: 'Stock',
       accessor: 'stock',
+      // Add classes to hide stock on smaller screens
+      headerClassName: 'hidden md:table-cell', // Hide header on smaller screens
+      cellClassName: 'hidden md:table-cell',   // Hide cell on smaller screens
     },
     {
       Header: 'Action',
@@ -68,7 +74,7 @@ const ProductTable = ({ setdata }) => {
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps()}
-                  className="px-6 py-3 text-left text-gray-600 font-medium"
+                  className={`${column.headerClassName} px-6 py-3 text-left text-gray-600 font-medium`}
                 >
                   {column.render('Header')}
                 </th>
@@ -84,7 +90,7 @@ const ProductTable = ({ setdata }) => {
                 {row.cells.map((cell) => (
                   <td
                     {...cell.getCellProps()}
-                    className="px-6 py-4 text-sm text-gray-900"
+                    className={`${cell.column.cellClassName} px-6 py-4 text-sm text-gray-900`}
                   >
                     {cell.render('Cell')}
                   </td>
