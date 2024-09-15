@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { baseurl, userdata, setcart, cart,total,settotal } = useContext(MainContext);
+  const { baseurl, userdata, setcart, cart,total,settotal,getCart } = useContext(MainContext);
   const [grandtotal, setgrandtotal] = useState(0);
   const [shippingfee, setshippingfee] = useState(100);
   const [showshipForm, setshowshipForm] = useState(false);
@@ -37,21 +37,6 @@ const Cart = () => {
   useEffect(() => {
     calculateTotal();
   }, [cart]);
-  // function to get cart
-  const getCart = () => {
-    axios
-      .get(`${baseurl}/api/cart/${userdata._id}`)
-      .then((result) => {
-        console.log(result);
-        setcart(result.data.cart.items);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(
-          err.response ? err.response.data.message : "something went wrong"
-        );
-      });
-  };
 
   useEffect(() => {
     if (userdata) {

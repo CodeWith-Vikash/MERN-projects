@@ -91,13 +91,28 @@ export const MainContextProvider = ({ children }) => {
    }
   //  function to getToken
   const getAuthToken = ()=>{
-    const getToken= Cookies.get('token')
-    if(getToken){
-      settoken(getToken)
+    const gotToken= Cookies.get('token')
+    if(gotToken){
+      settoken(gotToken)
     }else{
       settoken(null)
     }
   }
+   // function to get cart
+   const getCart = () => {
+    axios
+      .get(`${baseurl}/api/cart/${userdata._id}`)
+      .then((result) => {
+        console.log(result);
+        setcart(result.data.cart.items);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(
+          err.response ? err.response.data.message : "something went wrong"
+        );
+      });
+  };
 
 
   useEffect(()=>{
@@ -105,8 +120,14 @@ export const MainContextProvider = ({ children }) => {
     getlocalUser()
     getProducts()
   },[])
+  
+  useEffect(()=>{
+    if(userdata){
+      getCart()
+    }
+  },[userdata])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal,getCart}}>
       {children}
     </MainContext.Provider>
   );

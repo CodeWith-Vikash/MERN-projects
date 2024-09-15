@@ -1,8 +1,8 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaCartShopping, FaXmark } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MainContext } from "../context/MainContext";
 import { toast } from "react-toastify";
 
@@ -14,6 +14,14 @@ const Navbar = () => {
   const { token, userdata, getlocalUser, getAuthToken,cart,allproducts} =
     useContext(MainContext);
   const navref = useRef(null);
+
+  // functionallity to close nav on route change
+  const {pathname} = useLocation()
+  useEffect(()=>{
+    if(isnav){
+      togglenav()
+    }
+  },[pathname])
 
 
   // function to serach product

@@ -47,20 +47,20 @@ const Signup = () => {
 
     try {
       const result = await axios.post(`${baseurl}/api/signup`, { username, email, password,avatar:img?img:'/user.jfif',city,nearby,state }, {
-        withCredentials: true,  // Include cookies in the request
+        withCredentials: true, 
       });
       
       console.log(result.data); 
 
-      // Access the token cookie if needed
+      // Access the token cookie 
       const token = Cookies.get("token");
       console.log("JWT Token from cookie:", token);
 
-      // Redirect user after successful signup (optional)
+      // Redirect user after successful signup
       if (token) {
         settoken(token)
         setuserdata(result.data.user)
-        Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
+        Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1});
         toast.success(result.data.message)
         navigate('/')
       }

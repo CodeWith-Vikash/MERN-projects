@@ -95,7 +95,7 @@ router.patch('/product/review/delete/:prodid',async(req,res)=>{
     try {
         const product= await productModel.findById(id)
         if(!product){
-            res.status(404).json({message:'product not found'})
+            return res.status(404).json({message:'product not found'})
         }
         product.reviews=product.reviews.filter((review)=> review._id != reviewId)
         product.save()
@@ -112,7 +112,7 @@ router.patch('/product/review/like/:prodid',async(req,res)=>{
     try {
         const product= await productModel.findById(id)
         if(!product){
-            res.status(404).json({message:'product not found'})
+            return res.status(404).json({message:'product not found'})
         }
         const review=product.reviews.find((review)=> review._id == reviewId)
         review.likes.push(userId)
@@ -140,6 +140,31 @@ router.patch('/product/review/dislike/:prodid',async(req,res)=>{
         res.status(200).json({message:'dislike added',product})
     } catch (error) {
         res.status(500).json({message:'something went wrong while likinging review',error})
+    }
+})
+
+// route to update stock of a product
+router.patch('/product/stock/:productId',async(req,res)=>{
+    const productId = req.params.productId
+    const {action,quantity} = req.body
+    try {
+        const product= await productModel.findById(productId)
+        if(!product){
+            return res.status(404).json({message:'product not found'})
+        }
+        if(action=='order'){
+            if(product.stock==0){
+                return res.status(400).json({message:'product out of stock'})
+            }
+            product.stock==product.stock-quantity
+        }
+        if(action=='cancel'){
+            product.stock==product.stock+quantity
+        }
+       await  product.save()
+        res.status(200).json({message:'stock updated',product})
+    } catch (error) {
+        res.status(500).json({message:'server error while updating stock',error})
     }
 })
 

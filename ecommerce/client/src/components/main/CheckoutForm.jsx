@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { MainContext } from '../context/MainContext';
 import { toast } from 'react-toastify';
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaFortAwesome } from "react-icons/fa";
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
 
@@ -17,6 +17,21 @@ const CheckoutForm = () => {
   const navigate = useNavigate()
 
 
+  // function to update stock
+  const updateStock=(id,action,quantity)=>{
+    axios.patch(`${baseurl}/api/product/stock/${id}`,{action:action,quantity}).then((result)=>{
+      console.log(result)
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response?err.response.data.message:'something went wrong')
+    })
+  }
+
+  const handlestock=()=>{
+    cart.forEach(async (item)=>{
+       await updateStock(item.product._id,'order',item.quantity)
+    })
+  }
   // fuction to clear cart
   const  clearCart=()=>{
     axios.delete(`${baseurl}/api/cart/clear/${userdata._id}`).then((result)=>{
@@ -35,9 +50,10 @@ const CheckoutForm = () => {
 
   // function to place order
   const palaceOrder=()=>{
-    axios.post(`${baseurl}/api/order/${userdata._id}`,{items:cart,totalprice:total}).then((result)=>{
+    axios.post(`${baseurl}/api/order/${userdata._id}`,{items:cart,totalprice:total}).then(async(result)=>{
       console.log(result)
       toast.success(result.data.message)
+      await handlestock()
       clearCart()
     }).catch((err)=>{
       console.log(err)

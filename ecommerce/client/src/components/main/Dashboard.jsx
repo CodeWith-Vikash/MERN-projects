@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { MainContext } from "../context/MainContext";
 import axios from "axios";
 import ManageProd from "./ManageProd";
+import Orders from './Orders'
 
 const Dashboard = () => {
   const [imageurl, setimageurl] = useState(null);
@@ -14,6 +15,7 @@ const Dashboard = () => {
   const [formloading, setformloading] = useState(false);
   const { uploadBlob, baseurl,getProducts } = useContext(MainContext);
   const [managedata, setmanagedata] = useState(null)
+  const [selectedSec, setselectedSec] = useState('products')
 
   // function to add product
   const formref= useRef(null)
@@ -77,7 +79,18 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-blue-500 text-white px-4 py-10">
+    <div className="min-h-screen bg-blue-500 text-white px-4 py-10 flex flex-col gap-2">
+      <nav className='text-white flex gap-10 pt-10 pb-5 justify-center shadow-xl'>
+        <div className='flex flex-col items-center cursor-pointer' onClick={()=> setselectedSec('products')}>
+          <b>Products</b>
+          <div className={`h-1 w-[100px] ${selectedSec=='products'?'bg-green-500':'bg-blue-500'} rounded-full`}></div>
+        </div>
+        <div className='flex flex-col items-center cursor-pointer' onClick={()=> setselectedSec('orders')}>
+          <b>Orders</b>
+          <div className={`h-1 w-[100px] ${selectedSec=='orders'?'bg-green-500':'bg-blue-500'} rounded-full`}></div>
+        </div>
+      </nav>
+       {selectedSec=='products'?<div>
        {managedata?
         <ManageProd data={managedata} setdata={setmanagedata} baseurl={baseurl} getdata={getProducts} uploadBlob={uploadBlob}/>
        :<section>
@@ -167,6 +180,8 @@ const Dashboard = () => {
       </section>
       <ProductTable setdata={setmanagedata}/>
        </section>}
+       </div>:
+       <Orders/>}
     </div>
   );
 };

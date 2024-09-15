@@ -32,7 +32,7 @@ const Login = () => {
     const password = e.target[1].value;
     axios.post(`${baseurl}/api/login`,{email,password},{withCredentials:true}).then((result)=>{
       console.log(result);
-      Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1 / 24 });
+      Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1});
       getlocalUser()
       getAuthToken()
       toast.success(result.data.message)

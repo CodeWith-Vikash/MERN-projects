@@ -4,11 +4,19 @@ import axios from 'axios';
 import { MainContext } from '../context/MainContext';
 import { toast } from 'react-toastify';
 
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
+
 const CartTable = ({ cart, setcart }) => {
   const { baseurl, userdata } = useContext(MainContext);
   const [deleting, setdeleting] = useState(false);
 
-  // Memoize the `onQuantityChange` to prevent unnecessary re-renders
+  // Memoize the `onQuantityChange` with debouncing
   const onQuantityChange = useCallback((productId, quantity) => {
     if (userdata) {
       axios
@@ -19,14 +27,19 @@ const CartTable = ({ cart, setcart }) => {
         })
         .catch((err) => {
           console.log(err);
-          toast.error(err.response ? err.response.data.message : 'something went wrong');
+          toast.error(err.response ? err.response.data.message : 'Something went wrong');
         });
     }
   }, [baseurl, userdata]);
 
+  const onQuantityChangeDebounced = useMemo(
+    () => debounce(onQuantityChange, 500),
+    [onQuantityChange]
+  );
+
   const handleDelete = (item) => {
     const { product } = item;
-    if (userdata) {
+    if (userdata && product) {
       setdeleting(true);
       axios
         .patch(`${baseurl}/api/cart/remove/${userdata._id}`, { productId: product._id })
@@ -36,11 +49,11 @@ const CartTable = ({ cart, setcart }) => {
         })
         .catch((err) => {
           console.log(err);
-          toast.error(err.response ? err.response.data.message : 'something went wrong');
+          toast.error(err.response ? err.response.data.message : 'Something went wrong');
         })
         .finally(() => setdeleting(false));
     } else {
-      toast.error('no userdata available, try again');
+      toast.error('No user data available, try again');
     }
   };
 
@@ -61,9 +74,8 @@ const CartTable = ({ cart, setcart }) => {
       {
         Header: 'Name',
         accessor: 'product.name',
-        // Hide Name on smaller screens
-        headerClassName: 'hidden md:table-cell', // Hide header on smaller screens
-        cellClassName: 'hidden md:table-cell',   // Hide cell on smaller screens
+        headerClassName: 'hidden md:table-cell',
+        cellClassName: 'hidden md:table-cell',
         Cell: ({ cell: { value } }) => (
           <p className="text-xs md:text-sm lg:text-base">{value}</p>
         ),
@@ -72,8 +84,9 @@ const CartTable = ({ cart, setcart }) => {
         Header: 'Total Price',
         Cell: ({ row }) => {
           const { quantity, product } = row.original;
+          if (!product) return <p className="text-xs md:text-sm lg:text-base">N/A</p>;
           const actualprice = (
-            product?.price - (product?.price * product?.discount) / 100
+            product.price - (product.price * product.discount) / 100
           ).toFixed(0);
           const totalPrice = quantity * actualprice;
           return <p className="text-xs md:text-sm lg:text-base">${totalPrice.toFixed(0)}</p>;
@@ -84,10 +97,11 @@ const CartTable = ({ cart, setcart }) => {
         Cell: ({ row }) => {
           const [quantity, setQuantity] = useState(row.original.quantity);
 
-          // Only update when quantity actually changes, avoid updating immediately
           useEffect(() => {
-            onQuantityChange(row.original.product._id, quantity);
-          }, [quantity, row.original.product._id, onQuantityChange]);
+            if (row.original.product?._id) {
+              onQuantityChangeDebounced(row.original.product._id, quantity);
+            }
+          }, [quantity, row.original.product?._id, onQuantityChangeDebounced]);
 
           const increaseQuantity = () =>
             quantity < row.original.product.stock && setQuantity((prev) => prev + 1);
@@ -121,16 +135,16 @@ const CartTable = ({ cart, setcart }) => {
             onClick={() => handleDelete(row.original)}
           >
             Delete
-            {deleting && <img src="/loader.gif" className="h-10" />}
+            {deleting && <img src="/loader.gif" className="h-4 rounded-full" />}
           </button>
         ),
       },
     ],
-    [onQuantityChange, deleting]
+    [onQuantityChangeDebounced, deleting]
   );
 
-  // Memoize the data
-  const data = useMemo(() => cart, [cart]);
+  // Memoize the data and filter out items without a product
+  const data = useMemo(() => cart.filter(item => item.product), [cart]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
     columns,
