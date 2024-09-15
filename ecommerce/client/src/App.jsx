@@ -11,6 +11,11 @@ import AllProducts from './components/main/AllProducts'
 import Dashboard from './components/main/Dashboard'
 import SingleProd from './components/main/SingleProd'
 import Profile from './components/main/Profile'
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from './components/main/CheckoutForm'
+
+const stripePromise = loadStripe('pk_test_51PyueBC7ONiM7sjbMS489viG3MIn4dxSrdfY6IlHLvsd213mjASqUAqgqBqzmUaliF9PO7qP482ApuUaC5aCZcP400mpEeNPDv');
 
 const AppContent = () => {
   const location = useLocation();
@@ -20,7 +25,7 @@ const AppContent = () => {
     window.scrollTo(0,0)
   },[pathname])
   // Define routes where Navbar and Footer should not be rendered
-  const noNavFooterRoutes = ['/signup','/login'];
+  const noNavFooterRoutes = ['/signup','/login','/checkout'];
 
   return (
     <>
@@ -36,6 +41,7 @@ const AppContent = () => {
         <Route path='/admin' element={<Dashboard/>} />
         <Route path='/profile' element={<Profile/>} />
         <Route path='/product/:id' element={<SingleProd/>} />             
+        <Route path='/checkout' element={<CheckoutForm/>} />             
         <Route path='*' element={<Error />} />
       </Routes>
       
@@ -47,9 +53,11 @@ const AppContent = () => {
 
 const App = () => {
   return (
+    <Elements stripe={stripePromise}>
     <BrowserRouter>
       <AppContent />
     </BrowserRouter>
+    </Elements>
   );
 }
 

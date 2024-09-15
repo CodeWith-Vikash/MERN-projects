@@ -4,6 +4,7 @@ import {MainContext} from '../context/MainContext'
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Cookies from 'js-cookie'
+import Myorders from './Myorders'
 
 const Profile = () => {
   const {baseurl,userdata,uploadFile}= useContext(MainContext)
@@ -61,7 +62,7 @@ const Profile = () => {
   },[userdata])
   return (
     <div className='h-screen bg-blue-500 flex justify-center items-center'>
-      <div className='w-[300px] text-white shad flex flex-col p-2 gap-2 items-center rounded-lg'>
+      {/* <div className='w-[300px] text-white shad flex flex-col p-2 gap-2 items-center rounded-lg'>
         <section className='relative'>
         <img src={imageurl} className='rounded-full h-[150px] w-[150px] object-cover'/>
         <input type="file" id="file" className='hidden'
@@ -94,7 +95,8 @@ const Profile = () => {
         <address>{nearby}, {city}, {state}</address>
          <button className='py-1 px-2 bg-violet-800 rounded' onClick={()=> setediting(true)}>Edit address</button>
         </section>}
-      </div>
+      </div> */}
+      <Myorders/>
     </div>
   )
 }

@@ -151,6 +151,10 @@ const Navbar = () => {
         className="glass flex justify-center text-white h-[90vh] w-full absolute pt-10 z-[999]"
         ref={navref}
       >
+         <div className="flex flex-col gap-2 items-center">
+         <Link to='/products'>
+             <button  className="py-1 px-2 border-2 hover:border-violet-800 hover:bg-violet-800 rounded-lg">Products</button>
+            </Link>
         {token ? (
           <div className="flex flex-col gap-4 items-center">
             <Link to={'/profile'}>
@@ -162,9 +166,7 @@ const Navbar = () => {
               <p className="font-semibold">{userdata?.username}</p>
             </div>
             </Link>
-            <Link to='/products'>
-             <button  className="py-1 px-2 border-2 hover:border-violet-800 hover:bg-violet-800 rounded-lg">Products</button>
-            </Link>
+            
             {userdata?.email == "admin@techstuff.com" && <Link to='/admin'>
               <button className="py-1 px-2 bg-violet-800 rounded-lg">Dashboard</button>
             </Link>}
@@ -182,6 +184,7 @@ const Navbar = () => {
             </button>
           </Link>
         )}
+         </div>
       </section>
     </>
   );

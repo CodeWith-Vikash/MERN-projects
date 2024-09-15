@@ -203,7 +203,7 @@ const SingleProd = () => {
                 onClick={addToCart}
               >
                 Add to cart
-                {addingtocart && <img src="/loader.gif" className="h-10" />}
+                {addingtocart && <img src="/loader.gif" className="h-4 rounded-full" />}
               </button>
             </section>
           </section>

@@ -75,4 +75,24 @@ router.patch('/cart/quantity/:userId',async(req,res)=>{
   }
 })
 
+// Route to clear cart
+router.delete('/cart/clear/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const cart = await cartModel.findOne({ userId })
+    
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    cart.items = []; 
+    await cart.save();
+
+    return res.status(200).json({ message: 'Cart cleared', cart });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error while clearing cart', error });
+  }
+});
+
+
 module.exports = router;

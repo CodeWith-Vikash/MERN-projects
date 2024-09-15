@@ -54,7 +54,7 @@ const CartTable = ({ cart, setcart }) => {
           <img
             src={value}
             alt="Product"
-            className="w-12 h-12 md:w-16 md:h-16 object-cover bg-blue-500 rounded-lg"
+            className="w-12 h-12 md:w-16 md:h-16 object-contain rounded-lg"
           />
         ),
       },

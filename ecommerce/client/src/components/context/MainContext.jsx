@@ -11,6 +11,7 @@ export const MainContextProvider = ({ children }) => {
   const [avatarloading, setavatarloading] = useState(false)
   const [allproducts, setallproducts] = useState([])
   const [cart, setcart] = useState([])
+  const [total, settotal] = useState(0);
   const baseurl = "http://localhost:3000";
   // function to upload blob on cloudinary
   const uploadBlob = async (blobUrl) => {
@@ -105,7 +106,7 @@ export const MainContextProvider = ({ children }) => {
     getProducts()
   },[])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal}}>
       {children}
     </MainContext.Provider>
   );
