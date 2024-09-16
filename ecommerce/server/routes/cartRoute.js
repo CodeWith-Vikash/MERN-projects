@@ -94,27 +94,29 @@ router.delete('/cart/clear/:userId', async (req, res) => {
   }
 });
 
-// Route to update cart
-// Route to update cart
-// Route to update cart
+
+// route to update the cart
 router.patch('/cart/update/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { items } = req.body;
-  
+
+  // Validate the items array
+  if (!Array.isArray(items) || items.some(item => !item.product || !item.quantity)) {
+    return res.status(400).json({ message: 'Invalid items format' });
+  }
+
   try {
     let cart = await cartModel.findOne({ userId });
-    
     if (!cart) {
       cart = new cartModel({ userId, items });
     } else {
       cart.items = items;
     }
-    
+
     await cart.save();
-    
     res.status(200).json({ message: 'Cart updated', cart });
   } catch (error) {
-    console.error(error); // Log the error on the server
+    console.error(error);
     res.status(500).json({ message: 'Server error while updating cart', error });
   }
 });

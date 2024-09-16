@@ -61,50 +61,61 @@ const CheckoutForm = () => {
   };
 
   // function to set cart outOfStockProducts
-  const updateCart = () => {
-    axios
-      .patch(`${baseurl}/api/cart/update/${userdata._id}`, {
+  const updateCart = async () => {
+    if (outOfStockProducts.length === 0) {
+      console.log("No out-of-stock products to update.");
+      return;
+    }
+  
+    try {
+      const result = await axios.patch(`${baseurl}/api/cart/update/${userdata._id}`, {
         items: outOfStockProducts,
-      })
-      .then((result) => {
-        console.log(result);
-        setcart(result.data.cart.items);
-        settotal(0);
-        setsuccess(true);
-        setTimeout(() => {
-          navigate("/cart");
-        }, 2000);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(
-          err.response ? err.response.data.message : "something went wrong"
-        );
       });
+      console.log(result);
+      setcart(result.data.cart.items);
+      settotal(0);
+      setsuccess(true);
+      setTimeout(() => {
+        navigate("/cart");
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err.response ? err.response.data.message : "something went wrong"
+      );
+    }
   };
+  
 
   // function to place order
-  const palaceOrder = () => {
-    axios
-      .post(`${baseurl}/api/order/${userdata._id}`, {
+  const palaceOrder = async () => {
+    try {
+      const result = await axios.post(`${baseurl}/api/order/${userdata._id}`, {
         items: cart,
         totalprice: total,
-      })
-      .then(async (result) => {
-        console.log(result);
-        toast.success(result.data.message);
-        await handlestock();
-        await clearCart();
-        await updateCart();
-        getProducts();
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(
-          err.response ? err.response.data.message : "something went wrong"
-        );
       });
+      console.log(result);
+      toast.success(result.data.message);
+      
+      // Wait for stock handling to complete
+      await handlestock();
+      
+      // Clear the cart first
+      await clearCart();
+  
+      // Then update the cart with out-of-stock products
+      await updateCart();
+  
+      // Refresh products after updating the cart
+      getProducts();
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err.response ? err.response.data.message : "something went wrong"
+      );
+    }
   };
+  
 
   // Fetch clientSecret when component mounts
   useEffect(() => {
