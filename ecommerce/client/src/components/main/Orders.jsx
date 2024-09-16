@@ -5,7 +5,7 @@ import  {toast} from 'react-toastify'
 
 const Orders = () => {
     const [orders, setorders] = useState([])
-    const {baseurl,userdata} = useContext(MainContext)
+    const {baseurl,userdata,updateStock,getProducts} = useContext(MainContext)
     const [canceling, setcanceling] = useState(false)
     const [processing, setprocessing] = useState(false)
     // function to get orders
@@ -19,12 +19,21 @@ const Orders = () => {
         })
     }
 
+    
+  const handlestock=(items)=>{
+    items.forEach(async (item)=>{
+       await updateStock(item.product._id,'cancel',item.quantity)
+    })
+  }
+
     // function to cancel order
-    const cancelOrder=(id)=>{
+    const cancelOrder=(id,items)=>{
         setcanceling(true)
-        axios.patch(`${baseurl}/api/order/status/${id}`,{status:'canceled'}).then((result)=>{
+        axios.patch(`${baseurl}/api/order/status/${id}`,{status:'canceled'}).then(async (result)=>{
             console.log(result)
-            getOrders()
+            await handlestock(items)
+            await getOrders()
+            getProducts()
         }).catch((err)=>{
             console.log(err)
             toast.error(
@@ -82,7 +91,7 @@ const Orders = () => {
                           {order.status=='pending'?<button className='bg-yellow-500 py-1 px-2 rounded text-white' onClick={()=> processOrder(order._id,order.status)}>Ship Order</button>:
                           <button className='bg-green-500 py-1 px-2 rounded text-white' onClick={()=> processOrder(order._id,order.status)}>Deliver order</button>
                           }
-                          {order.status !='delivered' && <button className='bg-red-500 py-1 px-2 rounded text-white flex items-center gap-1' onClick={()=> cancelOrder(order._id)}>Cancel Order
+                          {order.status !='delivered' && <button className='bg-red-500 py-1 px-2 rounded text-white flex items-center gap-1' onClick={()=> cancelOrder(order._id,order.items)}>Cancel Order
                             {canceling && <img src="/loader.gif" className='h-4 rounded-full'/>}
                             </button>}
                         </div>}

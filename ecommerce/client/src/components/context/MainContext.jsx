@@ -11,6 +11,7 @@ export const MainContextProvider = ({ children }) => {
   const [avatarloading, setavatarloading] = useState(false)
   const [allproducts, setallproducts] = useState([])
   const [cart, setcart] = useState([])
+  const [outOfStockProducts, setoutOfStockProducts] = useState([])
   const [total, settotal] = useState(0);
   const baseurl = "http://localhost:3000";
   // function to upload blob on cloudinary
@@ -114,12 +115,37 @@ export const MainContextProvider = ({ children }) => {
       });
   };
 
+   // function to find out of stock products
+   const findOutOfStock=()=>{
+    let products= cart.filter((item)=>item.product.stock==0)
+    setoutOfStockProducts(products)
+  }
+
+
+  // function to update stock
+  const updateStock=(id,action,quantity)=>{
+    axios.patch(`${baseurl}/api/product/stock/${id}`,{action:action,quantity}).then((result)=>{
+      console.log(result)
+    }).catch((err)=>{
+      console.log(err)
+      toast.error(err.response?err.response.data.message:'something went wrong')
+    })
+  }
+
 
   useEffect(()=>{
     getAuthToken()
     getlocalUser()
     getProducts()
   },[])
+
+  useEffect(()=>{
+    if(cart){
+      if(!outOfStockProducts.length){
+        findOutOfStock()
+      }
+    }
+  },[cart])
   
   useEffect(()=>{
     if(userdata){
@@ -127,7 +153,7 @@ export const MainContextProvider = ({ children }) => {
     }
   },[userdata])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal,getCart}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal,getCart,updateStock,outOfStockProducts}}>
       {children}
     </MainContext.Provider>
   );

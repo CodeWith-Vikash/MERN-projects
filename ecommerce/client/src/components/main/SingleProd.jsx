@@ -100,7 +100,10 @@ const SingleProd = () => {
           toast.warning("product already added in cart");
           navigate("/cart");
         } else {
-          setaddingtocart(true);
+           if(singledata.stock==0){
+              toast.warning('product out of stock')
+           }else{
+            setaddingtocart(true);
           axios
             .post(`${baseurl}/api/cart/add/${userdata._id}`, {
               product: singledata,
@@ -119,6 +122,7 @@ const SingleProd = () => {
               );
             })
             .finally(() => setaddingtocart(false));
+           }
         }
       }
     } else {
@@ -179,7 +183,9 @@ const SingleProd = () => {
             </div>
 
             <section className="flex flex-col gap-2 md:flex-row">
-              <div className="flex">
+              {singledata?.stock==0?
+              <p className="text-red-500 font-semibold">Out of stock</p>
+              :<div className="flex">
                 <p
                   className="border-2  w-[30px] text-center text-lg font-bold cursor-pointer"
                   onClick={() => count > 1 && setcount(count - 1)}
@@ -197,7 +203,7 @@ const SingleProd = () => {
                 >
                   +
                 </p>
-              </div>
+              </div>}
               <button
                 className="bg-violet-800 py-1 px-2 rounded flex items-center justify-center gap-1"
                 onClick={addToCart}

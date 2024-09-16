@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback, useContext } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { useTable } from 'react-table';
 import axios from 'axios';
 import { MainContext } from '../context/MainContext';
@@ -97,11 +97,14 @@ const CartTable = ({ cart, setcart }) => {
         Cell: ({ row }) => {
           const [quantity, setQuantity] = useState(row.original.quantity);
 
+          const prevQuantity = useRef(quantity);
+
           useEffect(() => {
-            if (row.original.product?._id) {
+            if (row.original.product._id && quantity !== prevQuantity.current) {
               onQuantityChangeDebounced(row.original.product._id, quantity);
             }
-          }, [quantity, row.original.product?._id, onQuantityChangeDebounced]);
+            prevQuantity.current = quantity;
+          }, [quantity, row.original.product._id, onQuantityChangeDebounced]);
 
           const increaseQuantity = () =>
             quantity < row.original.product.stock && setQuantity((prev) => prev + 1);
@@ -109,7 +112,11 @@ const CartTable = ({ cart, setcart }) => {
             quantity > 1 && setQuantity((prev) => prev - 1);
 
           return (
-            <div className="flex items-center space-x-2">
+            <>
+              {row.original.product.stock==0?
+                <p className='text-red-500'>out of stock</p>
+              :
+              <div className="flex items-center space-x-2">
               <button
                 className="border-2 border-gray-300 w-8 h-8 flex justify-center items-center text-lg font-bold text-gray-700 hover:bg-gray-200"
                 onClick={decreaseQuantity}
@@ -124,6 +131,8 @@ const CartTable = ({ cart, setcart }) => {
                 +
               </button>
             </div>
+              }
+            </>
           );
         },
       },

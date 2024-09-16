@@ -156,10 +156,10 @@ router.patch('/product/stock/:productId',async(req,res)=>{
             if(product.stock==0){
                 return res.status(400).json({message:'product out of stock'})
             }
-            product.stock==product.stock-quantity
+            product.stock=product.stock-quantity
         }
         if(action=='cancel'){
-            product.stock==product.stock+quantity
+            product.stock=product.stock+quantity
         }
        await  product.save()
         res.status(200).json({message:'stock updated',product})
