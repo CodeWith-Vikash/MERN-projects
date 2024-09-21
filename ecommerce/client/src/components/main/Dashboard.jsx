@@ -53,7 +53,7 @@ const Dashboard = () => {
       const formData = new FormData();
       formData.append("image_file", file);
       formData.append("size", "auto");
-      const apiKey = "96jMJaQDnhK8G8hc2fdkdbdh";
+      const apiKey = "P8mmKHfQBcz45NbrWG21E1ar";
       fetch("https://api.remove.bg/v1.0/removebg", {
         method: "POST",
         headers: {
