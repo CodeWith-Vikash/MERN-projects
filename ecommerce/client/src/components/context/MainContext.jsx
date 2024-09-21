@@ -94,6 +94,7 @@ export const MainContextProvider = ({ children }) => {
   //  function to getToken
   const getAuthToken = ()=>{
     const gotToken= Cookies.get('token')
+    console.log(' token :',gotToken)
     if(gotToken){
       settoken(gotToken)
     }else{

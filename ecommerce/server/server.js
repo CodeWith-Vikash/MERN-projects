@@ -15,10 +15,13 @@ dotenv.config()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin :['https://techstufff.vercel.app'],
+    origin :['https://techstufff.vercel.app','http://localhost:5173'],
     methods:['GET','POST','PATCH','DELETE'],
     credentials:true
 }))
+
+// Trust proxy
+app.set('trust proxy', 1); // Trust first proxy
 
 mongoose.connect(process.env.CONNECTION_URI).then(()=>{
     console.log("mongodb connected")

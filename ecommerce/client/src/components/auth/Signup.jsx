@@ -61,6 +61,7 @@ const Signup = () => {
         settoken(token)
         setuserdata(result.data.user)
         Cookies.set('userdata', JSON.stringify(result.data.user), { expires: 1});
+        Cookies.set('token', JSON.stringify(result.data.token), { expires: 1});
         toast.success(result.data.message)
         navigate('/')
       }

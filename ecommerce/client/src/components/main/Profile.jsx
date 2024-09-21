@@ -15,7 +15,7 @@ const Profile = () => {
   const [state, setstate] = useState("")
   const [city, setcity] = useState("")
   const [nearby, setnearby] = useState("")
-  const [selectedSec, setselectedSec] = useState('orders')
+  const [selectedSec, setselectedSec] = useState('profile')
 
    const handleFileChange=async(file)=>{
     setavatarloading(true)
