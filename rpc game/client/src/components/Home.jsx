@@ -56,7 +56,7 @@ const Home = () => {
           />
 
           <Link to="/game/computer">
-            <motion.button
+          <motion.button
               initial={{ scale: 1.1 }}
               animate={{ scale: 1 }}
               transition={{

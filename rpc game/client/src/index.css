@@ -24,6 +24,9 @@
 .right{
     background: linear-gradient(to top,rgb(255, 251, 0,0.5),rgb(255, 179, 0,0.5),rgb(237, 73, 40,0.5));
 }
+.card2{
+    background-color: rgb(10, 10, 10,0.5);
+}
 
 .lmove{
     transform: rotate(270deg);
