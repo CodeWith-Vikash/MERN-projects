@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.card{
+    background-color: rgb(255, 255, 255,0.1);
+    /* backdrop-filter: blur(5px); */
+}
+.btn{
+    background: linear-gradient(to bottom, rgb(130, 18, 130), rgb(42, 6, 42));
+    font-family: cursive;
+}
+.rock{
+    transform: rotate(50deg);
+}
+.paper{
+    transform: rotate(180deg);
+}
+
+.left{
+    background: linear-gradient(to bottom,rgb(255, 51, 0,0.5),rgb(234, 76, 27,0.5),rgb(237, 73, 40,0.5)); 
+}
+.right{
+    background: linear-gradient(to top,rgb(255, 251, 0,0.5),rgb(255, 179, 0,0.5),rgb(237, 73, 40,0.5));
+}
+
+@media(min-width:768px){
+    .right{
+        background: linear-gradient(to left,rgb(255, 51, 0,0.5),rgb(234, 76, 27,0.5),rgb(237, 73, 40,0.5));
+    }
+    .left{
+        background: linear-gradient(to right,rgb(255, 251, 0,0.5),rgb(255, 179, 0,0.5),rgb(237, 73, 40,0.5));
+    }
+}
+
+.lmove{
+    transform: rotate(270deg);
+}
