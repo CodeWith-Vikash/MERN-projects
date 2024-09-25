@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BiSolidImageAdd } from "react-icons/bi";
+import Cookies from 'js-cookie'
+import {toast} from 'react-toastify'
+import {MainContext} from '../context/MainContext'
 
 const Signup = () => {
   const [avatarloading, setavatarloading] = useState(false);
   const [submitting, setsubmitting] = useState(false)
-  const [fileurl, setfileurl] = useState('/user.jfif');
+  const [fileurl, setfileurl] = useState(null);
   const [username, setusername] = useState('')
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
+
+  const {baseurl,getToken,getUserdata} = useContext(MainContext)
+  const navigate=useNavigate()
 
   // function to upload image on cloudinary
   const uploadFile = async (file) => {
@@ -19,7 +26,7 @@ const Signup = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/upload`, formData, {
+      const response = await axios.post(`${baseurl}/api/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -38,15 +45,31 @@ const Signup = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    setsubmitting(true)
-    axios.post('http://localhost:3000/api/signup',{username,password,email,avatar:fileurl}).then((result)=>{
-      console.log(result);
-      setusername('')
-      setemail('')
-      setpassword('')
-    }).catch((err)=>{
-      console.log(err)
-    }).finally(()=> setsubmitting(false))
+    if(fileurl){
+      setsubmitting(true)
+      axios.post(`${baseurl}/api/signup`,{username,password,email,avatar:fileurl}).then((result)=>{
+        console.log(result);
+        Cookies.set('token',result.data.token,{
+          expires:30
+        })
+        Cookies.set('userdata',JSON.stringify(result.data.user),{
+          expires:30
+        })
+        getToken()
+        getUserdata()
+        navigate('/')
+        setusername('')
+        setemail('')
+        setpassword('')
+        setfileurl(null)
+        toast.success(result.data.message)
+      }).catch((err)=>{
+        console.log(err)
+        toast.error(err.response?err.response.data.message:'something went wrong')
+      }).finally(()=> setsubmitting(false))
+    }else{
+      toast.warning('please add an avatar')
+    }
   }
 
   return (
@@ -56,12 +79,13 @@ const Signup = () => {
         <input className="outline-none border-2 py-1 px-2 rounded-lg bg-transparent" type="email" placeholder="Email" value={email} onChange={(e)=> setemail(e.target.value)} required/>
         <input className="outline-none border-2 py-1 px-2 rounded-lg bg-transparent" type="text" placeholder="Password" value={password} onChange={(e)=> setpassword(e.target.value)} required/>
         
-        <label htmlFor="img" className="font-semibold cursor-pointer">
+        <label htmlFor="img" className="font-semibold cursor-pointer flex items-center gap-2">
+          <BiSolidImageAdd size={'2rem'}/>
           Add an avatar
           {avatarloading ? (
             <img src="/loader.gif" className="h-10 rounded-full" alt="loading" />
           ) : (
-            fileurl && <img src={fileurl} className="h-10 w-10 object-cover rounded-full" alt="avatar" />
+            fileurl && <img src={fileurl} className="h-10 w-10 object-cover rounded" alt="avatar" />
           )}
         </label>
         <input

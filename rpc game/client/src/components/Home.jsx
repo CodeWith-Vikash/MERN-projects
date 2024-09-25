@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useContext,useState } from "react";
 import bg from "/bg3.jpg";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {MainContext} from '../context/MainContext'
+import axios from 'axios'
+import {toast} from 'react-toastify'
 
 const Home = () => {
+  const {baseurl,token,userdata} = useContext(MainContext)
+  const [creatingcomputer, setcreatingcomputer] = useState(false)
+  const [creatingfriend, setcreatingfriend] = useState(false)
+  const navigate=useNavigate()
+
+  const createGame=(mode)=>{
+    if(mode=='computer'){
+       setcreatingcomputer(true)
+       axios.post(`${baseurl}/api/game/create/${mode}`,{userId:userdata._id}).then((result)=>{
+          console.log(result)
+       }).catch((err)=>{
+        console.log(err)
+        toast.error(err.response?err.response.data.message:'something went wrong')
+       }).finally(()=> setcreatingcomputer(false))
+    }
+  }
   return (
     <div
       className={`h-screen w-full bg-cover bg-center flex justify-center items-center text-white`}
@@ -55,7 +74,6 @@ const Home = () => {
             className="hidden md:block h-[250px] paper absolute right-0 bottom-[30px]"
           />
 
-          <Link to="/game/computer">
           <motion.button
               initial={{ scale: 1.1 }}
               animate={{ scale: 1 }}
@@ -65,12 +83,13 @@ const Home = () => {
                 repeatType: "mirror",
                 ease: "easeInOut",
               }}
-              className="btn text-sm h-fit w-fit border-2 border-white rounded-lg py-1 px-2"
+              className="btn text-sm h-fit border-2 border-white rounded-lg py-1 px-2 flex items-center gap-1"
+              onClick={()=> userdata?createGame('computer'):navigate('/login')}
             >
-              Play With Computer
+              {creatingcomputer?'creating...':'Play With Computer'}
             </motion.button>
-          </Link>
-          <Link to="/game/friend">
+
+          <Link to={`${token?'/game/friend':'/login'}`}>
             <motion.button
               initial={{ scale: 1.1 }}
               animate={{ scale: 1 }}
@@ -81,6 +100,7 @@ const Home = () => {
                 ease: "easeInOut",
               }}
               className="btn text-sm h-fit w-fit border-2 border-white rounded-lg py-1 px-2"
+              onClick={()=> userdata?createGame('friend'):navigate('/login')}
             >
               Play With Friend
             </motion.button>

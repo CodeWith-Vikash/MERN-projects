@@ -1,21 +1,38 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {motion} from 'framer-motion'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
+import {MainContext} from '../context/MainContext'
+import {toast} from 'react-toastify'
+import Cookies from 'js-cookie'
 
 const Login = () => {
   const [loading, setloading] = useState(false)
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
+  const {baseurl,getToken,getUserdata} = useContext(MainContext)
+  const navigate = useNavigate()
+
   const handleSubmit=(e)=>{
     e.preventDefault()
     setloading(true)
-    axios.post('http://localhost:3000/api/login',{email,password}).then((result)=>{
+    axios.post(`${baseurl}/api/login`,{email,password}).then((result)=>{
       console.log(result);
+      Cookies.set('token',result.data.token,{
+        expires:30
+      })
+      Cookies.set('userdata',JSON.stringify(result.data.user),{
+        expires:30
+      })
+      getToken()
+      getUserdata()
+      navigate('/')
       setemail('')
       setpassword('')
+      toast.success(result.data.message)
     }).catch((err)=>{
       console.log(err)
+      toast.error(err.response?err.response.data.message:'something went wrong')
     }).finally(()=> setloading(false))
   }
   return (

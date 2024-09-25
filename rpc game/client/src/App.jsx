@@ -4,10 +4,12 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import Game from './components/Game'                     
 import Signup from './components/Signup'                     
 import Login from './components/Login'                     
+import Navbar from './components/Navbar'                     
 
 const App = () => {
   return (
     <BrowserRouter>
+    <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/signup' element={<Signup/>}/>

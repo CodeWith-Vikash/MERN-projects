@@ -2,6 +2,7 @@ const express= require('express')
 const mongoose= require('mongoose')
 const userRoute= require('./routes/userRoute')
 const uploadRoute= require('./routes/uploadRoute')
+const gameRoute= require('./routes/gameRoute')
 const dotenv= require('dotenv')
 const cors= require('cors')
 
@@ -25,6 +26,7 @@ app.get('/',(req,res)=>{
 })
 app.use('/api',userRoute)
 app.use('/api',uploadRoute)
+app.use('/api',gameRoute)
 const port= process.env.PORT || 3000
 app.listen(port,()=>{
     console.log(`app is running on port ${port}`)
