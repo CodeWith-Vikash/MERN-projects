@@ -7,24 +7,10 @@ import axios from 'axios'
 import {toast} from 'react-toastify'
 
 const Home = () => {
-  const {baseurl,token,userdata,setgame} = useContext(MainContext)
-  const [creatingcomputer, setcreatingcomputer] = useState(false)
+  const {baseurl,token,userdata,setgame,createGame,creatingcomputer} = useContext(MainContext)
   const [creatingfriend, setcreatingfriend] = useState(false)
   const navigate=useNavigate()
 
-  const createGame=(mode)=>{
-    if(mode=='computer'){
-       setcreatingcomputer(true)
-       axios.post(`${baseurl}/api/game/create/${mode}`,{userId:userdata._id}).then((result)=>{
-          console.log(result)
-          setgame(result.data.game)
-          navigate('/game/computer')
-       }).catch((err)=>{
-        console.log(err)
-        toast.error(err.response?err.response.data.message:'something went wrong')
-       }).finally(()=> setcreatingcomputer(false))
-    }
-  }
   return (
     <div
       className={`h-screen w-full bg-cover bg-center flex justify-center items-center text-white`}

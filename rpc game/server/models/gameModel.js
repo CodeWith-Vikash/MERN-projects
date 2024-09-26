@@ -20,15 +20,7 @@ const gameSchema = new mongoose.Schema({
   },
   player1score: { type: Number, default: 0 }, // Player's score
   player2score: { type: Number, default: 0 }, // Friend's or Computer's score
-  winner: {
-    type: mongoose.Schema.Types.Mixed, // Can be ObjectId or String
-    refPath: "winnerType", // Reference to the dynamic winner type
-    default: undefined,
-  },
-  winnerType: {
-    type: String,
-    enum: ["User", "Computer"], // Dynamic reference to either 'User' or 'Computer'
-  },
-});
+  winner:{type:String,enum:['player1','player2','computer']}
+})
 
 module.exports = mongoose.model("Game", gameSchema);

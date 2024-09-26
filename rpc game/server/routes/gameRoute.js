@@ -31,7 +31,7 @@ router.get('/game/:userId', async (req,res)=>{
               { player1: userId },
               { player2: userId }
             ]
-          }).populate('player1')
+          }).populate('player1').populate('winner')
           if(game.mode=='friend'){
             game.populate('player2')
           }
@@ -56,13 +56,16 @@ router.patch('/game/score/:gameId',async(req,res)=>{
         if(mode=='computer'){
             if(winner=='computer'){
                 game.player2score = game.player2score+1
+            }else{
+                game.player1score = game.player1score+1
             }
-            game.player1score = game.player1score+1
+            
         }else{
             if(game.player1==winner){
                 game.player1score = game.player1score+1
+            }else{
+                game.player2score = game.player2score+1
             }
-            game.player2score = game.player2score+1
             game.populate('player2')
         }
         await game.save()
@@ -72,40 +75,42 @@ router.patch('/game/score/:gameId',async(req,res)=>{
     }
 })
 
-// route to set winner
-router.post('/game/winner/:gameId',async(req,res)=>{
-    const {gameId} = req.params
+
+//  to set winner
+router.post('/game/winner/:gameId', async (req, res) => {
+    const { gameId } = req.params;
     try {
-         const game = await gameModel.findById(gameId)
-         if(!game){
-             return res.status(404).json({message:'game not found'})
+        const game = await gameModel.findById(gameId);
+        if (!game) {
+            return res.status(404).json({ message: 'Game not found' });
+        }
+
+        if (game.mode === 'computer') {
+            if (game.player1score === 3) {
+                game.winner='player1'
+            } else if (game.player2score === 3) {
+                game.winner='computer'
             }
-            if(game.mode=='computer'){
-                if(game.player1score==3){
-                    game.winner=game.player1
-                    game.winnerType='User'
-                }else if(game.player2score==3){
-                    game.winner='Computer'
-                    game.winnerType='Computer'
-                }
-                
-            }else{
-                if(game.player1score==3){
-                    game.winner=game.player1
-                    game.winnerType='User'
-                }else if(game.player2score==3){
-                    game.winner=game.player2
-                    game.winnerType='User'
-                }
-                await game.populate('player2')
+        } else {
+            if (game.player1score === 3) {
+                game.winner='player1'
+            } else if (game.player2score === 3) {
+                game.winner='player2'
             }
-            await game.populate('player1')
-            await game.populate('winner')
-           await game.save()
-           return res.status(200).json({message:"checked for winner",game})
+            await game.populate('player2');
+        }
+
+        await game.save();
+        await game.populate('player1');
+        await game.populate('winner');
+
+        return res.status(200).json({ message: "Checked for winner", game });
     } catch (error) {
-        return res.status(500).json({message:"server error while setting winner "})
+        return res.status(500).json({ message: "Server error while setting winner" });
     }
-})
+});
+
+
+  
 
 module.exports=router

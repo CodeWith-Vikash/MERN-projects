@@ -12,8 +12,10 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@fireworks-js/react": "^2.10.8",
     "@mui/material": "^6.1.1",
     "axios": "^1.7.7",
+    "fireworks-js": "^2.10.8",
     "framer-motion": "^11.5.6",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
