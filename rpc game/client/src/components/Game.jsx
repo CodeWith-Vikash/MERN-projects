@@ -108,7 +108,7 @@ const checkWinner=()=>{
               src={game?.player1.avatar}
               className="h-10 w-10 rounded-full object-cover"
             />
-            <Rating
+             <Rating
               name="read-only"
               value={myscore}
               max={3}

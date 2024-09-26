@@ -5,6 +5,7 @@ import Game from './components/Game'
 import Signup from './components/Signup'                     
 import Login from './components/Login'                     
 import Navbar from './components/Navbar'                     
+import Result from './components/Result'                     
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route path='/' element={<Home/>}/>
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/login' element={<Login/>}/>
+        <Route path='/result' element={<Result/>}/>
         <Route path='/game/:mode' element={<Game/>}/>
       </Routes>
     </BrowserRouter>
