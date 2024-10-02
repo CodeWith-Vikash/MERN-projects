@@ -1,15 +1,64 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import bg from "/bg3.jpg";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import {MainContext} from '../context/MainContext'
-import axios from 'axios'
-import {toast} from 'react-toastify'
+import { MainContext } from "../context/MainContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Home = () => {
-  const {baseurl,token,userdata,setgame,createGame,creatingcomputer} = useContext(MainContext)
-  const [creatingfriend, setcreatingfriend] = useState(false)
-  const navigate=useNavigate()
+  const [room, setroom] = useState("");
+  const [gameid, setgameid] = useState("");
+  const [joining, setjoining] = useState(false);
+  const {
+    baseurl,
+    token,
+    userdata,
+    setgame,
+    createGame,
+    creatingcomputer,
+    creatingfriend,
+    socket,
+    roomname,
+    setwaiting
+  } = useContext(MainContext);
+  const navigate = useNavigate();
+
+  const joingame = (e) => {
+    e.preventDefault();
+    if (userdata) {
+      if (socket) {
+        if(room && gameid){
+          setjoining(true);
+        axios
+          .patch(`${baseurl}/api/game/join/${gameid}`, {
+            userId: userdata._id,
+            roomname:room,
+          })
+          .then((result) => {
+            console.log(result);
+            setgame(result.data.game);
+            setwaiting(false)
+            socket.emit("joinRoom", {roomname:room});
+            navigate('/game/friend')
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.error(
+              err.response ? err.response.data.message : "something went wrong"
+            );
+          })
+          .finally(() => setjoining(false));
+        }else{
+          toast.error("roomname and gameid not avilable");
+        }
+      } else {
+        toast.error("socket not avilable");
+      }
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div
@@ -33,8 +82,8 @@ const Home = () => {
           <h3 className="font-sans text-4xl">SCISSOR</h3>
         </motion.section>
 
-        <section className="flex flex-col items-center justify-end gap-2 h-full w-[50%] relative">
-          {/* Rock Image Animation */}
+        <section className="flex flex-col items-start justify-center gap-2 h-full md:w-[50%]">
+          {/* Rock Image Animation
           <motion.img
             initial={{ rotate: 55 }}
             animate={{ rotate: 50 }}
@@ -48,7 +97,7 @@ const Home = () => {
             className="hidden md:block h-[200px] rock absolute bottom-8 left-[-5px]"
           />
 
-          {/* Paper Image Animation */}
+          Paper Image Animation
           <motion.img
             initial={{ rotate: 185 }}
             animate={{ rotate: 180 }}
@@ -60,9 +109,29 @@ const Home = () => {
             }}
             src="/paper.png"
             className="hidden md:block h-[250px] paper absolute right-0 bottom-[30px]"
-          />
-
-          <motion.button
+          /> */}
+          <form
+            className="flex flex-col gap-2 items-start bg-black p-2 rounded bg-opacity-[0.5]"
+            onSubmit={joingame}
+          >
+            <input
+              type="text"
+              placeholder="RoomName"
+              required
+              value={room}
+              onChange={(e) => setroom(e.target.value)}
+              className="outline-none bg-transparent border-white border rounded py-1 px-2"
+            />
+            <input
+              type="text"
+              placeholder="Game id"
+              required
+              value={gameid}
+              onChange={(e) => setgameid(e.target.value)}
+              className="outline-none bg-transparent border-white border rounded py-1 px-2"
+            />
+            <motion.button
+              type="submit"
               initial={{ scale: 1.1 }}
               animate={{ scale: 1 }}
               transition={{
@@ -72,27 +141,45 @@ const Home = () => {
                 ease: "easeInOut",
               }}
               className="btn text-sm h-fit border-2 border-white rounded-lg py-1 px-2 flex items-center gap-1"
-              onClick={()=> userdata?createGame('computer'):navigate('/login')}
             >
-              {creatingcomputer?'creating...':'Play With Computer'}
+              {joining ? "joining..." : "Join a Game"}
             </motion.button>
+          </form>
+          <motion.button
+            type="button"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+            className="btn text-sm h-fit border-2 border-white rounded-lg py-1 px-2 flex items-center gap-1"
+            onClick={() =>
+              userdata ? createGame("computer") : navigate("/login")
+            }
+          >
+            {creatingcomputer ? "creating..." : "Play With Computer"}
+          </motion.button>
 
-          <Link to={`${token?'/game/friend':'/login'}`}>
-            <motion.button
-              initial={{ scale: 1.1 }}
-              animate={{ scale: 1 }}
-              transition={{
-                duration: 2.5,
-                repeat: Infinity,
-                repeatType: "mirror",
-                ease: "easeInOut",
-              }}
-              className="btn text-sm h-fit w-fit border-2 border-white rounded-lg py-1 px-2"
-              onClick={()=> userdata?createGame('friend'):navigate('/login')}
-            >
-              Play With Friend
-            </motion.button>
-          </Link>
+          <motion.button
+            type="button"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
+            className="btn text-sm h-fit w-fit border-2 border-white rounded-lg py-1 px-2"
+            onClick={() =>
+              userdata ? createGame("friend") : navigate("/login")
+            }
+          >
+            {creatingfriend ? "creating..." : "Play With Friend"}
+          </motion.button>
         </section>
       </div>
     </div>

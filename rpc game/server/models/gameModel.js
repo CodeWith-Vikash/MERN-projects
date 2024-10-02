@@ -14,9 +14,6 @@ const gameSchema = new mongoose.Schema({
   player2: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: function () {
-      return this.mode === "friend";
-    },
   },
   player1score: { type: Number, default: 0 }, // Player's score
   player2score: { type: Number, default: 0 }, // Friend's or Computer's score

@@ -6,17 +6,16 @@ import { MainContext } from "../context/MainContext";
 import { Fireworks } from "@fireworks-js/react";
 
 const Result = () => {
-  const { winner, userdata, game, createGame, creatingcomputer } =
-    useContext(MainContext);
+  const { userdata, game, createGame, creatingcomputer } = useContext(MainContext);
   const navigate = useNavigate();
   const fireworksRef = useRef(null); // Reference for the Fireworks component
 
   // Start fireworks when the winner is the current user
   useEffect(() => {
-    if (winner === "player1" && fireworksRef.current) {
+    if (game?.winner === "player1" && fireworksRef.current) {
       fireworksRef.current.start(); // Start fireworks if the user won
     }
-  }, [winner, userdata]);
+  }, [game, userdata]);
 
   return (
     <div
@@ -25,7 +24,9 @@ const Result = () => {
     >
       <div className="card w-[300px] md:w-[500px] h-[300px] rounded-lg flex justify-center items-center relative">
         {/* Winner card */}
-        {winner === "player1" ? (
+        {(game?.mode === 'computer' && game?.winner === "player1") ||
+        (game?.mode !== 'computer' && game?.winner === 'player1' && userdata?._id === game?.player1?._id) ||
+        (game?.mode !== 'computer' && game?.winner === 'player2' && userdata?._id === game?.player2?._id) ? (
           <section className="w-[180px] h-[200px] win rounded-lg border-2 border-white flex flex-col items-center justify-center gap-2 relative">
             <h3>You Won</h3>
             <motion.button
@@ -91,7 +92,13 @@ const Result = () => {
           <section className="w-[180px] h-[200px] loose rounded-lg border-2 border-white flex flex-col items-center justify-center gap-2 relative">
             <Rating
               name="read-only"
-              value={game?.player1score}
+              value={
+                game?.mode === 'computer'
+                  ? game?.player1score
+                  : game?.winner === 'player1'
+                  ? game?.player2score // If player1 won, show player2's score
+                  : game?.player1score // If player2 won, show player1's score
+              }
               max={3}
               readOnly
               sx={{
@@ -102,7 +109,7 @@ const Result = () => {
                   color: "lightgray",
                 },
               }}
-              className="pb-2 pt-10"
+              className="pb-4 pt-8 scale-[1.3]"
             />
             <motion.button
               initial={{ scale: 1.1 }}
