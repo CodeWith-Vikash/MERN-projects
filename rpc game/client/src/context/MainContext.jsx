@@ -7,7 +7,8 @@ import { io } from 'socket.io-client';
 export const MainContext = createContext(null);
 
 export const ContextProvider = ({ children, navigate }) => {
-  const baseurl = 'http://localhost:3000';
+  // const baseurl = 'http://localhost:3000';
+  const baseurl = 'https://rpc-server-production.up.railway.app';
   const [token, settoken] = useState(null);
   const [userdata, setuserdata] = useState(null);
   const [game, setgame] = useState(null);

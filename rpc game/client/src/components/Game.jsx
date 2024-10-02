@@ -10,7 +10,6 @@ import Move from "./Move";
 const Game = () => {
   const navigate = useNavigate();
   const { mode } = useParams();
-  console.log(mode);
   const [ismoveselected, setismoveselected] = useState(false);
   const [mymove, setmymove] = useState(null);
   const [computermove, setcomputermove] = useState(null);
@@ -29,6 +28,7 @@ const Game = () => {
     waiting,
     setwaiting
   } = useContext(MainContext);
+  console.log(game);
   const [opponentScore, setopponentScore] = useState(0);
   const [myscore, setmyscore] = useState(0);
   const [computerscore, setcomputerscore] = useState(0);
@@ -99,48 +99,59 @@ const Game = () => {
   };
 
   // Function to determine the winner and update the score
-  const determineWinner = (move) => {
-    if (!mymove || !move) {
-      return; // Ensure both moves are set
-    }
-    
-    if (mymove === move) {
-      setTimeout(() => {
-        setismoveselected(false);
-        setmymove(null);
-        setopponentmove(null);
-      }, 1000);
-      return "draw"; // Handle the draw case separately
-    }
-  
-    const playerWins =
-      (mymove === "rock" && move === "scissor") ||
-      (mymove === "scissor" && move === "paper") ||
-      (mymove === "paper" && move === "rock");
-  
-    if (playerWins) {
-      updateScore(userdata._id); // Player wins
-    } else {
-      const winnerId = mode === 'computer' ? 'computer' : opponent._id;
-      updateScore(winnerId); // Opponent or computer wins
-    }
-  };
+  const [scoreUpdated, setScoreUpdated] = useState(false); // Flag to track if the score has been updated
+
+const determineWinner = (move) => {
+  if (!mymove || !move || scoreUpdated) {
+    return; // Ensure both moves are set and the score hasn't been updated
+  }
+
+  let winnerId;
+  if (mymove === move) {
+    // Handle draw case
+    setTimeout(() => {
+      setismoveselected(false);
+      setmymove(null);
+      setopponentmove(null);
+      setScoreUpdated(false); // Reset score update flag for the next round
+    }, 1000);
+    return "draw"; 
+  }
+
+  const playerWins =
+    (mymove === "rock" && move === "scissor") ||
+    (mymove === "scissor" && move === "paper") ||
+    (mymove === "paper" && move === "rock");
+
+  if (playerWins) {
+    winnerId = userdata._id; // Player wins
+  } else {
+    winnerId = mode === 'computer' ? 'computer' : opponent._id; // Opponent or computer wins
+  }
+
+  // Update score if not already updated
+  updateScore(winnerId);
+  setScoreUpdated(true); // Set flag to prevent multiple updates
+};
+
   
 
   // This useEffect triggers the game logic whenever the player makes a move
   useEffect(() => {
     if (mymove) {
-      if(mode=='computer'){
+      if (mode === 'computer') {
         const computerMove = generateComputerMove();
-       setcomputermove(computerMove);
-       determineWinner(computerMove);
-      }else{
-        if(opponentmove){
-          determineWinner(opponentmove)
-        }
+        setcomputermove(computerMove);
+        determineWinner(computerMove);
+      } else if (opponentmove) {
+        determineWinner(opponentmove);
       }
     }
-  }, [mymove,opponentmove]);
+    
+    // Reset score update flag at the end of the round
+    setTimeout(() => setScoreUpdated(false), 1000); // Reset after determining winner
+  }, [mymove, opponentmove]);
+  
 
   // handle move selection
   const handleMoveSelection = (move) => {
@@ -210,7 +221,7 @@ const Game = () => {
             />
             <Rating
               name="read-only"
-              value={game?.player1._id==userdata?._id?game?.player1score:game?.player2score}
+              value={Number(game?.player1._id==userdata?._id?game?.player1score:game?.player2score)}
               max={3}
               readOnly
               sx={{
@@ -222,6 +233,7 @@ const Game = () => {
                 },
               }}
             />
+            {/* <p>{game?.player1._id==userdata?._id?game?.player1score:game?.player2score}</p> */}
           </div>
           {/* move */}
           <motion.img
@@ -302,7 +314,7 @@ const Game = () => {
                   />
                   <Rating
                     name="read-only"
-                    value={game?.player1._id!=userdata?._id?game?.player1score:game?.player2score}
+                    value={Number(game?.player1._id!=userdata?._id ? game?.player1score : game?.player2score)}
                     max={3}
                     readOnly
                     sx={{
@@ -314,6 +326,7 @@ const Game = () => {
                       },
                     }}
                   />
+                  {/* <p>{game?.player1._id!=userdata?._id ? game?.player1score : game?.player2score}</p> */}
                 </div>
                 {/* move */}
                 <motion.img
@@ -362,7 +375,7 @@ const Game = () => {
           />
         ) : (
           <>
-            {game?.player2 && (
+            {game?.player2 ? (
               <>
                 {!waiting?<Move
                   winner={winner}
@@ -371,7 +384,7 @@ const Game = () => {
                   mymove={mymove}
                 />: <p className="absolute bottom-[40%] right-2 md:bottom-2 md:right-[40%] text-sm">waiting for opponent move</p>}
               </>
-            )}
+            ):"player2 not avilable"}
           </>
         )}
       </div>
