@@ -15,13 +15,17 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-// Configure Multer to use Cloudinary
+// Configure Multer to use Cloudinary with timestamp in public_id
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'techstuff', // Optional: Specify a folder to store uploads in
+    folder: 'techstuff', // Specify folder in Cloudinary
     resource_type: 'auto', // Automatically determine resource type (image, video, raw, etc.)
-    public_id: (req, file) => path.parse(file.originalname).name, // Use original file name as public ID
+    public_id: (req, file) => {
+      const timestamp = Date.now(); // Get current timestamp
+      const fileName = path.parse(file.originalname).name; // Extract file name without extension
+      return `${fileName}-${timestamp}`; // Return file name with timestamp appended
+    },
   },
 });
 
@@ -33,7 +37,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
     // The uploaded file's Cloudinary info is available in req.file
     res.json({
       message: 'File uploaded successfully',
-      url: req.file.path, // This is the Cloudinary URL of the uploaded file
+      url: req.file.path, // Cloudinary URL of the uploaded file
     });
   } catch (error) {
     console.error('Error uploading file:', error);

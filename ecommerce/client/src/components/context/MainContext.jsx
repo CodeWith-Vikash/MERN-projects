@@ -14,7 +14,7 @@ export const MainContextProvider = ({ children }) => {
   const [outOfStockProducts, setoutOfStockProducts] = useState([])
   const [total, settotal] = useState(0);
   // const baseurl = "http://localhost:3000";
-  const baseurl = "https://techstuff-server-production.up.railway.app";
+  const baseurl = "https://techstuff-server.onrender.com";
   // function to upload blob on cloudinary
   const uploadBlob = async (blobUrl) => {
     try {
