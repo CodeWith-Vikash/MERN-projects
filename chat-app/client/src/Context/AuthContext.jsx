@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   const [chat, setchat] = useState({})
   const [chatuser, setchatuser] = useState(null)
   const [socketId, setsocketId] = useState(null)
-  const baseurl='https://chat-app-server-production-c721.up.railway.app'
+  const baseurl='https://chat-app-server-1ebz.onrender.com'
   // const baseurl='http://localhost:3000'
    
   //  function to set socket id to room
