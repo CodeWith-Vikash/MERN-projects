@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
+  const [mainloading, setmainloading] = useState(false)
   const [userdata, setuserdata] = useState(null);
   const [imgloading, setimgloading] = useState(false)
   const [allusers, setallusers] = useState([])
@@ -69,13 +70,15 @@ export const UserProvider = ({ children }) => {
  
 // function to get all users
 const getUsers=()=>{
+  setmainloading(true)
+  console.log('loading')
   axios.get(`${baseurl}/api/users`).then((result)=>{
-    console.log(result);
+    console.log('loaded',result);
     setallusers(result.data)
   }).catch((err)=>{
     console.log(err);
     toast.error(err.response.data.message)
-  })
+  }).finally(()=> setmainloading(false))
 }
 
 // function to get user chat
@@ -162,7 +165,7 @@ const getChat=(id)=>{
   }, [userdata]);
   
   return (
-    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl,setSocket,getSocket,socketId}}>
+    <UserContext.Provider value={{ chatref,userdata,setuserdata,uploadFile,imgloading,getuserdetails,allusers,chat,chatuser,getChat,sideref,openSide,closeSide,setchat,scrollToBottom,baseurl,setSocket,getSocket,socketId,mainloading}}>
       {children}
     </UserContext.Provider>
   );
