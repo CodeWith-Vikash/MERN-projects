@@ -156,7 +156,9 @@ const SingleProd = () => {
   return (
     <div className="min-h-screen bg-blue-500 text-white">
       {loading ? (
-        <b>loading...</b>
+        <div className="flex justify-center items-center h-[300px]">
+          <img src='\loader.gif' className='my-0 mx-auto rounded-full'/>
+        </div>
       ) : (
         <section className="md:h-[500px] flex flex-col items-center justify-center py-10 md:flex-row">
           <div className="prod h-[300px] w-[250px] rounded relative md:rounded-r-none flex items-center">

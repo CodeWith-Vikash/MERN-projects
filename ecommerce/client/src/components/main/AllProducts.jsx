@@ -3,7 +3,7 @@ import { MainContext } from "../context/MainContext";
 import Product from "./Product";
 
 const AllProducts = () => {
-  const { allproducts } = useContext(MainContext);
+  const { allproducts,mainloading } = useContext(MainContext);
 
   const [products, setproducts] = useState(allproducts);
   const [range, setrange] = useState(100);
@@ -74,11 +74,11 @@ const AllProducts = () => {
         </div>
       </section>
 
-      <section className="flex flex-wrap justify-center gap-4">
+      {mainloading?<img src='\loader.gif' className='my-10 mx-auto rounded-full'/>:<section className="flex flex-wrap justify-center gap-4">
         {products.map((data) => {
           return <Product data={data} key={data._id} />;
         })}
-      </section>
+      </section>}
     </div>
   );
 };

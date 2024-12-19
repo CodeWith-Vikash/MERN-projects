@@ -6,6 +6,7 @@ import Cookies from 'js-cookie'
 export const MainContext = createContext();
 
 export const MainContextProvider = ({ children }) => {
+  const [mainloading, setmainloading] = useState(false)
   const [token, settoken] = useState(null)
   const [userdata, setuserdata] = useState(null)
   const [avatarloading, setavatarloading] = useState(false)
@@ -71,13 +72,14 @@ export const MainContextProvider = ({ children }) => {
 
   // function to get all products
   const getProducts=()=>{
+    setmainloading(true)
     axios.get(`${baseurl}/api/products`).then((result)=>{
       console.log(result)
       setallproducts(result.data.products)
     }).catch((err)=>{
       console.log(err)
       toast.error(err.response?err.response.data.message:'something went wrong')
-    })
+    }).finally(()=> setmainloading(false))
   }
 
   // function to get localstorage
@@ -155,7 +157,7 @@ export const MainContextProvider = ({ children }) => {
     }
   },[userdata])
   return (
-    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal,getCart,updateStock,outOfStockProducts}}>
+    <MainContext.Provider value={{ uploadBlob, uploadFile,baseurl,token,settoken,userdata,setuserdata,getlocalUser,getAuthToken,avatarloading,allproducts,getProducts,cart,setcart,total,settotal,getCart,updateStock,outOfStockProducts,mainloading}}>
       {children}
     </MainContext.Provider>
   );
