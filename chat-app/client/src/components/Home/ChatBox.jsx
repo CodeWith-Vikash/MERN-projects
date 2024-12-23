@@ -286,7 +286,7 @@ const ChatBox = ({ openSide }) => {
           }
         })}
       </section>
-      <section className="relative">
+      {chatuser ?<section className="relative">
         {/* emoji picker */}
         {isEmojiVisible && (
           <div className="absolute bottom-[11vh] left-2 z-[0] flex-shrink-0" ref={emojiPickerRef}>
@@ -333,7 +333,7 @@ const ChatBox = ({ openSide }) => {
             </button>
           </form>
         </div>
-      </section>
+      </section>:<p className="bg-black h-[63px] flex justify-center items-center font-bold text-lg text-yellow-300">select a user to start chatting</p>}
       {/* selected media section */}
       {mediaUrl && <section className="bg-gray-950 w-full absolute top-0 h-screen flex flex-col justify-between items-end">
         <GrClose size='2rem' className="float-right m-6 cursor-pointer" onClick={()=>{

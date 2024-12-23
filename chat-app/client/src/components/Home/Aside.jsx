@@ -87,7 +87,7 @@ const Aside = ({closeSide}) => {
            </div>
         </nav>
         <section className='relative w-fit my-0 mx-auto'>
-            <input type="text" placeholder='Search username' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'
+            <input type="text" placeholder='Search username ex-vikash' className='w-[280px] xl:w-[350px] lg:w-[310px] p-2 outline-none rounded-lg bg-zinc-700'
             value={searchval}
             onChange={(e)=> setsearchval(e.target.value)}
             />

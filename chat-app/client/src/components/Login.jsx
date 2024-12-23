@@ -58,6 +58,10 @@ const Login = () => {
         <input type="password" className="bg-gray-300 p-2 rounded-lg w-[270px] outline-none" placeholder="Password" ref={passwordref}/>
         {isopen? <RxEyeOpen  className="absolute top-3 right-3 cursor-pointer"size="1.3rem" onClick={toggleye}/> : <RiEyeCloseFill className="absolute top-3 right-3 cursor-pointer"size="1.3rem" onClick={toggleye}/>}
         </div>
+        <div>
+          <p>Email:- test@hello.com</p>
+          <p>password: - test123</p>
+        </div>
         <button className="bg-black text-white font-semibold py-1 px-2 rounded">{loading?'Loging...':'Login'}</button>
         <p>you don't have an account ? <NavLink to="/signup">
         <b>signup</b>
